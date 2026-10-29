@@ -160,13 +160,13 @@ print(f"check with Planck at 10.9 µm: {planck_inv(10.9, np.median(L10)) - 273.1
 fig, ax = plt.subplots(figsize=(7.5, 6.5))
 im = ax.imshow(BT - 273.15, cmap="inferno")
 fig.colorbar(im, ax=ax, label="jasová teplota B10 (°C)")
-ax.set_title(f"Praha, {mtl['DATE_ACQUIRED']}, Landsat 8 B10\n(pixel 30 m, převzorkováno ze 100 m)")
+ax.set_title(f"Praha, {mtl['DATE_ACQUIRED']}, Landsat 8 B10\\n(pixel 30 m, převzorkováno ze 100 m)")
 ax.axis("off"); plt.show()
 ''', '''
 fig, ax = plt.subplots(figsize=(7.5, 6.5))
 im = ax.imshow(BT - 273.15, cmap="inferno")
 fig.colorbar(im, ax=ax, label="B10 brightness temperature (°C)")
-ax.set_title(f"Prague, {mtl['DATE_ACQUIRED']}, Landsat 8 B10\n(30 m pixel, resampled from 100 m)")
+ax.set_title(f"Prague, {mtl['DATE_ACQUIRED']}, Landsat 8 B10\\n(30 m pixel, resampled from 100 m)")
 ax.axis("off"); plt.show()
 ''')),
         ("task", t(
