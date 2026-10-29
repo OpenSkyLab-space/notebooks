@@ -41,7 +41,7 @@ def cells(t):
         ("md", t("## 1. Příprava a dráhy družic", "## 1. Setup and satellite orbits")),
         ("code", "%pip install -q sgp4 rasterio"),
         ("code", '''
-import time, requests
+import os, time, requests
 from datetime import datetime, timedelta, timezone
 import numpy as np, pandas as pd
 import matplotlib.pyplot as plt
@@ -49,15 +49,24 @@ import rasterio
 from pyproj import Transformer
 from sgp4.api import Satrec, jday
 ''' + t(CUZK_HELPER["cs"], CUZK_HELPER["en"]) + t('''
-for attempt in range(6):                     # CelesTrak občas spojení odmítne; zkusíme to znovu
-    try:
-        r = requests.get("https://celestrak.org/NORAD/elements/gp.php", params={"GROUP": "gnss", "FORMAT": "tle"}, timeout=60)
-        if r.ok and r.text.startswith(("GPS", "COSMOS", "BEIDOU", "GSAT", "INMARSAT", "QZS", "IRNSS", "NVS", "SES")) or r.text.count("\\n1 ") > 50:
-            break
-    except requests.RequestException as e:
-        print("CelesTrak:", type(e).__name__, "– zkusím znovu")
-    time.sleep(5 * (attempt + 1))
-lines = [l.rstrip() for l in r.text.splitlines() if l.strip()]
+TLE_FILE = "gnss.tle"                       # CelesTrak aktualizuje data jednou za 2 h a opakované stahování omezuje; stažený soubor proto použijeme znovu
+if os.path.exists(TLE_FILE) and time.time() - os.path.getmtime(TLE_FILE) < 2 * 3600:
+    tle = open(TLE_FILE).read()
+else:
+    tle = None
+    for attempt in range(6):
+        try:
+            r = requests.get("https://celestrak.org/NORAD/elements/gp.php", params={"GROUP": "gnss", "FORMAT": "tle"}, timeout=60)
+            if r.ok and r.text.count("\\n1 ") > 50:
+                tle = r.text; open(TLE_FILE, "w").write(tle); break
+            print("CelesTrak:", r.status_code, "– zkusím znovu")
+        except requests.RequestException as e:
+            print("CelesTrak:", type(e).__name__, "– zkusím znovu")
+        time.sleep(5 * (attempt + 1))
+    if tle is None:
+        raise RuntimeError("CelesTrak neodpovídá. Počkej pár minut a spusť buňku znovu; "
+                       "při opakovaném stahování v krátké době CelesTrak spojení dočasně odmítá.")
+lines = [l.rstrip() for l in tle.splitlines() if l.strip()]
 
 def system(name):
     if name.startswith("GPS"): return "GPS"
@@ -69,15 +78,24 @@ SATS = [(lines[i].strip(), system(lines[i]), Satrec.twoline2rv(lines[i + 1], lin
 SATS = [s for s in SATS if s[1]]
 print(pd.Series([s[1] for s in SATS]).value_counts().to_string())
 ''', '''
-for attempt in range(6):                     # CelesTrak sometimes refuses the connection; try again
-    try:
-        r = requests.get("https://celestrak.org/NORAD/elements/gp.php", params={"GROUP": "gnss", "FORMAT": "tle"}, timeout=60)
-        if r.ok and r.text.startswith(("GPS", "COSMOS", "BEIDOU", "GSAT", "INMARSAT", "QZS", "IRNSS", "NVS", "SES")) or r.text.count("\\n1 ") > 50:
-            break
-    except requests.RequestException as e:
-        print("CelesTrak:", type(e).__name__, "– retrying")
-    time.sleep(5 * (attempt + 1))
-lines = [l.rstrip() for l in r.text.splitlines() if l.strip()]
+TLE_FILE = "gnss.tle"                       # CelesTrak updates the data every 2 h and limits repeated downloads, so we reuse the downloaded file
+if os.path.exists(TLE_FILE) and time.time() - os.path.getmtime(TLE_FILE) < 2 * 3600:
+    tle = open(TLE_FILE).read()
+else:
+    tle = None
+    for attempt in range(6):
+        try:
+            r = requests.get("https://celestrak.org/NORAD/elements/gp.php", params={"GROUP": "gnss", "FORMAT": "tle"}, timeout=60)
+            if r.ok and r.text.count("\\n1 ") > 50:
+                tle = r.text; open(TLE_FILE, "w").write(tle); break
+            print("CelesTrak:", r.status_code, "– retrying")
+        except requests.RequestException as e:
+            print("CelesTrak:", type(e).__name__, "– retrying")
+        time.sleep(5 * (attempt + 1))
+    if tle is None:
+        raise RuntimeError("CelesTrak does not respond. Wait a few minutes and run the cell again; "
+                       "CelesTrak temporarily refuses connections after repeated downloads in a short time.")
+lines = [l.rstrip() for l in tle.splitlines() if l.strip()]
 
 def system(name):
     if name.startswith("GPS"): return "GPS"
@@ -293,8 +311,8 @@ good = v_day[(v_day.PDOP < 3) & (v_day.satellites >= 10)]
 print(f"in the valley PDOP < 3 with at least 10 satellites for {len(good) * 10 / 60:.1f} h out of 24 h")
 ''')),
         ("task", t(
-            "Které směry údolí zakrývá nejvíc a proč? Kdy během příštích 24 hodin bys v údolí měřil vlícovací body? Proč model terénu nezachytí všechno, co signál ve skutečnosti blokuje nebo odráží (stromy, budovy, skalní stěny)?",
-            "Which directions does the valley block most and why? When in the next 24 hours would you survey ground control points in the valley? Why does the terrain model not capture everything that actually blocks or reflects the signal (trees, buildings, rock faces)?")),
+            "Které směry údolí zakrývá nejvíc a proč? Jak vysoko horizont sahá a je údolí z pohledu GNSS se čtyřmi systémy opravdu „hluboké“? Zkus `mask = 20` nebo bod pod skalní stěnou. Kdy během příštích 24 hodin bys v údolí měřil vlícovací body? Proč model terénu nezachytí všechno, co signál ve skutečnosti blokuje nebo odráží (stromy, budovy, skalní stěny)?",
+            "Which directions does the valley block most and why? How high does the horizon reach, and is the valley really “deep” for a four-system GNSS receiver? Try `mask = 20` or a point below a rock face. When in the next 24 hours would you survey ground control points in the valley? Why does the terrain model not capture everything that actually blocks or reflects the signal (trees, buildings, rock faces)?")),
         ("md", t(
             "## 5. Referenční stanice CZEPOS\n\nPřesnost RTK klesá se vzdáleností od referenční stanice, protože se rozcházejí vlivy ionosféry, troposféry a drah. Výrobci obvykle udávají přesnost ve tvaru 1 cm + 1 ppm (1 mm na každý km).",
             "## 5. CZEPOS reference stations\n\nRTK accuracy decreases with distance from the reference station because ionospheric, tropospheric and orbit effects decorrelate. Manufacturers usually state accuracy as 1 cm + 1 ppm (1 mm per km).")),
