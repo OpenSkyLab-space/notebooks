@@ -228,8 +228,8 @@ print(f"agreement with the SCL snow mask: {np.mean((ndsi > thr) == (snow_scl == 
             "Proč NDSI odliší sníh od oblaků, i když jsou ve viditelném oba bílé? Změň práh na 0,2 a 0,6: kde se maska mění nejvíc (les se sněhem, stíny, kosodřevina)? Proč je Vltava v NDWI kladná a vegetace záporná?",
             "Why does NDSI separate snow from clouds although both are white in the visible? Change the threshold to 0.2 and 0.6: where does the mask change most (snowy forest, shadows, dwarf pine)? Why is the Vltava positive in NDWI and vegetation negative?")),
         ("md", t(
-            "## 6. Stejný index, jiné číslo\n\nNDVI lze ze Sentinelu-2 spočítat s širokým pásmem B8 (842 nm, šířka 145 nm, 10 m) nebo s úzkým B8A (865 nm, 33 nm, 20 m). Dron s multispektrální kamerou nebo Landsat mají zase jiná pásma. Porovnáme obě varianty na stejných pixelech.",
-            "## 6. Same index, different number\n\nNDVI can be computed from Sentinel-2 with the broad band B8 (842 nm, 145 nm wide, 10 m) or the narrow B8A (865 nm, 33 nm, 20 m). A drone multispectral camera or Landsat have different bands again. We compare both variants on the same pixels.")),
+            "## 6. Stejný index, jiné číslo\n\nNDVI lze ze Sentinelu-2 spočítat s širokým pásmem B8 (střed kolem 833 nm, šířka přes 100 nm, pixel 10 m) nebo s úzkým B8A (865 nm, šířka asi 21 nm, pixel 20 m). Dron s multispektrální kamerou nebo Landsat mají zase jiná pásma. Porovnáme obě varianty na stejných pixelech.",
+            "## 6. Same index, different number\n\nNDVI can be computed from Sentinel-2 with the broad band B8 (centred near 833 nm, over 100 nm wide, 10 m pixel) or the narrow B8A (865 nm, about 21 nm wide, 20 m pixel). A drone multispectral camera or Landsat have different bands again. We compare both variants on the same pixels.")),
         ("code", t('''
 ndvi_b8 = (refl["nir"] - refl["red"]) / (refl["nir"] + refl["red"])
 ndvi_b8a = (refl["nir08"] - refl["red"]) / (refl["nir08"] + refl["red"])

@@ -20,27 +20,28 @@ def main():
             f"[![{lang.upper()}]({COLAB})](https://colab.research.google.com/github/{REPO}/blob/main/{path.stem}_{lang}.ipynb) "
             f"[{lang.upper()}]({path.stem}_{lang}.ipynb)"
             for lang in ("cs", "en"))
-        rows.append(f"| [{meta['visual']['cs']}]({SITE}/edu_viz_{path.stem}.html) | {meta['title']['cs']} | {meta['minutes']} | {links} |")
+        docs = f"[CS](docs/cs/{path.stem}.md) [EN](docs/en/{path.stem}.md)"
+        rows.append(f"| [{meta['visual']['cs']}]({SITE}/edu_viz_{path.stem}.html) | {meta['title']['cs']} | {meta['minutes']} | {links} | {docs} |")
     text = f"""# OpenSkyLab · notebooky k vizuálům / notebooks for the visuals
 
 Notebooky pro Google Colab k interaktivním výukovým vizuálům [OpenSkyLab]({SITE}) o dálkovém průzkumu a dronech.
 Každý notebook pracuje se skutečnými otevřenými daty, má 4 až 6 úkolů a parametry, které student mění.
-Každý existuje česky (`_cs`) a anglicky (`_en`).
+Každý existuje česky (`_cs`) a anglicky (`_en`). Ke každému je popis toho, co se v něm dělá, ve složce `docs/`.
 
 Google Colab notebooks for the [OpenSkyLab]({SITE}) interactive teaching visuals on remote sensing and drones.
 Every notebook works with real open data, has 4 to 6 tasks and parameters for the student to change.
-Each one exists in Czech (`_cs`) and English (`_en`).
+Each one exists in Czech (`_cs`) and English (`_en`). A description of what each one does is in the `docs/` folder.
 
-| Vizuál / visual | Notebook | min | Colab |
-|---|---|---|---|
+| Vizuál / visual | Notebook | min | Colab | Popis / description |
+|---|---|---|---|---|
 {chr(10).join(rows)}
 
 ## Jak vznikají / How they are made
 
-Obě jazykové verze se generují z jednoho zdroje v `src/<kmen>.py` (`python tools/build.py`) a před zveřejněním se celé spustí
+Obě jazykové verze i jejich popisy se generují z jednoho zdroje v `src/<kmen>.py` (`python tools/build.py`, `python tools/docs.py`) a před zveřejněním se celé spustí
 na skutečných datech (`python tools/run.py`), takže uložené výstupy jsou z opravdového běhu.
 
-Both language versions are generated from one source in `src/<stem>.py` (`python tools/build.py`) and, before publishing,
+Both language versions and their descriptions are generated from one source in `src/<stem>.py` (`python tools/build.py`, `python tools/docs.py`) and, before publishing,
 run in full on real data (`python tools/run.py`), so the stored outputs come from a real run.
 
 ## Licence

@@ -24,7 +24,7 @@ META = {
             "Relativní vlhkost a tlak nasycených par (Magnusův vzorec): WMO (2018). *Guide to Instruments and Methods of Observation* (WMO-No. 8), příloha 4.B.",
             "Přenos větru přes výšku promíchání 60 m: Wieringa, J. (1986). Roughness-dependent geographical interpolation of surface wind speed averages. *Quarterly Journal of the Royal Meteorological Society* 112, 867–889; Verkaik, J. W. (2000). Evaluation of two gustiness models for exposure correction calculations. *Journal of Applied Meteorology* 39, 1613–1626.",
             "Klíč ke zprávám METAR: ICAO Annex 3 / WMO-No. 306, kód FM 15.",
-            "Odolnost DJI Mavic 3 Enterprise vůči větru 12 m/s, max. rychlost 15 m/s (technický list DJI).",
+            "Odolnost DJI Mavic 3 Enterprise vůči větru 12 m/s, max. rychlost 15 m/s v normálním režimu, 21 m/s ve sportovním (technický list DJI); odolnost DJI Mini 4 Pro vůči větru 10,7 m/s.",
         ],
         "en": [
             "METAR and TAF: NOAA/NWS Aviation Weather Center, https://aviationweather.gov/data/api/ (US government public data).",
@@ -32,7 +32,7 @@ META = {
             "Relative humidity and saturation vapour pressure (Magnus formula): WMO (2018). *Guide to Instruments and Methods of Observation* (WMO-No. 8), annex 4.B.",
             "Wind transfer via a 60 m blending height: Wieringa, J. (1986). Roughness-dependent geographical interpolation of surface wind speed averages. *Quarterly Journal of the Royal Meteorological Society* 112, 867–889; Verkaik, J. W. (2000). Evaluation of two gustiness models for exposure correction calculations. *Journal of Applied Meteorology* 39, 1613–1626.",
             "METAR code: ICAO Annex 3 / WMO-No. 306, code FM 15.",
-            "DJI Mavic 3 Enterprise wind resistance 12 m/s, max. speed 15 m/s (DJI data sheet).",
+            "DJI Mavic 3 Enterprise wind resistance 12 m/s, max. speed 15 m/s in normal mode, 21 m/s in sport mode (DJI data sheet); DJI Mini 4 Pro wind resistance 10.7 m/s.",
         ],
     },
 }
@@ -246,6 +246,6 @@ colors = {"ok": "#cfe8cf", "caution": "#ffe7a3", "NO GO": "#f4b6b6"}
 out.style.apply(lambda r: [f"background-color: {colors[r['verdict']]}"] * len(r), axis=1)
 ''')),
         ("task", t(
-            "Kdy bys v příštích 48 hodinách letěl a co v ostatních hodinách rozhoduje? Porovnej předpověď s posledním TAF pro Prahu: shodují se? Nárazy ve 120 m jsme odhadli poměrem nárazů a větru v 10 m; proč je to hrubé a proč je výsledek spíš na straně bezpečnosti, nebo naopak? Nastav `limit = 10.7` (drony do 250 g).",
-            "When would you fly in the next 48 hours and what decides the other hours? Compare the forecast with the latest TAF for Prague: do they agree? We estimated gusts at 120 m from the gust-to-wind ratio at 10 m; why is that rough, and is the result on the safe side or not? Set `limit = 10.7` (drones under 250 g).")),
+            "Kdy bys v příštích 48 hodinách letěl a co v ostatních hodinách rozhoduje? Porovnej předpověď s posledním TAF pro Prahu: shodují se? Nárazy ve 120 m jsme odhadli poměrem nárazů a větru v 10 m; proč je to hrubé a proč je výsledek spíš na straně bezpečnosti, nebo naopak? Nastav `limit = 10.7` (odolnost malého dronu do 250 g, např. DJI Mini 4 Pro). Co se změní?",
+            "When would you fly in the next 48 hours and what decides the other hours? Compare the forecast with the latest TAF for Prague: do they agree? We estimated gusts at 120 m from the gust-to-wind ratio at 10 m; why is that rough, and is the result on the safe side or not? Set `limit = 10.7` (wind resistance of a small sub-250 g drone such as the DJI Mini 4 Pro). What changes?")),
     ]

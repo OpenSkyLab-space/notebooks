@@ -127,8 +127,8 @@ pd.DataFrame(rows).set_index("drone").round(2)
             "Ověř, že sloupec ṁ · 2 v_i dává stejné číslo jako tah rotoru. Proč jsou rozdíl tlaků a hybnost vrženého vzduchu dva popisy téže síly, ne dvě síly, které se sčítají? Proč má Matrice 350 větší zatížení disku a vyšší indukovanou rychlost, i když má mnohem větší vrtule?",
             "Check that the ṁ · 2 v_i column gives the same number as the rotor thrust. Why are the pressure difference and the momentum of the air thrown down two descriptions of one force, not two forces that add up? Why does the Matrice 350 have a higher disc loading and induced velocity even though its propellers are much larger?")),
         ("md", t(
-            "## 4. Skutečná hustota vzduchu: nížina, hory, léto a zima\n\nIdeální výkon při visení je P = T^(3/2) / √(2 ρ A), tedy roste s 1/√ρ. Hustotu spočítáme z tlaku, teploty a vlhkosti za posledních 92 dní.",
-            "## 4. Real air density: lowland, mountains, summer and winter\n\nIdeal hover power is P = T^(3/2) / √(2 ρ A), so it grows with 1/√ρ. We compute density from pressure, temperature and humidity over the last 92 days.")),
+            "## 4. Skutečná hustota vzduchu: nížina, hory, teplo a chlad\n\nIdeální výkon při visení je P = T^(3/2) / √(2 ρ A), tedy roste s 1/√ρ. Hustotu spočítáme z tlaku, teploty a vlhkosti za posledních 92 dní. Vypsaná nadmořská výška je výška bodu modelu Open-Meteo; u štítů je nižší než skutečný vrchol (Lomnický štít má 2634 m n. m.).",
+            "## 4. Real air density: lowland, mountains, warm and cold\n\nIdeal hover power is P = T^(3/2) / √(2 ρ A), so it grows with 1/√ρ. We compute density from pressure, temperature and humidity over the last 92 days. The printed elevation is that of the Open-Meteo model point; for the peaks it is lower than the real summit (Lomnický štít is 2634 m a.s.l.).")),
         ("code", t('''
 SITES = {"Praha": (50.08, 14.42), "Sněžka": (50.736, 15.740), "Lomnický štít": (49.195, 20.215)}
 dens = {}

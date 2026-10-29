@@ -18,13 +18,13 @@ META = {
     "sources": {
         "cs": [
             "Copernicus Sentinel-2 data 2024, ESA; metadata L1C z veřejného archivu Google Cloud (`gcp-public-data-sentinel-2`). Licence: [Legal notice on the use of Copernicus Sentinel Data](https://sentinels.copernicus.eu/documents/247904/690755/Sentinel_Data_Legal_Notice), volné užití s uvedením zdroje.",
-            "Konstanty h, c, e, k: CODATA 2018 (přesné hodnoty SI), převzaté z `scipy.constants`.",
+            "Konstanty h, c, e, k: v SI od roku 2019 přesně definované hodnoty, převzaté z `scipy.constants`.",
             "Šířka zakázaného pásu křemíku 1,12 eV při 300 K: Sze, S. M., Ng, K. K. (2007). *Physics of Semiconductor Devices*, 3. vyd. Wiley.",
             "Frekvence radaru Sentinel-1 (pásmo C) 5,405 GHz: ESA, Sentinel-1 User Handbook.",
         ],
         "en": [
             "Copernicus Sentinel-2 data 2024, ESA; L1C metadata from the Google Cloud public archive (`gcp-public-data-sentinel-2`). Licence: [Legal notice on the use of Copernicus Sentinel Data](https://sentinels.copernicus.eu/documents/247904/690755/Sentinel_Data_Legal_Notice), free use with attribution.",
-            "Constants h, c, e, k: CODATA 2018 (exact SI values), taken from `scipy.constants`.",
+            "Constants h, c, e, k: exactly defined SI values since 2019, taken from `scipy.constants`.",
             "Silicon band gap 1.12 eV at 300 K: Sze, S. M., Ng, K. K. (2007). *Physics of Semiconductor Devices*, 3rd ed. Wiley.",
             "Sentinel-1 radar frequency (C band) 5.405 GHz: ESA, Sentinel-1 User Handbook.",
         ],
@@ -210,6 +210,6 @@ other.style.format({"lambda_m": "{:.3g}", "E_eV": "{:.3g}", "E_over_kT": "{:.3g}
             "Termální foton má energii jen asi čtyřikrát větší než k · T, radarový foton je víc než tisíckrát slabší než k · T. Proč proto termální kamery s fotonovými detektory chladí a proč mikrobolometr a radarová anténa neměří jednotlivé fotony, ale ohřev, resp. elektrické pole vlny? Nastav `T = 77` (kapalný dusík) a porovnej.",
             "A thermal photon has only about four times the energy of k · T, a radar photon is more than a thousand times weaker than k · T. Why are thermal cameras with photon detectors cooled, and why do a microbolometer and a radar antenna measure heating or the electric field of the wave rather than individual photons? Set `T = 77` (liquid nitrogen) and compare.")),
         ("task", t(
-            "Na jaké vlnové délce má foton energii 10 eV (přibližná hranice ionizace)? Do které oblasti spektra patří? Vysvětli, proč je UV-C nebezpečné pro buňky, zatímco silný radarový signál nese víc energie celkem, a přesto nikoho neionizuje.",
-            "At what wavelength does a photon have an energy of 10 eV (the approximate ionisation threshold)? Which part of the spectrum is it? Explain why UV-C is dangerous to cells while a strong radar signal carries more energy in total and still ionises nobody.")),
+            "Na jaké vlnové délce má foton energii 10 eV (přibližná hranice ionizace)? Do které oblasti spektra patří? Chemické vazby v molekulách mají energii v řádu několika eV. Vysvětli, proč jediný foton UV záření může poškodit DNA, zatímco silný radarový signál nese celkem víc energie, a přesto žádnou vazbu nerozbije ani nic neionizuje.",
+            "At what wavelength does a photon have an energy of 10 eV (the approximate ionisation threshold)? Which part of the spectrum is it? Chemical bonds in molecules have energies of a few eV. Explain why a single UV photon can damage DNA while a strong radar signal carries more energy in total and still breaks no bond and ionises nothing.")),
     ]

@@ -173,8 +173,8 @@ ax.axis("off"); plt.show()
             "Najdi na mapě Vltavu, velké parky nebo lesy (Stromovka, Hvězda, Krč) a zastavěné plochy s halami. Jaké jasové teploty mají? Proč je rozdíl mezi Vltavou a střechami hal kolem poledne tak velký? Proč není jasová teplota totéž co teplota povrchu?",
             "Find the Vltava river, large parks or forests (Stromovka, Hvězda, Krč) and built-up areas with large halls on the map. What brightness temperatures do they have? Why is the difference between the river and hall roofs so large around noon? Why is brightness temperature not the same as surface temperature?")),
         ("md", t(
-            "## 4. Emisivita\n\nReálné povrchy vyzařují méně než černé těleso: L = ε · B(T). Emisivitu odhadneme z NDVI metodou prahů (Sobrino a kol. 2004): voda 0,991, holý povrch 0,97, plná vegetace 0,99, mezi tím podle podílu vegetace. Odraz oblohy a atmosféru zatím zanedbáme.",
-            "## 4. Emissivity\n\nReal surfaces emit less than a blackbody: L = ε · B(T). We estimate emissivity from NDVI with the threshold method (Sobrino et al. 2004): water 0.991, bare surface 0.97, full vegetation 0.99, in between according to the vegetation fraction. Sky reflection and the atmosphere are ignored for now.")),
+            "## 4. Emisivita\n\nReálné povrchy vyzařují méně než černé těleso: L = ε · B(T). Emisivitu odhadneme z NDVI zjednodušenou metodou prahů podle Sobrina a kol. (2004): holý povrch 0,97, plná vegetace 0,99, mezi tím podle podílu vegetace s opravou na vícenásobné odrazy mezi rostlinami a půdou. Vodě (NDVI < 0) dáme typickou hodnotu 0,991. Odraz oblohy a atmosféru zatím zanedbáme.",
+            "## 4. Emissivity\n\nReal surfaces emit less than a blackbody: L = ε · B(T). We estimate emissivity from NDVI with a simplified threshold method after Sobrino et al. (2004): bare surface 0.97, full vegetation 0.99, in between according to the vegetation fraction with a correction for multiple scattering between plants and soil. Water (NDVI < 0) gets a typical value of 0.991. Sky reflection and the atmosphere are ignored for now.")),
         ("code", t('''
 sun = np.sin(np.radians(num("SUN_ELEVATION")))
 refl = lambda b: (num(f"REFLECTANCE_MULT_BAND_{b}") * read_band(b) + num(f"REFLECTANCE_ADD_BAND_{b}")) / sun
@@ -254,8 +254,8 @@ for name, eps_m in [("grass", 0.98), ("concrete", 0.92), ("oxidised sheet metal"
             "Proč lesklý plech pod jasnou oblohou vypadá v termokameře mrazivě studený, i když má 27 °C? Proč při obloze stejně teplé jako povrch nehraje emisivita žádnou roli? Za jakého počasí bys proto plánoval termální snímkování střech?",
             "Why does polished sheet metal under a clear sky look freezing cold in a thermal camera although it is at 27 °C? Why does emissivity not matter at all when the sky is as warm as the surface? In what weather would you therefore plan thermal imaging of roofs?")),
         ("md", t(
-            "## 6. Požár menší než pixel\n\nPixel je směs: podíl p hoří při teplotě požáru, zbytek má teplotu pozadí. Jako pozadí vezmeme medián skutečné jasové teploty z výřezu Prahy a porovnáme pásmo 3,9 µm (jako MODIS a VIIRS) s pásmem 10,9 µm.",
-            "## 6. A fire smaller than a pixel\n\nA pixel is a mixture: a fraction p burns at the fire temperature, the rest has the background temperature. As background we take the median real brightness temperature of the Prague window and compare the 3.9 µm band (as on MODIS and VIIRS) with the 10.9 µm band.")),
+            "## 6. Požár menší než pixel\n\nPixel je směs: podíl p hoří při teplotě požáru, zbytek má teplotu pozadí. Jako pozadí vezmeme medián skutečné jasové teploty z výřezu Prahy a porovnáme pásmo 3,9 µm (požárová pásma MODIS a VIIRS leží mezi 3,7 a 4,1 µm) s pásmem 10,9 µm.",
+            "## 6. A fire smaller than a pixel\n\nA pixel is a mixture: a fraction p burns at the fire temperature, the rest has the background temperature. As background we take the median real brightness temperature of the Prague window and compare the 3.9 µm band (the fire bands of MODIS and VIIRS lie between 3.7 and 4.1 µm) with the 10.9 µm band.")),
         ("code", t('''
 T_fire = 900                     # ◀ parametr: teplota požáru v K
 T_bg = float(np.median(BT))

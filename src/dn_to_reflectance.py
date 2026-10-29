@@ -21,6 +21,7 @@ META = {
             "USGS (2019). *Landsat 8 (L8) Data Users Handbook*, verze 5.0, kap. 5 (převod DN na zář a odrazivost TOA).",
             "Copernicus Sentinel-2 data 2019, ESA (L2A, Sen2Cor), registr AWS Open Data (`sentinel-cogs`), katalog Earth Search (Element 84). Volné užití s uvedením zdroje.",
             "Chavez, P. S. (1988). An improved dark-object subtraction technique for atmospheric scattering correction of multispectral data. *Remote Sensing of Environment* 24, 459–479. https://doi.org/10.1016/0034-4257(88)90019-3",
+            "Chavez, P. S. (1996). Image-based atmospheric corrections – revisited and improved. *Photogrammetric Engineering and Remote Sensing* 62(9), 1025–1036.",
             "Smith, G. M., Milton, E. J. (1999). The use of the empirical line method to calibrate remotely sensed data to reflectance. *International Journal of Remote Sensing* 20, 2653–2662. https://doi.org/10.1080/014311699211994",
         ],
         "en": [
@@ -28,6 +29,7 @@ META = {
             "USGS (2019). *Landsat 8 (L8) Data Users Handbook*, version 5.0, ch. 5 (DN to radiance and TOA reflectance).",
             "Copernicus Sentinel-2 data 2019, ESA (L2A, Sen2Cor), AWS Open Data registry (`sentinel-cogs`), Earth Search catalogue (Element 84). Free use with attribution.",
             "Chavez, P. S. (1988). An improved dark-object subtraction technique for atmospheric scattering correction of multispectral data. *Remote Sensing of Environment* 24, 459–479. https://doi.org/10.1016/0034-4257(88)90019-3",
+            "Chavez, P. S. (1996). Image-based atmospheric corrections – revisited and improved. *Photogrammetric Engineering and Remote Sensing* 62(9), 1025–1036.",
             "Smith, G. M., Milton, E. J. (1999). The use of the empirical line method to calibrate remotely sensed data to reflectance. *International Journal of Remote Sensing* 20, 2653–2662. https://doi.org/10.1080/014311699211994",
         ],
     },
@@ -148,8 +150,8 @@ tab["ratio ρ summer/winter"] = tab["ρ TOA summer"] / tab["ρ TOA winter"]
 tab.round(3)
 ''')),
         ("task", t(
-            "O kolik se mediány DN mezi létem a zimou liší a o kolik mediány odrazivosti TOA? Kolik z rozdílu DN vysvětlí jen výška Slunce (porovnej poměr sinů výšek)? Proč se ani odrazivost TOA mezi daty úplně neshoduje (vegetace, sníh, atmosféra)?",
-            "How much do the median DN differ between summer and winter, and how much the median TOA reflectance? How much of the DN difference is explained by sun elevation alone (compare the ratio of the sines)? Why does even TOA reflectance not agree completely between the dates (vegetation, snow, atmosphere)?")),
+            "O kolik se mediány DN mezi létem a zimou liší a o kolik mediány odrazivosti TOA? Kolik z rozdílu DN vysvětlí jen výška Slunce (porovnej poměr sinů výšek)? Proč se ani odrazivost TOA mezi daty úplně neshoduje (stav porostu, případný sníh, atmosféra)?",
+            "How much do the median DN differ between summer and winter, and how much the median TOA reflectance? How much of the DN difference is explained by sun elevation alone (compare the ratio of the sines)? Why does even TOA reflectance not agree completely between the dates (state of vegetation, possible snow, atmosphere)?")),
         ("md", t(
             "## 3. Odrazivost na povrchu ze Sentinelu-2 jako reference\n\nSentinel-2 L2A z 25. 6. 2019 (o den dřív) má odrazivost BOA z modelu Sen2Cor. Převzorkujeme ho na mřížku Landsatu (průměr do pixelu 30 m) a přiřadíme si pásma s podobnou vlnovou délkou. Dokonalou shodu nečekej: jde o jiný senzor s trochu jinými pásmy, snímek o den dřív a z jiného úhlu pohledu.",
             "## 3. Surface reflectance from Sentinel-2 as a reference\n\nSentinel-2 L2A from 25 June 2019 (one day earlier) has BOA reflectance from the Sen2Cor model. We resample it to the Landsat grid (average into 30 m pixels) and pair bands of similar wavelength. Do not expect a perfect match: it is a different sensor with slightly different bands, an image taken one day earlier and from a different viewing angle.")),
@@ -225,8 +227,8 @@ w.round(4)
             "Jak se rozdíl TOA − BOA nad vodou mění s vlnovou délkou? Porovnej poměr mezi pásmy B1 a B4 s Rayleighovým zákonem (rozptyl ∝ λ⁻⁴). Proč je voda nad atmosférou modrá, i když je na povrchu tmavá ve všech pásmech?",
             "How does TOA − BOA over water change with wavelength? Compare the ratio between bands B1 and B4 with Rayleigh's law (scattering ∝ λ⁻⁴). Why is water blue above the atmosphere although it is dark in all bands at the surface?")),
         ("md", t(
-            "## 5. Metoda tmavého objektu (DOS)\n\nPředpokládáme, že nejtmavší pixely ve scéně mají na povrchu odrazivost skoro nulovou (Chavez 1988 bere 1 %). Co mají navíc, je zář dráhy, a tu odečteme od celé scény. DOS opraví jen aditivní část atmosféry.",
-            "## 5. Dark object subtraction (DOS)\n\nWe assume that the darkest pixels in the scene have almost zero surface reflectance (Chavez 1988 assumes 1 %). Whatever they have on top is path radiance, which we subtract from the whole scene. DOS corrects only the additive part of the atmosphere.")),
+            "## 5. Metoda tmavého objektu (DOS)\n\nPředpokládáme, že nejtmavší pixely ve scéně mají na povrchu odrazivost skoro nulovou (běžně se bere 1 %, Chavez 1996). Co mají navíc, je zář dráhy, a tu odečteme od celé scény. DOS opraví jen aditivní část atmosféry.",
+            "## 5. Dark object subtraction (DOS)\n\nWe assume that the darkest pixels in the scene have almost zero surface reflectance (1 % is the usual choice, Chavez 1996). Whatever they have on top is path radiance, which we subtract from the whole scene. DOS corrects only the additive part of the atmosphere.")),
         ("code", t('''
 pct = 0.1          # ◀ parametr: percentil, který považujeme za tmavý objekt (%)
 rho_dark = 0.01    # ◀ parametr: předpokládaná skutečná odrazivost tmavého objektu
@@ -257,11 +259,11 @@ res = pd.DataFrame({
 res.round(4)
 ''')),
         ("task", t(
-            "Ve kterých pásmech DOS chybu proti BOA nejvíc zmenší a ve kterých skoro nic nezmění? Nastav `pct = 2` a pak `rho_dark = 0`: co se stane? Kdy DOS selže úplně (zimní scéna se sněhem bez tmavých objektů, opar jen nad částí scény)?",
-            "In which bands does DOS reduce the error against BOA most and in which does it change almost nothing? Set `pct = 2` and then `rho_dark = 0`: what happens? When does DOS fail completely (a winter scene with snow and no dark objects, haze over only part of the scene)?")),
+            "Ve kterých pásmech DOS chybu proti BOA zmenší a ve kterých ji naopak zvětší? Proč je bias DOS ve všech pásmech záporný (co DOS dělá s násobnou složkou, propustností atmosféry)? Nastav `pct = 2` a pak `rho_dark = 0`: co se stane? Kdy DOS selže úplně (zimní scéna se sněhem bez tmavých objektů, opar jen nad částí scény)?",
+            "In which bands does DOS reduce the error against BOA and in which does it make it larger? Why is the DOS bias negative in all bands (what does DOS do with the multiplicative part, the atmospheric transmittance)? Set `pct = 2` and then `rho_dark = 0`: what happens? When does DOS fail completely (a winter scene with snow and no dark objects, haze over only part of the scene)?")),
         ("md", t(
-            "## 6. Empirická přímka\n\nV terénu se na snímek položí tmavý a světlý panel se změřenou odrazivostí. Tady jako panely poslouží tmavé a světlé pixely, jejichž odrazivost na povrchu známe ze Sentinelu-2. Pro každé pásmo proložíme přímku ρ_BOA = a · ρ_TOA + b: posun b odpovídá záři dráhy, sklon a propustnosti atmosféry.",
-            "## 6. Empirical line\n\nIn the field a dark and a bright panel with measured reflectance are placed in the image. Here the panels are dark and bright pixels whose surface reflectance we know from Sentinel-2. For each band we fit a line ρ_BOA = a · ρ_TOA + b: the offset b corresponds to path radiance, the slope a to atmospheric transmittance.")),
+            "## 6. Empirická přímka\n\nV terénu se na snímek položí tmavý a světlý panel se změřenou odrazivostí. Tady jako panely poslouží tmavé a světlé pixely, jejichž odrazivost na povrchu známe ze Sentinelu-2. Pro každé pásmo proložíme přímku ρ_BOA = a · ρ_TOA + b: posun b souvisí se září dráhy a sklon s propustností atmosféry: pro ρ_TOA ≈ ρ_dráhy + T · ρ_BOA vychází a ≈ 1/T a b ≈ −ρ_dráhy/T.",
+            "## 6. Empirical line\n\nIn the field a dark and a bright panel with measured reflectance are placed in the image. Here the panels are dark and bright pixels whose surface reflectance we know from Sentinel-2. For each band we fit a line ρ_BOA = a · ρ_TOA + b: the offset b relates to path radiance and the slope a to atmospheric transmittance: for ρ_TOA ≈ ρ_path + T · ρ_BOA we get a ≈ 1/T and b ≈ −ρ_path/T.")),
         ("code", t('''
 n_panel = 300        # ◀ parametr: kolik nejtmavších a nejsvětlejších pixelů použít jako panely
 rng = np.random.default_rng(0)

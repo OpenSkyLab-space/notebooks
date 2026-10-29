@@ -234,8 +234,8 @@ ax[1].plot(lbl, acc["forest training"], "o-", label="training"); ax[1].plot(lbl,
 ax[1].set(xlabel="max. tree depth", title="random forest (200 trees)"); ax[1].legend(); plt.show()
 ''')),
         ("task", t(
-            "Při k = 1 je přesnost na trénovacích pixelech 100 %. Proč to nic neznamená? Které k a jaká hloubka stromů dávají nejlepší testovací přesnost? Popiš, jak vypadá přeučení a nedoučení v obou grafech.",
-            "With k = 1 the accuracy on training pixels is 100 %. Why does that mean nothing? Which k and which tree depth give the best test accuracy? Describe what overfitting and underfitting look like in both plots.")),
+            "Při k = 1 je přesnost na trénovacích pixelech 100 % nebo skoro 100 %. Proč to nic neznamená? Které k a jaká hloubka stromů dávají nejlepší testovací přesnost? Popiš, jak vypadá přeučení a nedoučení v obou grafech.",
+            "With k = 1 the accuracy on training pixels is 100 % or nearly so. Why does that mean nothing? Which k and which tree depth give the best test accuracy? Describe what overfitting and underfitting look like in both plots.")),
         ("md", t(
             "## 6. Neuronová síť a přeučení\n\nMalá síť s jednou skrytou vrstvou. Učíme ji na málo pixelech a sledujeme přesnost na tréninku a testu po epochách.",
             "## 6. A neural network and overfitting\n\nA small network with one hidden layer. We train it on few pixels and watch training and test accuracy over the epochs.")),

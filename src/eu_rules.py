@@ -19,13 +19,13 @@ META = {
         "cs": [
             "Zeměpisné zóny UAS: Řízení letového provozu České republiky, s. p., AIM, https://aim.rlp.cz/?lang=cz&p=uas-gz; mapa zón: https://dronemap.gov.cz",
             "Prováděcí nařízení Komise (EU) 2019/947 o pravidlech a postupech pro provoz bezpilotních letadel, čl. 15 (zeměpisné zóny UAS); nařízení v přenesené pravomoci (EU) 2019/945.",
-            "Úřad pro civilní letectví: opatření obecné povahy k zeměpisným zónám UAS (LKR310 až LKR320), https://www.caa.gov.cz",
+            "Úřad pro civilní letectví: opatření obecné povahy k zeměpisným zónám UAS (LKR311 až LKR320), https://www.caa.gov.cz",
             "Výška terénu: Open-Meteo Elevation API (Copernicus DEM GLO-90), https://open-meteo.com (CC BY 4.0).",
         ],
         "en": [
             "UAS geographical zones: Air Navigation Services of the Czech Republic (ŘLP ČR), AIM, https://aim.rlp.cz/?lang=en&p=uas-gz; zone map: https://dronemap.gov.cz",
             "Commission Implementing Regulation (EU) 2019/947 on the rules and procedures for the operation of unmanned aircraft, Article 15 (UAS geographical zones); Delegated Regulation (EU) 2019/945.",
-            "Civil Aviation Authority of the Czech Republic: measures of general nature on UAS geographical zones (LKR310 to LKR320), https://www.caa.gov.cz",
+            "Civil Aviation Authority of the Czech Republic: measures of general nature on UAS geographical zones (LKR311 to LKR320), https://www.caa.gov.cz",
             "Terrain elevation: Open-Meteo Elevation API (Copernicus DEM GLO-90), https://open-meteo.com (CC BY 4.0).",
         ],
     },
@@ -209,8 +209,8 @@ airspace = pd.DataFrame([{"area": p.get("ident"), "vertical limits": p.get("vert
 print("\\nAirspace areas LKR320A by vertical limits:"); print(airspace["vertical limits"].value_counts().head(10).to_string())
 ''')),
         ("task", t(
-            "Vnitřní zóna CTR Praha má horní hranici 3500 ft AMSL: kolik je to metrů nad terénem v Suchdole? Proč se některé letecké prostory LKR320A dronu ve 120 m vůbec netýkají? Proč u hranic v AMSL nebo FL záleží na výšce terénu, a co to znamená pro let na horách (Pec pod Sněžkou)?",
-            "The inner zone of the Prague CTR has an upper limit of 3500 ft AMSL: how many metres above ground is that in Suchdol? Why do some LKR320A airspace areas not concern a drone at 120 m at all? Why does terrain elevation matter for limits in AMSL or FL, and what does that mean for a flight in the mountains (Pec pod Sněžkou)?")),
+            "Vnější i vnitřní zóna CTR Praha (LKR314C a LKR314D) má horní hranici 3500 ft AMSL: kolik je to metrů nad terénem v Suchdole? Proč se některé letecké prostory LKR320A dronu ve 120 m vůbec netýkají? Proč u hranic v AMSL nebo FL záleží na výšce terénu, a co to znamená pro let na horách (Pec pod Sněžkou)?",
+            "Both the outer and the inner zone of the Prague CTR (LKR314C and LKR314D) have an upper limit of 3500 ft AMSL: how many metres above ground is that in Suchdol? Why do some LKR320A airspace areas not concern a drone at 120 m at all? Why does terrain elevation matter for limits in AMSL or FL, and what does that mean for a flight in the mountains (Pec pod Sněžkou)?")),
         ("md", t(
             "## 4. Gridová síť kolem řízených letišť\n\nV okolí řízených letišť (CTR) ŘLP zveřejňuje síť buněk 30″ × 30″ (asi 600 × 900 m), kde každá buňka udává, do jaké výšky nad terénem je let povolen bez dalšího souhlasu. Podmínky použití sítě jsou v příslušném OOP.",
             "## 4. The grid around controlled airports\n\nAround controlled airports (CTR) ŘLP publishes a grid of 30″ × 30″ cells (about 600 × 900 m) where each cell states up to what height above ground flight is allowed without further approval. The conditions of using the grid are in the relevant OOP.")),

@@ -21,13 +21,13 @@ META = {
         "cs": [
             "Digitální model reliéfu České republiky 5. generace (DMR 5G), © ČÚZK, licence CC BY 4.0, služba https://ags.cuzk.cz/arcgis2/rest/services/dmr5g/ImageServer",
             "Počasí: Open-Meteo.com (CC BY 4.0), https://open-meteo.com",
-            "Parametry kamer: technické listy DJI Zenmuse P1, Mavic 3 Enterprise (3E, 3M) a obecná kamera 1″ 20 Mpx; baterie Mavic 3 Enterprise 5000 mAh, 15,4 V (77 Wh).",
+            "Parametry kamer: technické listy DJI Zenmuse P1, Mavic 3 Enterprise (3E, 3M) a obecná kamera 1″ 20 Mpx (u Mavic 3M a obecné kamery je nejkratší interval 2 s orientační hodnota); baterie Mavic 3 Enterprise 5000 mAh, 15,4 V (77 Wh).",
             "Výška letu v otevřené kategorii max. 120 m od nejbližšího bodu zemského povrchu: prováděcí nařízení Komise (EU) 2019/947, příloha, UAS.OPEN.010.",
         ],
         "en": [
             "Digital terrain model of the Czech Republic, 5th generation (DMR 5G), © ČÚZK, licence CC BY 4.0, service https://ags.cuzk.cz/arcgis2/rest/services/dmr5g/ImageServer",
             "Weather: Open-Meteo.com (CC BY 4.0), https://open-meteo.com",
-            "Camera parameters: data sheets of DJI Zenmuse P1, Mavic 3 Enterprise (3E, 3M) and a generic 1″ 20 MP camera; Mavic 3 Enterprise battery 5000 mAh, 15.4 V (77 Wh).",
+            "Camera parameters: data sheets of DJI Zenmuse P1, Mavic 3 Enterprise (3E, 3M) and a generic 1″ 20 MP camera (the shortest interval of 2 s for the Mavic 3M and the generic camera is an indicative value); Mavic 3 Enterprise battery 5000 mAh, 15.4 V (77 Wh).",
             "Flight height in the open category max. 120 m from the closest point of the surface of the earth: Commission Implementing Regulation (EU) 2019/947, Annex, UAS.OPEN.010.",
         ],
     },
@@ -190,8 +190,8 @@ ax[0].set_title("terrain following" if follow else f"constant {H0} m above take-
             "Při stálé výšce 80 m nad planinou: jaký je rozsah GSD a překryvů? Kde je překryv nejmenší, na planině, nebo v údolí, a proč? Kolik území je výš než 120 m nad terénem? Přepni `follow = True`: co se zlepší a co k sledování terénu potřebuješ (model terénu, jeho přesnost, překážky)?",
             "At a constant 80 m above the plateau: what is the range of GSD and overlaps? Where is the overlap smallest, on the plateau or in the valley, and why? How much of the area is more than 120 m above the terrain? Switch to `follow = True`: what improves and what do you need for terrain following (terrain model, its accuracy, obstacles)?")),
         ("md", t(
-            "## 5. Skutečný vítr, rozmazání a postupná závěrka\n\nZ Open-Meteo vezmeme předpověď větru pro Roztoky na dnešek. Rozmazání = rychlost vůči zemi · expozice / GSD; zkosení postupnou závěrkou = rychlost vůči zemi · doba vyčtení čipu / GSD.",
-            "## 5. Real wind, motion blur and rolling shutter\n\nWe take today's wind forecast for Roztoky from Open-Meteo. Blur = ground speed · exposure / GSD; rolling-shutter skew = ground speed · sensor readout time / GSD.")),
+            "## 5. Skutečný vítr, rozmazání a postupná závěrka\n\nZ Open-Meteo vezmeme předpověď větru pro Roztoky na dnešek. Rozmazání = rychlost vůči zemi · expozice / GSD; zkosení postupnou závěrkou = rychlost vůči zemi · doba vyčtení čipu / GSD. Zenmuse P1 a Mavic 3E mají mechanickou závěrku, takže u nich zkosení prakticky odpadá (t_read = 0); výchozích 30 ms je řádová hodnota pro elektronickou postupnou závěrku.",
+            "## 5. Real wind, motion blur and rolling shutter\n\nWe take today's wind forecast for Roztoky from Open-Meteo. Blur = ground speed · exposure / GSD; rolling-shutter skew = ground speed · sensor readout time / GSD. The Zenmuse P1 and Mavic 3E have a mechanical shutter, so skew practically disappears for them (t_read = 0); the default 30 ms is an order-of-magnitude value for an electronic rolling shutter.")),
         ("code", t('''
 w = open_meteo({"latitude": 50.152, "longitude": 14.392, "forecast_days": 1, "wind_speed_unit": "ms", "timezone": "Europe/Prague",
                 "hourly": "wind_speed_10m,wind_speed_80m,wind_speed_120m,wind_direction_80m,wind_gusts_10m"})
@@ -204,7 +204,7 @@ met = pd.DataFrame(w["hourly"]).set_index("time")
 print(met.iloc[6:20].to_string())
 ''')),
         ("code", t('''
-hour = int(met.wind_speed_80m.values[:24].argmax())   # ◀ parametr: hodina letu (místní čas); výchozí je největrnější hodina dne
+hour = 6 + int(met.wind_speed_80m.values[6:21].argmax())   # ◀ parametr: hodina letu (místní čas); výchozí je největrnější hodina mezi 6 a 20 h
 t_exp = 1 / 1000               # ◀ parametr: expoziční čas (s)
 t_read = 0.030                 # ◀ parametr: doba vyčtení čipu u postupné závěrky (s); 0 = globální závěrka
 wind = met.wind_speed_80m.iloc[hour]
@@ -216,7 +216,7 @@ for leg, sign in [("linka na východ", -1), ("linka na západ", +1)]:
     print(f"{leg}: vůči zemi {gs:4.1f} m/s, rozmazání {gs * t_exp / gsd0:.2f} px, zkosení {gs * t_read / gsd0:.1f} px")
 print(f"{met.index[hour]}: vítr v 80 m: {wind:.1f} m/s od {wdir:.0f}°; složka k východu {-along:+.1f} m/s, k severu {cross:+.1f} m/s")
 ''', '''
-hour = int(met.wind_speed_80m.values[:24].argmax())   # ◀ parameter: hour of the flight (local time); default is the windiest hour of the day
+hour = 6 + int(met.wind_speed_80m.values[6:21].argmax())   # ◀ parameter: hour of the flight (local time); default is the windiest hour between 6 and 20 h
 t_exp = 1 / 1000               # ◀ parameter: exposure time (s)
 t_read = 0.030                 # ◀ parameter: sensor readout time of a rolling shutter (s); 0 = global shutter
 wind = met.wind_speed_80m.iloc[hour]
