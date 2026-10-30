@@ -32,12 +32,25 @@ def load(stem):
     return mod
 
 
+def units(stem):
+    """(notebook stem, META, cells) for every notebook built from src/<stem>.py.
+
+    A source with VARIANTS = {suffix: place} defines meta(place) and cells(t, place) and gives one notebook
+    per place, <stem>_<suffix> (the empty suffix keeps <stem>). META["visual_stem"] names the visual
+    when it differs from the stem (e.g. the advanced version of a notebook)."""
+    mod = load(stem)
+    if hasattr(mod, "VARIANTS"):
+        return [(f"{stem}_{k}" if k else stem, dict(mod.meta(v), visual_stem=mod.meta(v).get("visual_stem", stem)),
+                 lambda t, _v=v: mod.cells(t, _v)) for k, v in mod.VARIANTS.items()]
+    return [(stem, dict(mod.META, visual_stem=mod.META.get("visual_stem", stem)), mod.cells)]
+
+
 def header(meta, lang):
     t = (lambda cs, en: cs if lang == "cs" else en)
     stem = meta["stem"]
     colab = f"https://colab.research.google.com/github/{REPO}/blob/main/{stem}_{lang}.ipynb"
     other = "en" if lang == "cs" else "cs"
-    viz = f"{SITE}/edu_viz_{stem}.html"
+    viz = f"{SITE}/edu_viz_{meta['visual_stem']}.html"
     title = meta["title"][lang]
     lines = [
         f"# {title}",
@@ -93,8 +106,11 @@ def footer(meta, lang):
 
 
 def build(stem):
-    mod = load(stem)
-    meta = dict(mod.META, stem=stem)
+    for out, meta, cells in units(stem):
+        build_one(out, dict(meta, stem=out), cells)
+
+
+def build_one(stem, meta, cells_fn):
     for lang in ("cs", "en"):
         t = (lambda cs, en, _l=lang: cs if _l == "cs" else en)
         nb = nbf.v4.new_notebook()
@@ -103,18 +119,18 @@ def build(stem):
             "language_info": {"name": "python"},
             "colab": {"provenance": [], "toc_visible": True},
         }
-        n_all = sum(1 for kind, text in mod.cells(t) if kind == "task" and not text.startswith("+"))
+        n_all = sum(1 for kind, text in cells_fn(t) if kind == "task" and not text.startswith("+"))
         meta["tasks"] = {"cs": ["", "", "", "", "čtyři", "pět", "šest"][n_all], "en": ["", "", "", "", "four", "five", "six"][n_all]}
         cells = [nbf.v4.new_markdown_cell(header(meta, lang))]
         n_task = 0
-        for kind, text in mod.cells(t):
+        for kind, text in cells_fn(t):
             text = text.strip("\n")
             if kind == "md":
                 cells.append(nbf.v4.new_markdown_cell(text))
             elif kind == "code":
                 cells.append(nbf.v4.new_code_cell(text))
             elif kind == "task":
-                n_task += 1
+                n_task += not text.startswith("+")
                 label = t("Úkol", "Task") + f" {n_task}" if not text.startswith("+") else t("Rozšíření (nepovinné)", "Extension (optional)")
                 cells.append(nbf.v4.new_markdown_cell(f"> **✏️ {label}.** " + text.lstrip("+ ").replace("\n", "\n> ")))
                 cells.append(nbf.v4.new_markdown_cell(t("*Tvoje odpověď:* ", "*Your answer:* ")))

@@ -30,7 +30,7 @@ Parameters the student changes:
 
 - `L = 0.5`: SAVI soil adjustment factor (0 = NDVI, 0.5 usual, 1 sparse vegetation)
 
-**Task 1.** Which NDVI threshold is best and which errors remain? Why can you not get rid of both errors at once? Which “vegetation” pixels have a low NDVI (look at harvested fields) and why are they counted as vegetation in WorldCover?
+**Task 1.** Which NDVI threshold is best and which errors remain? Why can you not get rid of both errors at once? Which “vegetation” pixels have a low NDVI (look at the fields: after harvest there is stubble, in spring the soil may still be bare) and why are they counted as vegetation in WorldCover?
 
 **Task 2.** Compare NDVI and SAVI. Set `L = 0`, `0.25` and `1`. How do the range of values and the best threshold change? Why does SAVI depend less on soil brightness and why does it hardly matter in dense vegetation?
 
@@ -69,7 +69,9 @@ Parameters the student changes:
 
 Loads the libraries and downloads the data.
 
-**Task 6.** Find places where the map differs from WorldCover. Is the error always in the classification? Consider that WorldCover is from 2021 and has errors of its own, that a single summer image cannot tell a meadow from a field of forage crops, and that a 10 m pixel at a forest edge is a mixture. How would you assess accuracy honestly?
+**Task 6.** Find places where the map differs from WorldCover. Is the error always in the classification? Consider that WorldCover is from 2021 and has errors of its own, that a single image from one day cannot tell a meadow from a field of forage crops, nor green spring cereals from grass, and that a 10 m pixel at a forest edge is a mixture. How would you assess accuracy honestly?
+
+**Extension (optional).** Compare your results with a classmate who has the notebook for another place (Roztoky, Brno, Hluboká nad Vltavou). Which classes are confused more elsewhere, and why (season of the image, type of landscape, field size)?
 
 ## Requirements
 

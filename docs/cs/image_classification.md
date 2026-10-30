@@ -4,7 +4,7 @@ Popis notebooku k vizuálu [Od pixelu ke třídě](https://openskylab.space/edu_
 
 ## O čem notebook je
 
-Ve vizuálu jsi dělil pixely prahem indexu, porovnával klasické klasifikátory a sledoval, jak se neuronová síť přeučí. Tady totéž uděláš na skutečném snímku Sentinel-2 od Roztok s referencí ESA WorldCover a přesnost vyhodnotíš chybovou maticí.
+Ve vizuálu jsi dělil pixely prahem indexu, porovnával klasické klasifikátory a sledoval, jak se neuronová síť přeučí. Tady totéž uděláš na skutečném snímku Sentinel-2 u Roztok s referencí ESA WorldCover a přesnost vyhodnotíš chybovou maticí.
 
 ## Cíl
 
@@ -30,7 +30,7 @@ Parametry, které student mění:
 
 - `L = 0.5`: korekční faktor půdy pro SAVI (0 = NDVI, 0,5 obvykle, 1 řídký porost)
 
-**Úkol 1.** Jaký práh NDVI je nejlepší a jaké chyby při něm zůstávají? Proč se nedá zbavit obou chyb současně? Které pixely „vegetace“ mají NDVI nízké (podívej se na pole po žních) a proč je podle WorldCover počítáme jako vegetaci?
+**Úkol 1.** Jaký práh NDVI je nejlepší a jaké chyby při něm zůstávají? Proč se nedá zbavit obou chyb současně? Které pixely „vegetace“ mají NDVI nízké (podívej se na pole: po žních je strniště, na jaře může být půda ještě holá) a proč je podle WorldCover počítáme jako vegetaci?
 
 **Úkol 2.** Porovnej NDVI a SAVI. Nastav `L = 0`, `0.25` a `1`. Jak se mění rozsah hodnot a nejlepší práh? Proč SAVI méně závisí na jasu půdy a proč v hustém porostu na tom skoro nezáleží?
 
@@ -69,7 +69,9 @@ Parametry, které student mění:
 
 Načte knihovny a stáhne data.
 
-**Úkol 6.** Najdi místa, kde se mapa liší od WorldCover. Je chyba vždy v klasifikaci? Uvažuj o tom, že WorldCover je z roku 2021 a sám má chyby, že jeden snímek z léta nerozliší louku od pole s pícninou a že pixel 10 m na okraji lesa je směs. Jak bys přesnost hodnotil poctivě?
+**Úkol 6.** Najdi místa, kde se mapa liší od WorldCover. Je chyba vždy v klasifikaci? Uvažuj o tom, že WorldCover je z roku 2021 a sám má chyby, že jeden snímek z jednoho dne nerozliší louku od pole s pícninou ani zelené obilí na jaře od trávy a že pixel 10 m na okraji lesa je směs. Jak bys přesnost hodnotil poctivě?
+
+**Rozšíření (nepovinné).** Porovnej své výsledky se spolužákem, který má notebook pro jiné místo (Roztoky, Brno, Hluboká nad Vltavou). Které třídy se jinde pletou víc a proč (roční doba snímku, druh krajiny, velikost polí)?
 
 ## Co je potřeba
 

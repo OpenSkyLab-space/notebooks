@@ -10,7 +10,7 @@ the sources, so it can go on the web next to the visual without drifting from th
 import re
 import sys
 
-from build import AI_NOTE, REPO, ROOT, SITE, load
+from build import AI_NOTE, REPO, ROOT, SITE, units
 
 PARAM = re.compile(r"^\s*(?P<code>.+?)\s*#\s*◀\s*(?:parametr|parameter):\s*(?P<text>.+)$")
 COUNT = {"cs": ["", "", "", "", "čtyři", "pět", "šest"], "en": ["", "", "", "", "four", "five", "six"]}
@@ -34,24 +34,23 @@ def steps(cells):
                 if m:
                     out[-1]["params"].append((m["code"], m["text"]))
         elif kind == "task":
-            out[-1]["tasks"].append(text.lstrip("+ "))
+            out[-1]["tasks"].append(text)
     return out
 
 
-def page(stem, lang):
-    mod = load(stem)
-    meta = mod.META
+def page(stem, meta, cells_fn, lang):
     t = (lambda cs, en: cs if lang == "cs" else en)
-    sec = steps(mod.cells(t))
-    n_tasks = sum(len(s["tasks"]) for s in sec)
+    sec = steps(cells_fn(t))
+    n_tasks = sum(not task.startswith("+") for s in sec for task in s["tasks"])
+    viz = meta["visual_stem"]
     pips = sorted({p.split("[")[0] for s in sec for p in s["pip"]})
     colab = f"https://colab.research.google.com/github/{REPO}/blob/main/{stem}_{lang}.ipynb"
     lines = [
         f"# {meta['title'][lang]}",
         "",
-        t(f"Popis notebooku k vizuálu [{meta['visual']['cs']}]({SITE}/edu_viz_{stem}.html). "
+        t(f"Popis notebooku k vizuálu [{meta['visual']['cs']}]({SITE}/edu_viz_{viz}.html). "
           f"[Otevřít v Google Colab]({colab}) · verze {meta['version']} · asi {meta['minutes']} min · {COUNT['cs'][n_tasks]} úkolů",
-          f"Description of the notebook for the visual [{meta['visual']['en']}]({SITE}/edu_viz_{stem}.html). "
+          f"Description of the notebook for the visual [{meta['visual']['en']}]({SITE}/edu_viz_{viz}.html). "
           f"[Open in Google Colab]({colab}) · version {meta['version']} · about {meta['minutes']} min · {COUNT['en'][n_tasks]} tasks"),
         "",
         t("## O čem notebook je", "## What the notebook is about"),
@@ -85,6 +84,9 @@ def page(stem, lang):
             lines += [t("Parametry, které student mění:", "Parameters the student changes:"), ""]
             lines += [f"- `{code}`: {text}" for code, text in s["params"]] + [""]
         for task in s["tasks"]:
+            if task.startswith("+"):
+                lines += [f"**{t('Rozšíření (nepovinné).', 'Extension (optional).')}** {task.lstrip('+ ')}", ""]
+                continue
             n += 1
             lines += [f"**{t('Úkol', 'Task')} {n}.** {task}", ""]
     lines += [
@@ -114,9 +116,10 @@ def page(stem, lang):
 
 if __name__ == "__main__":
     stems = sys.argv[1:] or sorted(p.stem for p in (ROOT / "src").glob("*.py") if not p.stem.startswith("_"))
-    for stem in stems:
-        for lang in ("cs", "en"):
-            out = ROOT / "docs" / lang / f"{stem}.md"
-            out.parent.mkdir(parents=True, exist_ok=True)
-            out.write_text(page(stem, lang), encoding="utf-8")
-        print("docs", stem)
+    for src in stems:
+        for stem, meta, cells_fn in units(src):
+            for lang in ("cs", "en"):
+                out = ROOT / "docs" / lang / f"{stem}.md"
+                out.parent.mkdir(parents=True, exist_ok=True)
+                out.write_text(page(stem, meta, cells_fn, lang), encoding="utf-8")
+            print("docs", stem)

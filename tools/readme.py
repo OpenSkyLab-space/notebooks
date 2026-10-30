@@ -5,7 +5,7 @@ Usage:
 """
 import pathlib
 
-from build import AI_NOTE, REPO, ROOT, SITE, load
+from build import AI_NOTE, REPO, ROOT, SITE, units
 
 COLAB = "https://colab.research.google.com/assets/colab-badge.svg"
 
@@ -15,13 +15,13 @@ def main():
     for path in sorted((ROOT / "src").glob("*.py")):
         if path.stem.startswith("_"):
             continue
-        meta = load(path.stem).META
-        links = " ".join(
-            f"[![{lang.upper()}]({COLAB})](https://colab.research.google.com/github/{REPO}/blob/main/{path.stem}_{lang}.ipynb) "
-            f"[{lang.upper()}]({path.stem}_{lang}.ipynb)"
-            for lang in ("cs", "en"))
-        docs = f"[CS](docs/cs/{path.stem}.md) [EN](docs/en/{path.stem}.md)"
-        rows.append(f"| [{meta['visual']['cs']}]({SITE}/edu_viz_{path.stem}.html) | {meta['title']['cs']} | {meta['minutes']} | {links} | {docs} |")
+        for stem, meta, _ in units(path.stem):
+            links = " ".join(
+                f"[![{lang.upper()}]({COLAB})](https://colab.research.google.com/github/{REPO}/blob/main/{stem}_{lang}.ipynb) "
+                f"[{lang.upper()}]({stem}_{lang}.ipynb)"
+                for lang in ("cs", "en"))
+            docs = f"[CS](docs/cs/{stem}.md) [EN](docs/en/{stem}.md)"
+            rows.append(f"| [{meta['visual']['cs']}]({SITE}/edu_viz_{meta['visual_stem']}.html) | {meta['title']['cs']} | {meta['minutes']} | {links} | {docs} |")
     text = f"""# OpenSkyLab · notebooky k vizuálům / notebooks for the visuals
 
 Notebooky pro Google Colab k interaktivním výukovým vizuálům [OpenSkyLab]({SITE}) o dálkovém průzkumu a dronech.

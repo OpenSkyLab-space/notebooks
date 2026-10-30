@@ -1,43 +1,56 @@
 from _common import S2_HELPERS
 
-META = {
-    "version": "1.0",
-    "minutes": 50,
-    "title": {"cs": "Od pixelu ke třídě: klasifikace Sentinelu-2 u Roztok", "en": "From pixel to class: classifying Sentinel-2 near Roztoky"},
-    "visual": {"cs": "Od pixelu ke třídě", "en": "From pixel to class"},
-    "lead": {
-        "cs": "Ve vizuálu jsi dělil pixely prahem indexu, porovnával klasické klasifikátory a sledoval, jak se neuronová síť přeučí. Tady totéž uděláš na skutečném snímku Sentinel-2 od Roztok s referencí ESA WorldCover a přesnost vyhodnotíš chybovou maticí.",
-        "en": "In the visual you split pixels with an index threshold, compared classic classifiers and watched a neural network overfit. Here you do the same on a real Sentinel-2 image near Roztoky with ESA WorldCover as reference and assess accuracy with a confusion matrix.",
-    },
-    "goal": {
-        "cs": "najít práh NDVI a SAVI pro vegetaci, porovnat minimální vzdálenost, maximální věrohodnost, k-NN, náhodný les a neuronovou síť na trénovacích a testovacích pixelech a spočítat přesnost zpracovatele, uživatele a kappa.",
-        "en": "find an NDVI and SAVI threshold for vegetation, compare minimum distance, maximum likelihood, k-NN, random forest and a neural network on training and test pixels, and compute producer's and user's accuracy and kappa.",
-    },
-    "data": {
-        "cs": "Sentinel-2 L2A `S2B_33UVR_20240721_0_L2A` (21. 7. 2024) z katalogu Earth Search na AWS, výřez 4 × 4 km kolem Roztok a Suchdola; reference ESA WorldCover 10 m 2021 v200. Stahuje se asi 20 MB.",
-        "en": "Sentinel-2 L2A `S2B_33UVR_20240721_0_L2A` (21 July 2024) from the Earth Search catalogue on AWS, a 4 × 4 km window around Roztoky and Suchdol; reference ESA WorldCover 10 m 2021 v200. About 20 MB is downloaded.",
-    },
-    "sources": {
-        "cs": [
-            "Copernicus Sentinel-2 data 2024, ESA (L2A, Sen2Cor); registr AWS Open Data (`sentinel-cogs`), katalog Earth Search (Element 84). Volné užití s uvedením zdroje.",
-            "Zanaga, D. a kol. (2022). *ESA WorldCover 10 m 2021 v200*. https://doi.org/10.5281/zenodo.7254221 (CC BY 4.0).",
-            "Huete, A. R. (1988). A soil-adjusted vegetation index (SAVI). *Remote Sensing of Environment* 25, 295–309. https://doi.org/10.1016/0034-4257(88)90106-X",
-            "Congalton, R. G., Green, K. (2019). *Assessing the Accuracy of Remotely Sensed Data: Principles and Practices*, 3. vyd. CRC Press.",
-            "Pedregosa, F. a kol. (2011). Scikit-learn: Machine Learning in Python. *Journal of Machine Learning Research* 12, 2825–2830.",
-        ],
-        "en": [
-            "Copernicus Sentinel-2 data 2024, ESA (L2A, Sen2Cor); AWS Open Data registry (`sentinel-cogs`), Earth Search catalogue (Element 84). Free use with attribution.",
-            "Zanaga, D. et al. (2022). *ESA WorldCover 10 m 2021 v200*. https://doi.org/10.5281/zenodo.7254221 (CC BY 4.0).",
-            "Huete, A. R. (1988). A soil-adjusted vegetation index (SAVI). *Remote Sensing of Environment* 25, 295–309. https://doi.org/10.1016/0034-4257(88)90106-X",
-            "Congalton, R. G., Green, K. (2019). *Assessing the Accuracy of Remotely Sensed Data: Principles and Practices*, 3rd ed. CRC Press.",
-            "Pedregosa, F. et al. (2011). Scikit-learn: Machine Learning in Python. *Journal of Machine Learning Research* 12, 2825–2830.",
-        ],
-    },
+# místa, pro která se notebook staví: přípona souboru → snímek, střed výřezu, dlaždice WorldCover a popisy
+VARIANTS = {
+    "": dict(item="S2B_33UVR_20240721_0_L2A", lon=14.37, lat=50.14, wc="N48E012", year=2024, date_cs="21. 7. 2024", date_en="21 July 2024",
+             near_cs="u Roztok", near_en="near Roztoky", around_cs="kolem Roztok a Suchdola", around_en="around Roztoky and Suchdol"),
+    "brno": dict(item="S2B_33UXQ_20240814_0_L2A", lon=16.52, lat=49.23, wc="N48E015", year=2024, date_cs="14. 8. 2024", date_en="14 August 2024",
+                 near_cs="u Brněnské přehrady", near_en="near the Brno reservoir", around_cs="kolem Brněnské přehrady a Bystrce", around_en="around the Brno reservoir and Bystrc"),
+    "hluboka": dict(item="S2B_33UVQ_20230528_0_L2A", lon=14.44, lat=49.05, wc="N48E012", year=2023, date_cs="28. 5. 2023", date_en="28 May 2023",
+                    near_cs="u Hluboké nad Vltavou", near_en="near Hluboká nad Vltavou", around_cs="kolem Hluboké nad Vltavou a jejích rybníků", around_en="around Hluboká nad Vltavou and its fishponds"),
 }
 
+def meta(P):
+    return {
+        "version": "1.0",
+        "minutes": 50,
+        "title": {"cs": "Od pixelu ke třídě: klasifikace Sentinelu-2 " + P["near_cs"], "en": "From pixel to class: classifying Sentinel-2 " + P["near_en"]},
+        "visual": {"cs": "Od pixelu ke třídě", "en": "From pixel to class"},
+        "lead": {
+            "cs": "Ve vizuálu jsi dělil pixely prahem indexu, porovnával klasické klasifikátory a sledoval, jak se neuronová síť přeučí. Tady totéž uděláš na skutečném snímku Sentinel-2 " + P["near_cs"] + " s referencí ESA WorldCover a přesnost vyhodnotíš chybovou maticí.",
+            "en": "In the visual you split pixels with an index threshold, compared classic classifiers and watched a neural network overfit. Here you do the same on a real Sentinel-2 image " + P["near_en"] + " with ESA WorldCover as reference and assess accuracy with a confusion matrix.",
+        },
+        "goal": {
+            "cs": "najít práh NDVI a SAVI pro vegetaci, porovnat minimální vzdálenost, maximální věrohodnost, k-NN, náhodný les a neuronovou síť na trénovacích a testovacích pixelech a spočítat přesnost zpracovatele, uživatele a kappa.",
+            "en": "find an NDVI and SAVI threshold for vegetation, compare minimum distance, maximum likelihood, k-NN, random forest and a neural network on training and test pixels, and compute producer's and user's accuracy and kappa.",
+        },
+        "data": {
+            "cs": f"Sentinel-2 L2A `{P['item']}` ({P['date_cs']}) z katalogu Earth Search na AWS, výřez 4 × 4 km {P['around_cs']}; reference ESA WorldCover 10 m 2021 v200. Stahuje se asi 20 MB.",
+            "en": f"Sentinel-2 L2A `{P['item']}` ({P['date_en']}) from the Earth Search catalogue on AWS, a 4 × 4 km window {P['around_en']}; reference ESA WorldCover 10 m 2021 v200. About 20 MB is downloaded.",
+        },
+        "sources": {
+            "cs": [
+                f"Copernicus Sentinel-2 data {P['year']}, ESA (L2A, Sen2Cor); registr AWS Open Data (`sentinel-cogs`), katalog Earth Search (Element 84). Volné užití s uvedením zdroje.",
+                "Zanaga, D. a kol. (2022). *ESA WorldCover 10 m 2021 v200*. https://doi.org/10.5281/zenodo.7254221 (CC BY 4.0).",
+                "Huete, A. R. (1988). A soil-adjusted vegetation index (SAVI). *Remote Sensing of Environment* 25, 295–309. https://doi.org/10.1016/0034-4257(88)90106-X",
+                "Congalton, R. G., Green, K. (2019). *Assessing the Accuracy of Remotely Sensed Data: Principles and Practices*, 3. vyd. CRC Press.",
+                "Pedregosa, F. a kol. (2011). Scikit-learn: Machine Learning in Python. *Journal of Machine Learning Research* 12, 2825–2830.",
+            ],
+            "en": [
+                f"Copernicus Sentinel-2 data {P['year']}, ESA (L2A, Sen2Cor); AWS Open Data registry (`sentinel-cogs`), Earth Search catalogue (Element 84). Free use with attribution.",
+                "Zanaga, D. et al. (2022). *ESA WorldCover 10 m 2021 v200*. https://doi.org/10.5281/zenodo.7254221 (CC BY 4.0).",
+                "Huete, A. R. (1988). A soil-adjusted vegetation index (SAVI). *Remote Sensing of Environment* 25, 295–309. https://doi.org/10.1016/0034-4257(88)90106-X",
+                "Congalton, R. G., Green, K. (2019). *Assessing the Accuracy of Remotely Sensed Data: Principles and Practices*, 3rd ed. CRC Press.",
+                "Pedregosa, F. et al. (2011). Scikit-learn: Machine Learning in Python. *Journal of Machine Learning Research* 12, 2825–2830.",
+            ],
+        },
+    }
 
-def cells(t):
-    return [
+
+def cells(t, P):
+    tokens = {"@ITEM@": P["item"], "@LON@": str(P["lon"]), "@LAT@": str(P["lat"]), "@DATE_CS@": P["date_cs"],
+              "@DATE_EN@": P["date_en"], "@YEAR@": str(P["year"]), "_N48E012_Map": f"_{P['wc']}_Map"}
+    out = [
         ("md", t("## 1. Příprava a data", "## 1. Setup and data")),
         ("code", "%pip install -q rasterio"),
         ("code", '''
@@ -56,7 +69,7 @@ from sklearn.metrics import confusion_matrix, cohen_kappa_score
 warnings.filterwarnings("ignore")
 ''' + t(S2_HELPERS["cs"], S2_HELPERS["en"])),
         ("code", t('''
-refl, scl, wl, grid, item = s2_window("S2B_33UVR_20240721_0_L2A", 14.37, 50.14, 2000)
+refl, scl, wl, grid, item = s2_window("@ITEM@", @LON@, @LAT@, 2000)
 wc = read_on_grid(WORLDCOVER, grid, Resampling.nearest, np.uint8)
 CLASSES = {10: "les", 30: "louka", 40: "pole", 50: "zástavba", 80: "voda"}
 COLORS = ["#2e7d32", "#9ccc65", "#f2c14e", "#c62828", "#1e88e5"]
@@ -65,13 +78,13 @@ X_img = np.dstack([refl[b] for b in FEAT])
 ok = np.isin(scl, [4, 5, 6]) & np.isin(wc, list(CLASSES))
 print("pixely podle třídy WorldCover:", {CLASSES[k]: int(((wc == k) & ok).sum()) for k in CLASSES})
 fig, ax = plt.subplots(1, 2, figsize=(11, 5))
-ax[0].imshow(np.clip(np.dstack([refl["red"], refl["green"], refl["blue"]]) / 0.15, 0, 1)); ax[0].set_title("Sentinel-2, 21. 7. 2024")
+ax[0].imshow(np.clip(np.dstack([refl["red"], refl["green"], refl["blue"]]) / 0.15, 0, 1)); ax[0].set_title("Sentinel-2, @DATE_CS@")
 lab = np.full(wc.shape, np.nan); [lab.__setitem__(wc == k, i) for i, k in enumerate(CLASSES)]
 ax[1].imshow(lab, cmap=ListedColormap(COLORS), vmin=0, vmax=4, interpolation="nearest"); ax[1].set_title("ESA WorldCover 2021 (reference)")
 for a in ax: a.axis("off")
 plt.show()
 ''', '''
-refl, scl, wl, grid, item = s2_window("S2B_33UVR_20240721_0_L2A", 14.37, 50.14, 2000)
+refl, scl, wl, grid, item = s2_window("@ITEM@", @LON@, @LAT@, 2000)
 wc = read_on_grid(WORLDCOVER, grid, Resampling.nearest, np.uint8)
 CLASSES = {10: "forest", 30: "meadow", 40: "field", 50: "built-up", 80: "water"}
 COLORS = ["#2e7d32", "#9ccc65", "#f2c14e", "#c62828", "#1e88e5"]
@@ -80,7 +93,7 @@ X_img = np.dstack([refl[b] for b in FEAT])
 ok = np.isin(scl, [4, 5, 6]) & np.isin(wc, list(CLASSES))
 print("pixels per WorldCover class:", {CLASSES[k]: int(((wc == k) & ok).sum()) for k in CLASSES})
 fig, ax = plt.subplots(1, 2, figsize=(11, 5))
-ax[0].imshow(np.clip(np.dstack([refl["red"], refl["green"], refl["blue"]]) / 0.15, 0, 1)); ax[0].set_title("Sentinel-2, 21 July 2024")
+ax[0].imshow(np.clip(np.dstack([refl["red"], refl["green"], refl["blue"]]) / 0.15, 0, 1)); ax[0].set_title("Sentinel-2, @DATE_EN@")
 lab = np.full(wc.shape, np.nan); [lab.__setitem__(wc == k, i) for i, k in enumerate(CLASSES)]
 ax[1].imshow(lab, cmap=ListedColormap(COLORS), vmin=0, vmax=4, interpolation="nearest"); ax[1].set_title("ESA WorldCover 2021 (reference)")
 for a in ax: a.axis("off")
@@ -123,8 +136,8 @@ for a, (name, idx) in zip(ax, [("NDVI", ndvi), (f"SAVI (L = {L})", savi)]):
 ax[0].legend(); plt.show()
 ''')),
         ("task", t(
-            "Jaký práh NDVI je nejlepší a jaké chyby při něm zůstávají? Proč se nedá zbavit obou chyb současně? Které pixely „vegetace“ mají NDVI nízké (podívej se na pole po žních) a proč je podle WorldCover počítáme jako vegetaci?",
-            "Which NDVI threshold is best and which errors remain? Why can you not get rid of both errors at once? Which “vegetation” pixels have a low NDVI (look at harvested fields) and why are they counted as vegetation in WorldCover?")),
+            "Jaký práh NDVI je nejlepší a jaké chyby při něm zůstávají? Proč se nedá zbavit obou chyb současně? Které pixely „vegetace“ mají NDVI nízké (podívej se na pole: po žních je strniště, na jaře může být půda ještě holá) a proč je podle WorldCover počítáme jako vegetaci?",
+            "Which NDVI threshold is best and which errors remain? Why can you not get rid of both errors at once? Which “vegetation” pixels have a low NDVI (look at the fields: after harvest there is stubble, in spring the soil may still be bare) and why are they counted as vegetation in WorldCover?")),
         ("task", t(
             "Porovnej NDVI a SAVI. Nastav `L = 0`, `0.25` a `1`. Jak se mění rozsah hodnot a nejlepší práh? Proč SAVI méně závisí na jasu půdy a proč v hustém porostu na tom skoro nezáleží?",
             "Compare NDVI and SAVI. Set `L = 0`, `0.25` and `1`. How do the range of values and the best threshold change? Why does SAVI depend less on soil brightness and why does it hardly matter in dense vegetation?")),
@@ -278,7 +291,7 @@ display(report(best, "Náhodný les, hloubka 12"))
 pred = best.predict(X_img.reshape(-1, len(FEAT))).reshape(wc.shape).astype(float)
 pred[~np.isin(scl, [4, 5, 6])] = np.nan
 fig, ax = plt.subplots(1, 2, figsize=(11, 5))
-for a, (img, title) in zip(ax, [(lab, "WorldCover 2021"), (pred, "náhodný les, Sentinel-2 2024")]):
+for a, (img, title) in zip(ax, [(lab, "WorldCover 2021"), (pred, "náhodný les, Sentinel-2 @YEAR@")]):
     a.imshow(img, cmap=ListedColormap(COLORS), vmin=0, vmax=4, interpolation="nearest"); a.set_title(title); a.axis("off")
 a.axhline(wc.shape[0] / 2, color="w", lw=1); plt.show()
 ''', '''
@@ -287,11 +300,17 @@ display(report(best, "Random forest, depth 12"))
 pred = best.predict(X_img.reshape(-1, len(FEAT))).reshape(wc.shape).astype(float)
 pred[~np.isin(scl, [4, 5, 6])] = np.nan
 fig, ax = plt.subplots(1, 2, figsize=(11, 5))
-for a, (img, title) in zip(ax, [(lab, "WorldCover 2021"), (pred, "random forest, Sentinel-2 2024")]):
+for a, (img, title) in zip(ax, [(lab, "WorldCover 2021"), (pred, "random forest, Sentinel-2 @YEAR@")]):
     a.imshow(img, cmap=ListedColormap(COLORS), vmin=0, vmax=4, interpolation="nearest"); a.set_title(title); a.axis("off")
 a.axhline(wc.shape[0] / 2, color="w", lw=1); plt.show()
 ''')),
         ("task", t(
-            "Najdi místa, kde se mapa liší od WorldCover. Je chyba vždy v klasifikaci? Uvažuj o tom, že WorldCover je z roku 2021 a sám má chyby, že jeden snímek z léta nerozliší louku od pole s pícninou a že pixel 10 m na okraji lesa je směs. Jak bys přesnost hodnotil poctivě?",
-            "Find places where the map differs from WorldCover. Is the error always in the classification? Consider that WorldCover is from 2021 and has errors of its own, that a single summer image cannot tell a meadow from a field of forage crops, and that a 10 m pixel at a forest edge is a mixture. How would you assess accuracy honestly?")),
+            "Najdi místa, kde se mapa liší od WorldCover. Je chyba vždy v klasifikaci? Uvažuj o tom, že WorldCover je z roku 2021 a sám má chyby, že jeden snímek z jednoho dne nerozliší louku od pole s pícninou ani zelené obilí na jaře od trávy a že pixel 10 m na okraji lesa je směs. Jak bys přesnost hodnotil poctivě?",
+            "Find places where the map differs from WorldCover. Is the error always in the classification? Consider that WorldCover is from 2021 and has errors of its own, that a single image from one day cannot tell a meadow from a field of forage crops, nor green spring cereals from grass, and that a 10 m pixel at a forest edge is a mixture. How would you assess accuracy honestly?")),
+        ("task", t(
+            "+Porovnej své výsledky se spolužákem, který má notebook pro jiné místo (Roztoky, Brno, Hluboká nad Vltavou). Které třídy se jinde pletou víc a proč (roční doba snímku, druh krajiny, velikost polí)?",
+            "+Compare your results with a classmate who has the notebook for another place (Roztoky, Brno, Hluboká nad Vltavou). Which classes are confused more elsewhere, and why (season of the image, type of landscape, field size)?")),
     ]
+    for k, v in tokens.items():
+        out = [(kind, text.replace(k, v)) for kind, text in out]
+    return out
