@@ -1,4 +1,4 @@
-# Kam zmizí sluneční záření: bilance povrchů ze Sentinelu-2
+# Kam zmizí sluneční záření: bilance povrchů ze Sentinelu-2 (Roztoky a Krkonoše)
 
 Popis notebooku k vizuálu [Kam zmizí záření](https://openskylab.space/edu_viz_radiation_balance.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/radiation_balance_cs.ipynb) · verze 1.0 · asi 40 min · šest úkolů
 
@@ -24,7 +24,7 @@ Nainstaluje knihovny, které Colab nemá předem (`rasterio`), a stáhne data.
 
 ### 2. Odrazivost skutečných povrchů
 
-Načteme výřez 3 × 3 km kolem Roztok a pro každou třídu ESA WorldCover vezmeme medián odrazivosti čistých pixelů (bez mraků a stínů podle masky SCL). Přidáme sníh z Krkonoš.
+Načteme výřez 3 × 3 km kolem Roztok a pro každou třídu ESA WorldCover vezmeme medián odrazivosti čistých pixelů (bez mraků a stínů podle masky SCL). Přidáme sníh z Krkonoš; aby šlo o otevřený sníh bez stromů, bereme jen sněhové pixely se zelenou odrazivostí nad 0,5.
 
 ### 3. Pohltivost: α = 1 − ρ − τ
 
@@ -65,6 +65,8 @@ Parametry, které student mění:
 **Úkol 5.** Jakou teplotu by měla střecha s albedem zástavby z tvého výřezu a jakou bílá střecha (albedo 0,8, ε 0,9)? Proč je lesklý plech s albedem 0,6 (ε 0,05) o tolik teplejší než nátěr se stejným albedem a emisivitou 0,9? Jaké vlastnosti má mít ideální nátěr v pásmu 0,3–2,5 µm a jaké v 8–13 µm?
 
 **Úkol 6.** Vyber z tabulky `met` jinou hodinu, třeba nejteplejší, a vlož ji místo `row` (např. `row = met.loc[met.temperature_2m.idxmax()]` pro nejteplejší hodinu). Jak se změní pořadí a teploty povrchů? Model dává sněhu teplotu nad 0 °C: proč to ve skutečnosti nejde a na co se přebytek energie spotřebuje? Proč na jaře sníh na slunci přesto neroztaje hned, i když S je vysoké?
+
+**Rozšíření (nepovinné).** Porovnej výsledky se spolužákem, který spustil notebook pro jiné místo: liší se albedo zástavby, pole a sněhu? Vyšla nejslunečnější hodina v jiný den a s jiným S?
 
 ## Co je potřeba
 

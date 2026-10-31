@@ -1,4 +1,4 @@
-# Where sunlight goes: surface balance from Sentinel-2
+# Where sunlight goes: surface balance from Sentinel-2 (Roztoky and Krkonoše)
 
 Description of the notebook for the visual [Where radiation goes](https://openskylab.space/edu_viz_radiation_balance.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/radiation_balance_en.ipynb) · version 1.0 · about 40 min · six tasks
 
@@ -24,7 +24,7 @@ Installs the libraries Colab lacks (`rasterio`) and downloads the data.
 
 ### 2. Reflectance of real surfaces
 
-We load a 3 × 3 km window around Roztoky and for each ESA WorldCover class take the median reflectance of clear pixels (no clouds or shadows according to the SCL mask). We add snow from the Krkonoše mountains.
+We load a 3 × 3 km window around Roztoky and for each ESA WorldCover class take the median reflectance of clear pixels (no clouds or shadows according to the SCL mask). We add snow from the Krkonoše mountains; to get open snow without trees, we take only snow pixels with green reflectance above 0.5.
 
 ### 3. Absorptance: α = 1 − ρ − τ
 
@@ -65,6 +65,8 @@ Parameters the student changes:
 **Task 5.** What temperature would a roof with the albedo of the built-up area in your window have, and a white roof (albedo 0.8, ε 0.9)? Why is polished sheet metal with albedo 0.6 (ε 0.05) so much warmer than a coating with the same albedo and emissivity 0.9? What properties should an ideal coating have at 0.3–2.5 µm and at 8–13 µm?
 
 **Task 6.** Pick another hour from the `met` table, for instance the warmest one, and put it in place of `row` (e.g. `row = met.loc[met.temperature_2m.idxmax()]` for the warmest hour). How do the ranking and the temperatures of the surfaces change? The model gives snow a temperature above 0 °C: why is that impossible in reality, and what does the surplus energy go into? Why does snow still not melt immediately in spring sunshine even though S is high?
+
+**Extension (optional).** Compare your results with a classmate who ran the notebook for another place: do the albedos of built-up land, fields and snow differ? Did the sunniest hour fall on another day and with another S?
 
 ## Requirements
 

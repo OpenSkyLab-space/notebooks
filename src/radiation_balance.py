@@ -1,46 +1,73 @@
-META = {
-    "version": "1.0",
-    "minutes": 40,
-    "title": {"cs": "Kam zmizí sluneční záření: bilance povrchů ze Sentinelu-2", "en": "Where sunlight goes: surface balance from Sentinel-2"},
-    "visual": {"cs": "Kam zmizí záření", "en": "Where radiation goes"},
-    "lead": {
-        "cs": "Ve vizuálu se dopadající záření dělí na odražené, pohlcené a prošlé, ρ + α + τ = 1, a podle Kirchhoffova zákona platí ε = α. Tady odrazivost změříš na skutečných pixelech Sentinelu-2 (les, louka, pole, zástavba, voda a sníh), spočítáš, kolik záření povrchy pohltí za skutečného počasí, a odhadneš, jak se ohřejí.",
-        "en": "In the visual, incoming radiation splits into reflected, absorbed and transmitted parts, ρ + α + τ = 1, and Kirchhoff's law gives ε = α. Here you measure reflectance on real Sentinel-2 pixels (forest, meadow, field, built-up area, water and snow), compute how much radiation the surfaces absorb in real weather and estimate how warm they get.",
-    },
-    "goal": {
-        "cs": "ze skutečné odrazivosti spočítat pohltivost a albedo povrchů, použít Kirchhoffův zákon na sníh a kovy a z energetické bilance s aktuálním počasím odhadnout rovnovážnou teplotu povrchu a navrhnout chladnou střechu.",
-        "en": "compute absorptance and albedo of surfaces from real reflectance, apply Kirchhoff's law to snow and metals, and estimate the equilibrium surface temperature from an energy balance with current weather, then design a cool roof.",
-    },
-    "data": {
-        "cs": "Sentinel-2 L2A (odrazivost na povrchu) z katalogu Earth Search na AWS: scéna `S2B_33UVR_20240721_0_L2A` (21. 7. 2024, okolí Roztok u Prahy) a `S2A_33UWS_20240308_0_L2A` (8. 3. 2024, Krkonoše se sněhem); třídy pokryvu ESA WorldCover 2021; hodinové počasí pro Prahu z Open-Meteo (posledních 92 dní). Stahuje se asi 15 MB.",
-        "en": "Sentinel-2 L2A (surface reflectance) from the Earth Search catalogue on AWS: scene `S2B_33UVR_20240721_0_L2A` (21 July 2024, near Roztoky u Prahy) and `S2A_33UWS_20240308_0_L2A` (8 March 2024, snow in the Krkonoše mountains); land-cover classes from ESA WorldCover 2021; hourly weather for Prague from Open-Meteo (last 92 days). About 15 MB is downloaded.",
-    },
-    "sources": {
-        "cs": [
-            "Copernicus Sentinel-2 data 2024, ESA, zpracováno ESA (L2A, Sen2Cor); COG kopie v registru AWS Open Data (`sentinel-cogs`), katalog Earth Search (Element 84). Volné užití s uvedením zdroje podle [Legal notice on the use of Copernicus Sentinel Data](https://sentinels.copernicus.eu/documents/247904/690755/Sentinel_Data_Legal_Notice).",
-            "Zanaga, D. a kol. (2022). *ESA WorldCover 10 m 2021 v200*. Zenodo. https://doi.org/10.5281/zenodo.7254221 (CC BY 4.0).",
-            "Počasí: Open-Meteo.com, model ICON/ECMWF podle dostupnosti (CC BY 4.0). https://open-meteo.com",
-            "Albedo z úzkých pásem: Liang, S. (2001). Narrowband to broadband conversions of land surface albedo I: Algorithms. *Remote Sensing of Environment* 76, 213–238. https://doi.org/10.1016/S0034-4257(00)00205-4",
-            "Dlouhovlnné záření jasné oblohy: Brutsaert, W. (1975). On a derivable formula for long-wave radiation from clear skies. *Water Resources Research* 11, 742–744. https://doi.org/10.1029/WR011i005p00742",
-            "Součinitel přestupu tepla prouděním h = 5,7 + 3,8 · u: McAdams, W. H. (1954). *Heat Transmission*, 3. vyd. McGraw-Hill (převzato v Duffie, J. A., Beckman, W. A., *Solar Engineering of Thermal Processes*).",
-        ],
-        "en": [
-            "Copernicus Sentinel-2 data 2024, ESA, processed by ESA (L2A, Sen2Cor); COG copy in the AWS Open Data registry (`sentinel-cogs`), Earth Search catalogue (Element 84). Free use with attribution under the [Legal notice on the use of Copernicus Sentinel Data](https://sentinels.copernicus.eu/documents/247904/690755/Sentinel_Data_Legal_Notice).",
-            "Zanaga, D. et al. (2022). *ESA WorldCover 10 m 2021 v200*. Zenodo. https://doi.org/10.5281/zenodo.7254221 (CC BY 4.0).",
-            "Weather: Open-Meteo.com, ICON/ECMWF models as available (CC BY 4.0). https://open-meteo.com",
-            "Narrowband to broadband albedo: Liang, S. (2001). Narrowband to broadband conversions of land surface albedo I: Algorithms. *Remote Sensing of Environment* 76, 213–238. https://doi.org/10.1016/S0034-4257(00)00205-4",
-            "Clear-sky longwave radiation: Brutsaert, W. (1975). On a derivable formula for long-wave radiation from clear skies. *Water Resources Research* 11, 742–744. https://doi.org/10.1029/WR011i005p00742",
-            "Convective heat transfer coefficient h = 5.7 + 3.8 · u: McAdams, W. H. (1954). *Heat Transmission*, 3rd ed. McGraw-Hill (as given in Duffie, J. A., Beckman, W. A., *Solar Engineering of Thermal Processes*).",
-        ],
-    },
-}
+import re
 
 from _common import S2_HELPERS, OPEN_METEO_HELPER
 
+# místa: přípona souboru → letní scéna, scéna se sněhem, souřadnice počasí a popisy
+VARIANTS = {
+    "": dict(item="S2B_33UVR_20240721_0_L2A", lon=14.375, lat=50.145, wc="N48E012", date_cs="21. 7. 2024", date_en="21 July 2024",
+             place_cs="okolí Roztok u Prahy", place_en="near Roztoky u Prahy", around_cs="kolem Roztok", around_en="around Roztoky",
+             snow_item="S2A_33UWS_20240308_0_L2A", snow_lon=15.70, snow_lat=50.735, snow_date_cs="8. 3. 2024", snow_date_en="8 March 2024",
+             snow_cs="Krkonoše se sněhem", snow_en="snow in the Krkonoše mountains", snowfrom_cs="z Krkonoš", snowfrom_en="from the Krkonoše mountains",
+             wlat=50.08, wlon=14.42, wx_cs="v Praze", wx_en="in Prague", wxg_cs="pro Prahu", wxg_en="for Prague", s2_years="2024",
+             title_cs="Roztoky a Krkonoše", title_en="Roztoky and Krkonoše"),
+    "brno": dict(item="S2B_33UXQ_20240814_0_L2A", lon=16.52, lat=49.23, wc="N48E015", date_cs="14. 8. 2024", date_en="14 August 2024",
+                 place_cs="okolí Brněnské přehrady", place_en="near the Brno reservoir", around_cs="kolem Brněnské přehrady", around_en="around the Brno reservoir",
+                 snow_item="S2B_33UXR_20240130_0_L2A", snow_lon=17.23, snow_lat=50.08, snow_date_cs="30. 1. 2024", snow_date_en="30 January 2024",
+                 snow_cs="Hrubý Jeseník kolem Pradědu se sněhem", snow_en="snow in the Hrubý Jeseník mountains around Praděd",
+                 snowfrom_cs="z okolí Pradědu", snowfrom_en="from around Praděd",
+                 wlat=49.20, wlon=16.61, wx_cs="v Brně", wx_en="in Brno", wxg_cs="pro Brno", wxg_en="for Brno", s2_years="2024",
+                 title_cs="Brno a Jeseníky", title_en="Brno and the Jeseníky"),
+    "hluboka": dict(item="S2B_33UVQ_20240731_0_L2A", lon=14.44, lat=49.05, wc="N48E012", date_cs="31. 7. 2024", date_en="31 July 2024",
+                    place_cs="okolí Hluboké nad Vltavou", place_en="near Hluboká nad Vltavou", around_cs="kolem Hluboké nad Vltavou", around_en="around Hluboká nad Vltavou",
+                    snow_item="S2A_33UVQ_20230209_0_L2A", snow_lon=13.86, snow_lat=48.77, snow_date_cs="9. 2. 2023", snow_date_en="9 February 2023",
+                    snow_cs="Šumava kolem Plechého se sněhem", snow_en="snow in the Šumava mountains around Plechý",
+                    snowfrom_cs="ze Šumavy kolem Plechého", snowfrom_en="from the Šumava mountains around Plechý",
+                    wlat=48.97, wlon=14.47, wx_cs="v Českých Budějovicích", wx_en="in České Budějovice", wxg_cs="pro České Budějovice", wxg_en="for České Budějovice",
+                    s2_years="2023–2024", title_cs="Hluboká a Šumava", title_en="Hluboká and Šumava"),
+}
 
 
-def cells(t):
-    return [
+def meta(P):
+    return {
+        "version": "1.0",
+        "minutes": 40,
+        "title": {"cs": "Kam zmizí sluneční záření: bilance povrchů ze Sentinelu-2 (" + P["title_cs"] + ")", "en": "Where sunlight goes: surface balance from Sentinel-2 (" + P["title_en"] + ")"},
+        "visual": {"cs": "Kam zmizí záření", "en": "Where radiation goes"},
+        "lead": {
+            "cs": "Ve vizuálu se dopadající záření dělí na odražené, pohlcené a prošlé, ρ + α + τ = 1, a podle Kirchhoffova zákona platí ε = α. Tady odrazivost změříš na skutečných pixelech Sentinelu-2 (les, louka, pole, zástavba, voda a sníh), spočítáš, kolik záření povrchy pohltí za skutečného počasí, a odhadneš, jak se ohřejí.",
+            "en": "In the visual, incoming radiation splits into reflected, absorbed and transmitted parts, ρ + α + τ = 1, and Kirchhoff's law gives ε = α. Here you measure reflectance on real Sentinel-2 pixels (forest, meadow, field, built-up area, water and snow), compute how much radiation the surfaces absorb in real weather and estimate how warm they get.",
+        },
+        "goal": {
+            "cs": "ze skutečné odrazivosti spočítat pohltivost a albedo povrchů, použít Kirchhoffův zákon na sníh a kovy a z energetické bilance s aktuálním počasím odhadnout rovnovážnou teplotu povrchu a navrhnout chladnou střechu.",
+            "en": "compute absorptance and albedo of surfaces from real reflectance, apply Kirchhoff's law to snow and metals, and estimate the equilibrium surface temperature from an energy balance with current weather, then design a cool roof.",
+        },
+        "data": {
+            "cs": f"Sentinel-2 L2A (odrazivost na povrchu) z katalogu Earth Search na AWS: scéna `{P['item']}` ({P['date_cs']}, {P['place_cs']}) a `{P['snow_item']}` ({P['snow_date_cs']}, {P['snow_cs']}); třídy pokryvu ESA WorldCover 2021; hodinové počasí {P['wxg_cs']} z Open-Meteo (posledních 92 dní). Stahuje se asi 15 MB.",
+            "en": f"Sentinel-2 L2A (surface reflectance) from the Earth Search catalogue on AWS: scene `{P['item']}` ({P['date_en']}, {P['place_en']}) and `{P['snow_item']}` ({P['snow_date_en']}, {P['snow_en']}); land-cover classes from ESA WorldCover 2021; hourly weather {P['wxg_en']} from Open-Meteo (last 92 days). About 15 MB is downloaded.",
+        },
+        "sources": {
+            "cs": [
+                "Copernicus Sentinel-2 data " + P["s2_years"] + ", ESA, zpracováno ESA (L2A, Sen2Cor); COG kopie v registru AWS Open Data (`sentinel-cogs`), katalog Earth Search (Element 84). Volné užití s uvedením zdroje podle [Legal notice on the use of Copernicus Sentinel Data](https://sentinels.copernicus.eu/documents/247904/690755/Sentinel_Data_Legal_Notice).",
+                "Zanaga, D. a kol. (2022). *ESA WorldCover 10 m 2021 v200*. Zenodo. https://doi.org/10.5281/zenodo.7254221 (CC BY 4.0).",
+                "Počasí: Open-Meteo.com, model ICON/ECMWF podle dostupnosti (CC BY 4.0). https://open-meteo.com",
+                "Albedo z úzkých pásem: Liang, S. (2001). Narrowband to broadband conversions of land surface albedo I: Algorithms. *Remote Sensing of Environment* 76, 213–238. https://doi.org/10.1016/S0034-4257(00)00205-4",
+                "Dlouhovlnné záření jasné oblohy: Brutsaert, W. (1975). On a derivable formula for long-wave radiation from clear skies. *Water Resources Research* 11, 742–744. https://doi.org/10.1029/WR011i005p00742",
+                "Součinitel přestupu tepla prouděním h = 5,7 + 3,8 · u: McAdams, W. H. (1954). *Heat Transmission*, 3. vyd. McGraw-Hill (převzato v Duffie, J. A., Beckman, W. A., *Solar Engineering of Thermal Processes*).",
+            ],
+            "en": [
+                "Copernicus Sentinel-2 data " + P["s2_years"] + ", ESA, processed by ESA (L2A, Sen2Cor); COG copy in the AWS Open Data registry (`sentinel-cogs`), Earth Search catalogue (Element 84). Free use with attribution under the [Legal notice on the use of Copernicus Sentinel Data](https://sentinels.copernicus.eu/documents/247904/690755/Sentinel_Data_Legal_Notice).",
+                "Zanaga, D. et al. (2022). *ESA WorldCover 10 m 2021 v200*. Zenodo. https://doi.org/10.5281/zenodo.7254221 (CC BY 4.0).",
+                "Weather: Open-Meteo.com, ICON/ECMWF models as available (CC BY 4.0). https://open-meteo.com",
+                "Narrowband to broadband albedo: Liang, S. (2001). Narrowband to broadband conversions of land surface albedo I: Algorithms. *Remote Sensing of Environment* 76, 213–238. https://doi.org/10.1016/S0034-4257(00)00205-4",
+                "Clear-sky longwave radiation: Brutsaert, W. (1975). On a derivable formula for long-wave radiation from clear skies. *Water Resources Research* 11, 742–744. https://doi.org/10.1029/WR011i005p00742",
+                "Convective heat transfer coefficient h = 5.7 + 3.8 · u: McAdams, W. H. (1954). *Heat Transmission*, 3rd ed. McGraw-Hill (as given in Duffie, J. A., Beckman, W. A., *Solar Engineering of Thermal Processes*).",
+            ],
+        },
+    }
+
+
+def cells(t, P):
+    out = [
         ("md", t("## 1. Příprava", "## 1. Setup")),
         ("code", "%pip install -q rasterio"),
         ("code", '''
@@ -53,10 +80,10 @@ from pyproj import Transformer
 from scipy.optimize import brentq
 ''' + t(S2_HELPERS["cs"] + OPEN_METEO_HELPER["cs"], S2_HELPERS["en"] + OPEN_METEO_HELPER["en"])),
         ("md", t(
-            "## 2. Odrazivost skutečných povrchů\n\nNačteme výřez 3 × 3 km kolem Roztok a pro každou třídu ESA WorldCover vezmeme medián odrazivosti čistých pixelů (bez mraků a stínů podle masky SCL). Přidáme sníh z Krkonoš.",
-            "## 2. Reflectance of real surfaces\n\nWe load a 3 × 3 km window around Roztoky and for each ESA WorldCover class take the median reflectance of clear pixels (no clouds or shadows according to the SCL mask). We add snow from the Krkonoše mountains.")),
+            "## 2. Odrazivost skutečných povrchů\n\nNačteme výřez 3 × 3 km @AROUND_CS@ a pro každou třídu ESA WorldCover vezmeme medián odrazivosti čistých pixelů (bez mraků a stínů podle masky SCL). Přidáme sníh @SNOWFROM_CS@; aby šlo o otevřený sníh bez stromů, bereme jen sněhové pixely se zelenou odrazivostí nad 0,5.",
+            "## 2. Reflectance of real surfaces\n\nWe load a 3 × 3 km window @AROUND_EN@ and for each ESA WorldCover class take the median reflectance of clear pixels (no clouds or shadows according to the SCL mask). We add snow @SNOWFROM_EN@; to get open snow without trees, we take only snow pixels with green reflectance above 0.5.")),
         ("code", t('''
-refl, scl, wl, grid, item = s2_window("S2B_33UVR_20240721_0_L2A", 14.375, 50.145, 1500)
+refl, scl, wl, grid, item = s2_window("@ITEM@", @LON@, @LAT@, 1500)
 wc = read_on_grid(WORLDCOVER, grid, Resampling.nearest, np.uint8)
 clear = np.isin(scl, [4, 5, 6])                     # 4 vegetace, 5 holý povrch, 6 voda
 classes = {10: "les", 30: "louka", 40: "pole", 50: "zástavba", 80: "voda"}
@@ -66,14 +93,14 @@ for code, name in classes.items():
     spectra[name] = [float(np.median(refl[b][m])) for b in BANDS]
     print(f"{name:9s}: {m.sum():6d} pixelů")
 
-snow_refl, snow_scl, *_ = s2_window("S2A_33UWS_20240308_0_L2A", 15.70, 50.735, 1500)
-m = snow_scl == 11                                   # 11 = sníh a led
+snow_refl, snow_scl, *_ = s2_window("@SNOW_ITEM@", @SNOW_LON@, @SNOW_LAT@, 1500)
+m = (snow_scl == 11) & (snow_refl["green"] > 0.5)    # 11 = sníh a led; jen otevřený sníh
 spectra["sníh"] = [float(np.median(snow_refl[b][m])) for b in BANDS]
 print(f"sníh     : {m.sum():6d} pixelů")
 R = pd.DataFrame(spectra, index=pd.Index([wl[b] for b in BANDS], name="λ (µm)"))
 R.round(3)
 ''', '''
-refl, scl, wl, grid, item = s2_window("S2B_33UVR_20240721_0_L2A", 14.375, 50.145, 1500)
+refl, scl, wl, grid, item = s2_window("@ITEM@", @LON@, @LAT@, 1500)
 wc = read_on_grid(WORLDCOVER, grid, Resampling.nearest, np.uint8)
 clear = np.isin(scl, [4, 5, 6])                     # 4 vegetation, 5 bare surface, 6 water
 classes = {10: "forest", 30: "meadow", 40: "field", 50: "built-up", 80: "water"}
@@ -83,8 +110,8 @@ for code, name in classes.items():
     spectra[name] = [float(np.median(refl[b][m])) for b in BANDS]
     print(f"{name:9s}: {m.sum():6d} pixels")
 
-snow_refl, snow_scl, *_ = s2_window("S2A_33UWS_20240308_0_L2A", 15.70, 50.735, 1500)
-m = snow_scl == 11                                   # 11 = snow and ice
+snow_refl, snow_scl, *_ = s2_window("@SNOW_ITEM@", @SNOW_LON@, @SNOW_LAT@, 1500)
+m = (snow_scl == 11) & (snow_refl["green"] > 0.5)    # 11 = snow and ice; open snow only
 spectra["snow"] = [float(np.median(snow_refl[b][m])) for b in BANDS]
 print(f"snow     : {m.sum():6d} pixels")
 R = pd.DataFrame(spectra, index=pd.Index([wl[b] for b in BANDS], name="λ (µm)"))
@@ -127,16 +154,16 @@ albedo = pd.Series({name: 0.356 * pick(name, "blue") + 0.130 * pick(name, "red")
 print(albedo.round(3).to_string())
 ''')),
         ("md", t(
-            "## 5. Skutečné počasí a energetická bilance\n\nZ Open-Meteo vezmeme nejslunečnější hodinu posledních 92 dní v Praze: globální záření S, teplotu vzduchu, rosný bod a vítr. Povrch v rovnováze (bez vypařování a vedení do země) splní\n\n(1 − albedo) · S + ε · L↓ = ε · σ · T⁴ + h · (T − T_vzduch),\n\nkde L↓ je dlouhovlnné záření oblohy (Brutsaert 1975, jasná obloha) a h = 5,7 + 3,8 · u je přestup tepla prouděním.",
-            "## 5. Real weather and the energy balance\n\nFrom Open-Meteo we take the sunniest hour of the last 92 days in Prague: global radiation S, air temperature, dew point and wind. A surface in equilibrium (no evaporation and no conduction into the ground) satisfies\n\n(1 − albedo) · S + ε · L↓ = ε · σ · T⁴ + h · (T − T_air),\n\nwhere L↓ is the longwave radiation of the sky (Brutsaert 1975, clear sky) and h = 5.7 + 3.8 · u is convective heat transfer.")),
+            "## 5. Skutečné počasí a energetická bilance\n\nZ Open-Meteo vezmeme nejslunečnější hodinu posledních 92 dní @WX_CS@: globální záření S, teplotu vzduchu, rosný bod a vítr. Povrch v rovnováze (bez vypařování a vedení do země) splní\n\n(1 − albedo) · S + ε · L↓ = ε · σ · T⁴ + h · (T − T_vzduch),\n\nkde L↓ je dlouhovlnné záření oblohy (Brutsaert 1975, jasná obloha) a h = 5,7 + 3,8 · u je přestup tepla prouděním.",
+            "## 5. Real weather and the energy balance\n\nFrom Open-Meteo we take the sunniest hour of the last 92 days @WX_EN@: global radiation S, air temperature, dew point and wind. A surface in equilibrium (no evaporation and no conduction into the ground) satisfies\n\n(1 − albedo) · S + ε · L↓ = ε · σ · T⁴ + h · (T − T_air),\n\nwhere L↓ is the longwave radiation of the sky (Brutsaert 1975, clear sky) and h = 5.7 + 3.8 · u is convective heat transfer.")),
         ("code", t('''
-w = open_meteo({"latitude": 50.08, "longitude": 14.42, "past_days": 92, "forecast_days": 1, "wind_speed_unit": "ms",
+w = open_meteo({"latitude": @WLAT@, "longitude": @WLON@, "past_days": 92, "forecast_days": 1, "wind_speed_unit": "ms",
                 "hourly": "shortwave_radiation,temperature_2m,dew_point_2m,wind_speed_10m,cloud_cover", "timezone": "UTC"})
 met = pd.DataFrame(w["hourly"]).set_index("time")
 row = met.loc[met.shortwave_radiation.idxmax()]
 print("nejslunečnější hodina:", row.name, "UTC"); print(row.to_string())
 ''', '''
-w = open_meteo({"latitude": 50.08, "longitude": 14.42, "past_days": 92, "forecast_days": 1, "wind_speed_unit": "ms",
+w = open_meteo({"latitude": @WLAT@, "longitude": @WLON@, "past_days": 92, "forecast_days": 1, "wind_speed_unit": "ms",
                 "hourly": "shortwave_radiation,temperature_2m,dew_point_2m,wind_speed_10m,cloud_cover", "timezone": "UTC"})
 met = pd.DataFrame(w["hourly"]).set_index("time")
 row = met.loc[met.shortwave_radiation.idxmax()]
@@ -209,4 +236,18 @@ ax.set(xlabel="roof albedo", ylabel="equilibrium temperature (°C)"); ax.legend(
         ("task", t(
             "Vyber z tabulky `met` jinou hodinu, třeba nejteplejší, a vlož ji místo `row` (např. `row = met.loc[met.temperature_2m.idxmax()]` pro nejteplejší hodinu). Jak se změní pořadí a teploty povrchů? Model dává sněhu teplotu nad 0 °C: proč to ve skutečnosti nejde a na co se přebytek energie spotřebuje? Proč na jaře sníh na slunci přesto neroztaje hned, i když S je vysoké?",
             "Pick another hour from the `met` table, for instance the warmest one, and put it in place of `row` (e.g. `row = met.loc[met.temperature_2m.idxmax()]` for the warmest hour). How do the ranking and the temperatures of the surfaces change? The model gives snow a temperature above 0 °C: why is that impossible in reality, and what does the surplus energy go into? Why does snow still not melt immediately in spring sunshine even though S is high?")),
+        ("task", t(
+        "+ Porovnej výsledky se spolužákem, který spustil notebook pro jiné místo: liší se albedo zástavby, pole a sněhu? Vyšla nejslunečnější hodina v jiný den a s jiným S?",
+        "+ Compare your results with a classmate who ran the notebook for another place: do the albedos of built-up land, fields and snow differ? Did the sunniest hour fall on another day and with another S?")),
     ]
+    tokens = {"@ITEM@": P["item"], "@LON@": str(P["lon"]), "@LAT@": str(P["lat"]), "@SNOW_ITEM@": P["snow_item"], "@SNOW_LON@": str(P["snow_lon"]),
+              "@SNOW_LAT@": str(P["snow_lat"]), "@AROUND_CS@": P["around_cs"], "@AROUND_EN@": P["around_en"], "@SNOWFROM_CS@": P["snowfrom_cs"],
+              "@SNOWFROM_EN@": P["snowfrom_en"], "@WX_CS@": P["wx_cs"], "@WX_EN@": P["wx_en"], "@WLAT@": str(P["wlat"]), "@WLON@": str(P["wlon"]),
+              "_N48E012_Map": f"_{P['wc']}_Map"}
+    res = []
+    for kind, text in out:
+        for k, v in tokens.items():
+            text = text.replace(k, v)
+        assert not re.search(r"@[A-Z0-9_]+@", text), text[:80]
+        res.append((kind, text))
+    return res
