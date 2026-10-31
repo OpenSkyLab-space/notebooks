@@ -12,7 +12,7 @@ Convert DN to radiance step by step, compute the calibration coefficient from th
 
 ## Data
 
-Two captures (5 bands) from a MicaSense RedEdge camera with DLS 2 from the MicaSense sample data (repository micasense/imageprocessing, MIT licence): IMG_0001 (RP06 panel, 6 April 2022 18:50 UTC) and IMG_0020 (flight 7 minutes later), 47.70° N, 122.14° W.
+Two captures (5 multispectral bands) from a MicaSense RedEdge camera with DLS 2 from the MicaSense sample data (repository micasense/imageprocessing, MIT licence): IMG_0001 (RP06 panel, 6 April 2022 18:50 UTC) and IMG_0020 (flight 7 minutes later), 47.70° N, 122.14° W.
 
 All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
 
@@ -29,7 +29,7 @@ The MicaSense model (the same as in the library `micasense/image.py`):
 L = V(r) · R(y) · (DN − black level) / (gain · exposure) · a₁ / 2¹⁶
 
 - black level: the signal without light (BlackLevel tag),
-- V(r) = 1 / (1 + k₀r + … + k₅r⁶): vignetting correction by the distance r from the vignetting centre,
+- V(r) = 1 / (1 + k₀r + … + k₅r⁶): vignetting correction by the distance r from the vignetting centre (newer cameras store a 2D polynomial in x, y instead),
 - R(y) = 1 / (1 + a₂ y / exposure − a₃ y): correction by row (the sensor is read out row by row),
 - a₁: the factory radiometric calibration coefficient. The result is spectral radiance in W/m²/sr/nm.
 
@@ -58,7 +58,7 @@ Parameters the student changes:
 
 - `TILT = 10`: tilt of the DLS sensor (°)
 
-**Task 3.** By what percentage did the horizontal irradiance change between the panel image and the flight image (7 minutes)? How large a reflectance error does a tilt of 10° and 20° towards and away from the Sun cause? Why is the error larger with a low Sun, and why does a large diffuse component (overcast) help?
+**Task 3.** By what percentage did the horizontal irradiance change between the panel image and the flight image (the first cell printed the image times)? How large a reflectance error does a tilt of 10° and 20° towards and away from the Sun cause? Why is the error larger with a low Sun, and why does a large diffuse component (overcast) help?
 
 ### 5. Three ways to calibrate
 
@@ -83,6 +83,8 @@ Parameters the student changes:
 - `NDVI_MIN = 0.5`: NDVI threshold for “vegetation”
 
 **Task 5.** Why does NDVI from radiance differ so much from NDVI from reflectance even though it is the same image? Why does skipping the vignetting correction hardly change NDVI while it does change reflectance in the corners (compare with step 2)? How would the vegetation share change if someone thresholded NDVI from radiance?
+
+**Extension (optional).** Classmates may have the notebook for another camera (RedEdge-MX, Altum, Altum-PT). Compare the panel coefficient k, the change in irradiance between the panel and the flight, and the difference between the “DLS only” and “panel + DLS” methods. Do the cameras differ more, or the lighting conditions during the flight?
 
 ## Requirements
 

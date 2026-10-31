@@ -12,7 +12,7 @@ Převést DN na radianci krok za krokem, z panelu spočítat kalibrační koefic
 
 ## Data
 
-Dva snímky (5 pásem) kamery MicaSense RedEdge s DLS 2 z ukázkových dat MicaSense (repozitář micasense/imageprocessing, licence MIT): IMG_0001 (panel RP06, 6. 4. 2022 18:50 UTC) a IMG_0020 (let o 7 minut později), 47,70° s. š., 122,14° z. d.
+Dva snímky (5 multispektrálních pásem) kamery MicaSense RedEdge s DLS 2 z ukázkových dat MicaSense (repozitář micasense/imageprocessing, licence MIT): IMG_0001 (panel RP06, 6. 4. 2022 18:50 UTC) a IMG_0020 (let o 7 minut později), 47,70° s. š., 122,14° z. d.
 
 Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
 
@@ -29,7 +29,7 @@ Model MicaSense (stejný jako v knihovně `micasense/image.py`):
 L = V(r) · R(y) · (DN − černá úroveň) / (zisk · expozice) · a₁ / 2¹⁶
 
 - černá úroveň: signál bez světla (tag BlackLevel),
-- V(r) = 1 / (1 + k₀r + … + k₅r⁶): korekce vinětace podle vzdálenosti r od středu vinětace,
+- V(r) = 1 / (1 + k₀r + … + k₅r⁶): korekce vinětace podle vzdálenosti r od středu vinětace (novější kamery ukládají místo toho 2D polynom v souřadnicích x, y),
 - R(y) = 1 / (1 + a₂ y / expozice − a₃ y): korekce podle řádku (snímač se čte po řádcích),
 - a₁: radiometrický kalibrační koeficient z výroby. Výsledek je spektrální radiance ve W/m²/sr/nm.
 
@@ -58,7 +58,7 @@ Parametry, které student mění:
 
 - `TILT = 10`: náklon senzoru DLS (°)
 
-**Úkol 3.** O kolik procent se mezi snímkem panelu a snímkem z letu změnilo vodorovné ozáření (7 minut)? Jak velkou chybu odrazivosti způsobí náklon 10° a 20° ke Slunci a od Slunce? Proč je chyba při nízkém Slunci větší a proč pomáhá, když je rozptýlené složky hodně (zataženo)?
+**Úkol 3.** O kolik procent se mezi snímkem panelu a snímkem z letu změnilo vodorovné ozáření (časy snímků vypsala první buňka)? Jak velkou chybu odrazivosti způsobí náklon 10° a 20° ke Slunci a od Slunce? Proč je chyba při nízkém Slunci větší a proč pomáhá, když je rozptýlené složky hodně (zataženo)?
 
 ### 5. Tři způsoby kalibrace
 
@@ -83,6 +83,8 @@ Parametry, které student mění:
 - `NDVI_MIN = 0.5`: práh NDVI pro „vegetaci“
 
 **Úkol 5.** Proč se NDVI z radiance tolik liší od NDVI z odrazivosti, i když jde o stejný snímek? Proč vynechání korekce vinětace NDVI skoro nezmění, ale odrazivost v rozích ano (srovnej s krokem 2)? Jak by se změnil podíl vegetace, kdyby někdo prahoval NDVI z radiance?
+
+**Rozšíření (nepovinné).** Spolužáci mohou mít notebook pro jinou kameru (RedEdge-MX, Altum, Altum-PT). Porovnejte koeficient k z panelu, změnu ozáření mezi panelem a letem a rozdíl metod „jen DLS“ a „panel + DLS“. Liší se víc kamery, nebo podmínky osvětlení při letu?
 
 ## Co je potřeba
 
