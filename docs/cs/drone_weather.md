@@ -56,13 +56,15 @@ Parametry, které student mění:
 
 ### 5. Semafor na příštích 48 hodin
 
-Pro každou hodinu předpovědi z Open-Meteo pro Roztoky rozhodneme: vítr ve 120 m a nárazy proti limitu dronu, srážky, dohlednost a riziko námrazy (teplota pod 1 °C a T − Td do 2 °C).
+Pro každou hodinu předpovědi z Open-Meteo pro místo letu rozhodneme: vítr ve 120 m a nárazy proti limitu dronu, srážky, dohlednost a riziko námrazy (teplota pod 1 °C a T − Td do 2 °C).
 
 Parametry, které student mění:
 
 - `limit = 12.0`: odolnost dronu vůči větru (m/s)
 
 **Úkol 5.** Kdy bys v příštích 48 hodinách letěl a co v ostatních hodinách rozhoduje? Porovnej předpověď s posledním TAF pro Prahu: shodují se? Nárazy ve 120 m jsme odhadli poměrem nárazů a větru v 10 m; proč je to hrubé a proč je výsledek spíš na straně bezpečnosti, nebo naopak? Nastav `limit = 10.7` (odolnost malého dronu do 250 g, např. DJI Mini 4 Pro). Co se změní?
+
+**Rozšíření (nepovinné).** Spolužáci mohou mít notebook pro jiné místo a jiná letiště (Roztoky a Praha; Brno-Bystrc a Brno-Tuřany; Hluboká a Linec). Porovnejte ve stejnou hodinu vítr z METAR, poměr větru 80 m / 10 m z Open-Meteo a výsledek semaforu. Proč se poměr liší podle místa a terénu?
 
 ## Co je potřeba
 

@@ -56,13 +56,15 @@ Parameters the student changes:
 
 ### 5. A traffic light for the next 48 hours
 
-For each hour of the Open-Meteo forecast for Roztoky we decide: wind at 120 m and gusts against the drone's limit, precipitation, visibility and icing risk (temperature below 1 °C and T − Td within 2 °C).
+For each hour of the Open-Meteo forecast for the flight site we decide: wind at 120 m and gusts against the drone's limit, precipitation, visibility and icing risk (temperature below 1 °C and T − Td within 2 °C).
 
 Parameters the student changes:
 
 - `limit = 12.0`: drone wind resistance (m/s)
 
 **Task 5.** When would you fly in the next 48 hours and what decides the other hours? Compare the forecast with the latest TAF for Prague: do they agree? We estimated gusts at 120 m from the gust-to-wind ratio at 10 m; why is that rough, and is the result on the safe side or not? Set `limit = 10.7` (wind resistance of a small sub-250 g drone such as the DJI Mini 4 Pro). What changes?
+
+**Extension (optional).** Classmates may have the notebook for another site and other airports (Roztoky and Prague; Brno-Bystrc and Brno-Tuřany; Hluboká and Linz). Compare, for the same hour, the METAR wind, the 80 m / 10 m wind ratio from Open-Meteo and the traffic-light result. Why does the ratio differ with site and terrain?
 
 ## Requirements
 
