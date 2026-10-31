@@ -1,54 +1,68 @@
+import re
+
 from _common import OPEN_METEO_HELPER
 
-META = {
-    "version": "1.0",
-    "minutes": 45,
-    "title": {"cs": "Kdy letět s termokamerou: teplota povrchů ze skutečného počasí", "en": "When to fly a thermal camera: surface temperatures from real weather"},
-    "visual": {"cs": "Kdy letět s termokamerou", "en": "When to fly a thermal camera"},
-    "lead": {
-        "cs": "Vizuál ukazuje, jak se voda, louka, asfalt, les a fotovoltaika během dne ohřívají a chladnou a kdy se dva povrchy v termosnímku slijí. Tady stejný typ modelu (energetická bilance povrchu s vedením tepla do hloubky) poženeš skutečným hodinovým počasím za poslední měsíce v Suchdole a hledáš nejlepší čas letu podle úlohy.",
-        "en": "The visual shows how water, meadow, asphalt, forest and photovoltaics warm up and cool down during the day, and when two surfaces merge in a thermal image. Here you drive the same kind of model (surface energy balance with heat conduction into the ground) with real hourly weather from the last months at Suchdol and look for the best flight time for a given task.",
-    },
-    "goal": {
-        "cs": "spočítat denní chod teploty povrchů ze skutečného záření, teploty, vlhkosti, oblačnosti a větru, najít časy, kdy se dva povrchy teplotně překříží, porovnat jasný a zatažený den, ukázat vliv větru a emisivity nastavené v kameře a najít hodiny vhodné pro kontrolu fotovoltaiky.",
-        "en": "compute the daily course of surface temperatures from real radiation, temperature, humidity, cloud cover and wind, find the times when two surfaces cross over in temperature, compare a clear and an overcast day, show the effect of wind and of the emissivity set in the camera, and find the hours suitable for inspecting photovoltaics.",
-    },
-    "data": {
-        "cs": "hodinová teplota a vlhkost vzduchu, globální záření na vodorovnou i skloněnou plochu, oblačnost, vítr v 10 m a teplota povrchu půdy z Open-Meteo pro kampus v Suchdole, co služba vrátí za posledních 92 dní, obvykle dva až tři měsíce (model počasí, ne měření na místě); tepelné vlastnosti materiálů z literatury.",
-        "en": "hourly air temperature and humidity, global radiation on a horizontal and a tilted surface, cloud cover, wind at 10 m and soil surface temperature from Open-Meteo for the Suchdol campus, whatever the service returns for the last 92 days, usually two to three months (weather model, not an on-site measurement); thermal properties of materials from the literature.",
-    },
-    "sources": {
-        "cs": [
-            "Počasí: Open-Meteo.com (CC BY 4.0), https://open-meteo.com",
-            "Brutsaert, W. (1975). On a derivable formula for long-wave radiation from clear skies. *Water Resources Research* 11, 742–744 (dlouhovlnné záření jasné oblohy).",
-            "Crawford, T. M., Duchon, C. E. (1999). An improved parameterization for estimating effective atmospheric emissivity. *Journal of Applied Meteorology* 38, 474–480 (vliv oblačnosti).",
-            "Oke, T. R. (1987). *Boundary Layer Climates*, 2. vyd. Routledge (tepelná vodivost a kapacita asfaltu a půdy, albeda).",
-            "Maes, W. H. (2025). Practical guidelines for performing UAV mapping flights with snapshot sensors. *Remote Sensing* 17(4), 606. https://doi.org/10.3390/rs17040606 (plánování mapovacích letů včetně termálních).",
-            "IEA PVPS Task 13 (2018). *Review on Infrared and Electroluminescence Imaging for PV Field Applications*, Report IEA-PVPS T13-10:2018 (emisivita skla 0,85, ozáření ≥ 600 W/m²).",
-            "Přestup tepla prouděním h = 5,7 + 3,8 U (McAdams), tlak nasycených par Magnusovým vzorcem (WMO-No. 8, 2018).",
-        ],
-        "en": [
-            "Weather: Open-Meteo.com (CC BY 4.0), https://open-meteo.com",
-            "Brutsaert, W. (1975). On a derivable formula for long-wave radiation from clear skies. *Water Resources Research* 11, 742–744 (clear-sky long-wave radiation).",
-            "Crawford, T. M., Duchon, C. E. (1999). An improved parameterization for estimating effective atmospheric emissivity. *Journal of Applied Meteorology* 38, 474–480 (effect of cloud cover).",
-            "Oke, T. R. (1987). *Boundary Layer Climates*, 2nd ed. Routledge (thermal conductivity and heat capacity of asphalt and soil, albedos).",
-            "Maes, W. H. (2025). Practical guidelines for performing UAV mapping flights with snapshot sensors. *Remote Sensing* 17(4), 606. https://doi.org/10.3390/rs17040606 (planning mapping flights, thermal included).",
-            "IEA PVPS Task 13 (2018). *Review on Infrared and Electroluminescence Imaging for PV Field Applications*, Report IEA-PVPS T13-10:2018 (glass emissivity 0.85, irradiance ≥ 600 W/m²).",
-            "Convective heat transfer h = 5.7 + 3.8 U (McAdams), saturation vapour pressure by the Magnus formula (WMO-No. 8, 2018).",
-        ],
-    },
+# verze: přípona souboru → místo, pro které se stahuje počasí
+VARIANTS = {
+    "": dict(lat="50.130", lon="14.373", loc_cs="v Suchdole", for_cs="pro kampus v Suchdole", for_en="for the Suchdol campus", at_en="at Suchdol",
+             par_cs="kampus v Suchdole", par_en="Suchdol campus", short="Suchdol"),
+    "brno": dict(lat="49.195", lon="16.608", loc_cs="v Brně", for_cs="pro střed Brna", for_en="for the centre of Brno", at_en="in Brno",
+                 par_cs="střed Brna", par_en="centre of Brno", short="Brno"),
+    "hluboka": dict(lat="49.052", lon="14.439", loc_cs="v Hluboké nad Vltavou", for_cs="pro Hlubokou nad Vltavou", for_en="for Hluboká nad Vltavou", at_en="at Hluboká nad Vltavou",
+                    par_cs="Hluboká nad Vltavou", par_en="Hluboká nad Vltavou", short="Hluboká"),
 }
 
 
-def cells(t):
-    return [
+def meta(P):
+    return {
+        "version": "1.0",
+        "minutes": 45,
+        "title": {"cs": "Kdy letět s termokamerou: teplota povrchů ze skutečného počasí", "en": "When to fly a thermal camera: surface temperatures from real weather"},
+        "visual": {"cs": "Kdy letět s termokamerou", "en": "When to fly a thermal camera"},
+        "lead": {
+            "cs": "Vizuál ukazuje, jak se voda, louka, asfalt, les a fotovoltaika během dne ohřívají a chladnou a kdy se dva povrchy v termosnímku slijí. Tady stejný typ modelu (energetická bilance povrchu s vedením tepla do hloubky) poženeš skutečným hodinovým počasím za poslední měsíce " + P["loc_cs"] + " a hledáš nejlepší čas letu podle úlohy.",
+            "en": "The visual shows how water, meadow, asphalt, forest and photovoltaics warm up and cool down during the day, and when two surfaces merge in a thermal image. Here you drive the same kind of model (surface energy balance with heat conduction into the ground) with real hourly weather from the last months " + P["at_en"] + " and look for the best flight time for a given task.",
+        },
+        "goal": {
+            "cs": "spočítat denní chod teploty povrchů ze skutečného záření, teploty, vlhkosti, oblačnosti a větru, najít časy, kdy se dva povrchy teplotně překříží, porovnat jasný a zatažený den, ukázat vliv větru a emisivity nastavené v kameře a najít hodiny vhodné pro kontrolu fotovoltaiky.",
+            "en": "compute the daily course of surface temperatures from real radiation, temperature, humidity, cloud cover and wind, find the times when two surfaces cross over in temperature, compare a clear and an overcast day, show the effect of wind and of the emissivity set in the camera, and find the hours suitable for inspecting photovoltaics.",
+        },
+        "data": {
+            "cs": "hodinová teplota a vlhkost vzduchu, globální záření na vodorovnou i skloněnou plochu, oblačnost, vítr v 10 m a teplota povrchu půdy z Open-Meteo " + P["for_cs"] + ", co služba vrátí za posledních 92 dní, obvykle dva až tři měsíce (model počasí, ne měření na místě); tepelné vlastnosti materiálů z literatury.",
+            "en": "hourly air temperature and humidity, global radiation on a horizontal and a tilted surface, cloud cover, wind at 10 m and soil surface temperature from Open-Meteo " + P["for_en"] + ", whatever the service returns for the last 92 days, usually two to three months (weather model, not an on-site measurement); thermal properties of materials from the literature.",
+        },
+        "sources": {
+            "cs": [
+                "Počasí: Open-Meteo.com (CC BY 4.0), https://open-meteo.com",
+                "Brutsaert, W. (1975). On a derivable formula for long-wave radiation from clear skies. *Water Resources Research* 11, 742–744 (dlouhovlnné záření jasné oblohy).",
+                "Crawford, T. M., Duchon, C. E. (1999). An improved parameterization for estimating effective atmospheric emissivity. *Journal of Applied Meteorology* 38, 474–480 (vliv oblačnosti).",
+                "Oke, T. R. (1987). *Boundary Layer Climates*, 2. vyd. Routledge (tepelná vodivost a kapacita asfaltu a půdy, albeda).",
+                "Maes, W. H. (2025). Practical guidelines for performing UAV mapping flights with snapshot sensors. *Remote Sensing* 17(4), 606. https://doi.org/10.3390/rs17040606 (plánování mapovacích letů včetně termálních).",
+                "IEA PVPS Task 13 (2018). *Review on Infrared and Electroluminescence Imaging for PV Field Applications*, Report IEA-PVPS T13-10:2018 (emisivita skla 0,85, ozáření ≥ 600 W/m²).",
+                "Přestup tepla prouděním h = 5,7 + 3,8 U (McAdams), tlak nasycených par Magnusovým vzorcem (WMO-No. 8, 2018).",
+            ],
+            "en": [
+                "Weather: Open-Meteo.com (CC BY 4.0), https://open-meteo.com",
+                "Brutsaert, W. (1975). On a derivable formula for long-wave radiation from clear skies. *Water Resources Research* 11, 742–744 (clear-sky long-wave radiation).",
+                "Crawford, T. M., Duchon, C. E. (1999). An improved parameterization for estimating effective atmospheric emissivity. *Journal of Applied Meteorology* 38, 474–480 (effect of cloud cover).",
+                "Oke, T. R. (1987). *Boundary Layer Climates*, 2nd ed. Routledge (thermal conductivity and heat capacity of asphalt and soil, albedos).",
+                "Maes, W. H. (2025). Practical guidelines for performing UAV mapping flights with snapshot sensors. *Remote Sensing* 17(4), 606. https://doi.org/10.3390/rs17040606 (planning mapping flights, thermal included).",
+                "IEA PVPS Task 13 (2018). *Review on Infrared and Electroluminescence Imaging for PV Field Applications*, Report IEA-PVPS T13-10:2018 (glass emissivity 0.85, irradiance ≥ 600 W/m²).",
+                "Convective heat transfer h = 5.7 + 3.8 U (McAdams), saturation vapour pressure by the Magnus formula (WMO-No. 8, 2018).",
+            ],
+        },
+    }
+
+
+def cells(t, P):
+    out = [
         ("md", t("## 1. Příprava a skutečné počasí", "## 1. Setup and real weather")),
         ("code", '''
 import time, requests
 import numpy as np, pandas as pd
 import matplotlib.pyplot as plt
 ''' + t(OPEN_METEO_HELPER["cs"], OPEN_METEO_HELPER["en"]) + t('''
-LAT, LON = 50.130, 14.373     # ◀ parametr: místo (kampus v Suchdole)
+LAT, LON = @LAT@, @LON@     # ◀ parametr: místo (@PAR_CS@)
 TILT, AZ = 35, 0              # ◀ parametr: sklon a azimut fotovoltaiky (°; azimut 0 = jih, −90 = východ, 90 = západ)
 
 def weather(lat, lon, tilt, az):
@@ -66,7 +80,7 @@ print(f"počasí {w.index[0]:%d. %m.} až {w.index[-1]:%d. %m. %Y}, {len(w)} hod
 print(f"nejslunečnější den {SUNNY} ({days.max():.1f} kWh/m²), nejzataženější {CLOUDY} ({days.min():.1f} kWh/m²)")
 w[["temperature_2m", "shortwave_radiation", "cloud_cover", "wind_speed_10m"]].plot(subplots=True, figsize=(10, 6), legend=True); plt.show()
 ''', '''
-LAT, LON = 50.130, 14.373     # ◀ parameter: site (Suchdol campus)
+LAT, LON = @LAT@, @LON@     # ◀ parameter: site (@PAR_EN@)
 TILT, AZ = 35, 0              # ◀ parameter: tilt and azimuth of the PV panels (°; azimuth 0 = south, −90 = east, 90 = west)
 
 def weather(lat, lon, tilt, az):
@@ -173,7 +187,7 @@ T.attrs["Ta"].loc[str(DAY)].plot(ax=ax, color="k", ls="--", label="vzduch 2 m")
 w.soil_temperature_0cm.loc[str(DAY)].plot(ax=ax, color="gray", ls=":", marker=".", label="povrch půdy podle Open-Meteo")
 for c in crossings(d[A], d[B]):
     ax.axvline(c, color="gray", lw=0.8); print(f"{A} × {B}: překřížení v {c:%H:%M}")
-ax.set_ylabel("teplota povrchu (°C)"); ax.set_xlabel(""); ax.set_title(f"{DAY}, Suchdol"); ax.legend(ncol=3, fontsize=8); plt.show()
+ax.set_ylabel("teplota povrchu (°C)"); ax.set_xlabel(""); ax.set_title(f"{DAY}, @SHORT@"); ax.legend(ncol=3, fontsize=8); plt.show()
 print(d.resample("h").mean().iloc[[2, 5, 8, 11, 13, 16, 19, 22]].round(1))
 ''', '''
 SIG = 5.670e-8
@@ -249,7 +263,7 @@ T.attrs["Ta"].loc[str(DAY)].plot(ax=ax, color="k", ls="--", label="air 2 m")
 w.soil_temperature_0cm.loc[str(DAY)].plot(ax=ax, color="gray", ls=":", marker=".", label="soil surface from Open-Meteo")
 for c in crossings(d[A], d[B]):
     ax.axvline(c, color="gray", lw=0.8); print(f"{A} × {B}: crossover at {c:%H:%M}")
-ax.set_ylabel("surface temperature (°C)"); ax.set_xlabel(""); ax.set_title(f"{DAY}, Suchdol"); ax.legend(ncol=3, fontsize=8); plt.show()
+ax.set_ylabel("surface temperature (°C)"); ax.set_xlabel(""); ax.set_title(f"{DAY}, @SHORT@"); ax.legend(ncol=3, fontsize=8); plt.show()
 print(d.resample("h").mean().iloc[[2, 5, 8, 11, 13, 16, 19, 22]].round(1))
 ''')),
         ("task", t(
@@ -404,4 +418,15 @@ print(ok.loc[:, ok.sum() > 0].to_string())
         ("task", t(
             "Ve kterých měsících a hodinách bylo ozáření panelů aspoň 600 W/m²? Změň v kroku 1 sklon na 60° a azimut na −90° (východ) a buňky spusť znovu: jak se okno pro kontrolu posune? Proč je kontrast vadného nebo odpojeného modulu při slabém slunci malý?",
             "In which months and hours was the panel irradiance at least 600 W/m²? In step 1 change the tilt to 60° and the azimuth to −90° (east) and run the cells again: how does the inspection window shift? Why is the contrast of a faulty or disconnected module small in weak sunlight?")),
+        ("task", t(
+            "+ Spolužáci mohou mít notebook pro jiné místo (Suchdol, Brno, Hluboká nad Vltavou). Porovnejte pro stejné datum amplitudu teploty asfaltu a louky a čas překřížení. Liší se víc kvůli počasí toho dne, nebo kvůli místu?",
+            "+ Classmates may have the notebook for another site (Suchdol, Brno, Hluboká nad Vltavou). Compare the amplitude of asphalt and meadow temperature and the crossover time for the same date. Do they differ more because of that day's weather or because of the site?")),
     ]
+    tokens = {"@LAT@": P["lat"], "@LON@": P["lon"], "@PAR_CS@": P["par_cs"], "@PAR_EN@": P["par_en"], "@SHORT@": P["short"]}
+    res = []
+    for kind, text in out:
+        for k, v in tokens.items():
+            text = text.replace(k, v)
+        assert not re.search(r"@[A-Z0-9_]+@", text), text[:80]
+        res.append((kind, text))
+    return res

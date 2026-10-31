@@ -95,6 +95,8 @@ Parametry, které student mění:
 
 **Úkol 6.** Ve kterých měsících a hodinách bylo ozáření panelů aspoň 600 W/m²? Změň v kroku 1 sklon na 60° a azimut na −90° (východ) a buňky spusť znovu: jak se okno pro kontrolu posune? Proč je kontrast vadného nebo odpojeného modulu při slabém slunci malý?
 
+**Rozšíření (nepovinné).** Spolužáci mohou mít notebook pro jiné místo (Suchdol, Brno, Hluboká nad Vltavou). Porovnejte pro stejné datum amplitudu teploty asfaltu a louky a čas překřížení. Liší se víc kvůli počasí toho dne, nebo kvůli místu?
+
 ## Co je potřeba
 
 Google účet a prohlížeč; notebook běží v Google Colab a nic se neinstaluje do počítače. Buňky se spouštějí popořadě shora dolů, odpovědi se píšou do buněk *Tvoje odpověď* pod úkoly.

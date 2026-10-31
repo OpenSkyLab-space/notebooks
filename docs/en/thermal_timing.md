@@ -95,6 +95,8 @@ Parameters the student changes:
 
 **Task 6.** In which months and hours was the panel irradiance at least 600 W/m²? In step 1 change the tilt to 60° and the azimuth to −90° (east) and run the cells again: how does the inspection window shift? Why is the contrast of a faulty or disconnected module small in weak sunlight?
 
+**Extension (optional).** Classmates may have the notebook for another site (Suchdol, Brno, Hluboká nad Vltavou). Compare the amplitude of asphalt and meadow temperature and the crossover time for the same date. Do they differ more because of that day's weather or because of the site?
+
 ## Requirements
 
 A Google account and a browser; the notebook runs in Google Colab and nothing is installed on the computer. Cells are run in order from top to bottom, answers go into the *Your answer* cells below the tasks.
