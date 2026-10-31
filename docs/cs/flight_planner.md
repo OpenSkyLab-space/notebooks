@@ -34,7 +34,7 @@ Parametry, které student mění:
 
 ### 3. Skutečný terén a plán linek
 
-Načteme DMR 5G pro svah údolí Vltavy. Linky vedou ve směru východ–západ, tedy po spádnici dolů do údolí a zpět. Místo vzletu je na planině na západním okraji.
+Načteme DMR 5G pro svah údolí Vltavy. Linky vedou ve směru východ–západ, tedy po spádnici dolů a zpět nahoru. Místo vzletu je na planině na západním okraji.
 
 Parametry, které student mění:
 
@@ -54,11 +54,11 @@ Parametry, které student mění:
 
 - `follow = False`: True = sledování terénu (stálá výška nad zemí H0)
 
-**Úkol 3.** Při stálé výšce 80 m nad planinou: jaký je rozsah GSD a překryvů? Kde je překryv nejmenší, na planině, nebo v údolí, a proč? Kolik území je výš než 120 m nad terénem? Přepni `follow = True`: co se zlepší a co k sledování terénu potřebuješ (model terénu, jeho přesnost, překážky)?
+**Úkol 3.** Při stálé výšce 80 m nad místem vzletu: jaký je rozsah GSD a překryvů? Kde je překryv nejmenší, nahoře u místa vzletu, nebo v nejnižších místech, a proč? Kolik území je výš než 120 m nad terénem? Přepni `follow = True`: co se zlepší a co k sledování terénu potřebuješ (model terénu, jeho přesnost, překážky)?
 
 ### 5. Skutečný vítr, rozmazání a postupná závěrka
 
-Z Open-Meteo vezmeme předpověď větru pro Roztoky na dnešek. Rozmazání = rychlost vůči zemi · expozice / GSD; zkosení postupnou závěrkou = rychlost vůči zemi · doba vyčtení čipu / GSD. Zenmuse P1 a Mavic 3E mají mechanickou závěrku, takže u nich zkosení prakticky odpadá (t_read = 0); výchozích 30 ms je řádová hodnota pro elektronickou postupnou závěrku.
+Z Open-Meteo vezmeme předpověď větru pro toto území na dnešek. Rozmazání = rychlost vůči zemi · expozice / GSD; zkosení postupnou závěrkou = rychlost vůči zemi · doba vyčtení čipu / GSD. Zenmuse P1 a Mavic 3E mají mechanickou závěrku, takže u nich zkosení prakticky odpadá (t_read = 0); výchozích 30 ms je řádová hodnota pro elektronickou postupnou závěrku.
 
 Parametry, které student mění:
 
@@ -79,6 +79,8 @@ Parametry, které student mění:
 - `reserve = 0.20`: rezerva při přistání
 
 **Úkol 5.** Stačí jedna baterie? Nastav `temp_factor = 0.75` a pak zvyš vítr (`headwind = 8`). Proč je „tam po větru, zpátky proti větru“ past? Zkus také vyšší `v_air`: proč při silném větru pomáhá letět rychleji, i když výkon roste?
+
+**Rozšíření (nepovinné).** Spolužáci mohou mít notebook pro jiné území (Roztoky, Brno-Bystrc, Hosín u Hluboké). Porovnejte převýšení, rozsah výšky nad zemí při stálé výšce 80 m nad místem vzletu a podíl území nad 120 m. Kde by stálá výška byla nejméně vhodná a kolik baterií by na území potřeboval každý z vás?
 
 ## Co je potřeba
 

@@ -34,7 +34,7 @@ Parameters the student changes:
 
 ### 3. Real terrain and the line plan
 
-We load DMR 5G for the slope of the Vltava valley. Lines run east–west, i.e. down the fall line into the valley and back. The take-off point is on the plateau at the western edge.
+We load DMR 5G for the slope of the Vltava valley. Lines run east–west, i.e. down the fall line and back up. The take-off point is on the plateau at the western edge.
 
 Parameters the student changes:
 
@@ -54,11 +54,11 @@ Parameters the student changes:
 
 - `follow = False`: True = terrain following (constant height H0 above ground)
 
-**Task 3.** At a constant 80 m above the plateau: what is the range of GSD and overlaps? Where is the overlap smallest, on the plateau or in the valley, and why? How much of the area is more than 120 m above the terrain? Switch to `follow = True`: what improves and what do you need for terrain following (terrain model, its accuracy, obstacles)?
+**Task 3.** At a constant 80 m above the take-off point: what is the range of GSD and overlaps? Where is the overlap smallest, at the top near the take-off point or in the lowest places, and why? How much of the area is more than 120 m above the terrain? Switch to `follow = True`: what improves and what do you need for terrain following (terrain model, its accuracy, obstacles)?
 
 ### 5. Real wind, motion blur and rolling shutter
 
-We take today's wind forecast for Roztoky from Open-Meteo. Blur = ground speed · exposure / GSD; rolling-shutter skew = ground speed · sensor readout time / GSD. The Zenmuse P1 and Mavic 3E have a mechanical shutter, so skew practically disappears for them (t_read = 0); the default 30 ms is an order-of-magnitude value for an electronic rolling shutter.
+We take today's wind forecast for this area from Open-Meteo. Blur = ground speed · exposure / GSD; rolling-shutter skew = ground speed · sensor readout time / GSD. The Zenmuse P1 and Mavic 3E have a mechanical shutter, so skew practically disappears for them (t_read = 0); the default 30 ms is an order-of-magnitude value for an electronic rolling shutter.
 
 Parameters the student changes:
 
@@ -79,6 +79,8 @@ Parameters the student changes:
 - `reserve = 0.20`: landing reserve
 
 **Task 5.** Is one battery enough? Set `temp_factor = 0.75` and then increase the wind (`headwind = 8`). Why is "downwind out, upwind back" a trap? Also try a higher `v_air`: why does flying faster help in strong wind even though power increases?
+
+**Extension (optional).** Classmates may have the notebook for another area (Roztoky, Brno-Bystrc, Hosín near Hluboká). Compare the relief, the range of height above ground at a constant 80 m above the take-off point and the share of the area above 120 m. Where would a constant height be least suitable, and how many batteries would each of you need for the area?
 
 ## Requirements
 

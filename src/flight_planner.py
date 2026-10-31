@@ -1,41 +1,70 @@
+import re
+
 from _common import CUZK_HELPER, OPEN_METEO_HELPER
 
-META = {
-    "version": "1.0",
-    "minutes": 50,
-    "title": {"cs": "Plán letu nad údolím Vltavy: GSD, překryvy, terén a vítr", "en": "A flight plan over the Vltava valley: GSD, overlaps, terrain and wind"},
-    "visual": {"cs": "Plánovač letu dronu", "en": "Drone flight planner"},
-    "lead": {
-        "cs": "Ve vizuálu jsi plánoval let nad rovinou a nad modelovým kopcem. Tady stejné vzorce použiješ na skutečný terén: svah údolí Vltavy u Roztok z digitálního modelu reliéfu ČÚZK DMR 5G (lidar, buňka 2 m) a na aktuální předpověď větru ve výšce letu.",
-        "en": "In the visual you planned a flight over flat ground and over a model hill. Here you apply the same formulas to real terrain: the slope of the Vltava valley at Roztoky from the ČÚZK DMR 5G digital terrain model (lidar, 2 m cells), and to the current wind forecast at flight height.",
-    },
-    "goal": {
-        "cs": "spočítat výšku letu pro cílové GSD, rozestup linek, interval a rychlost, rozmazání a zkosení, ukázat, jak terén mění výšku nad zemí a překryv, a naplánovat návrat proti větru.",
-        "en": "compute flight height for a target GSD, line spacing, trigger interval and speed, motion blur and skew, show how terrain changes height above ground and overlap, and plan the return against the wind.",
-    },
-    "data": {
-        "cs": "DMR 5G (ČÚZK, služba ImageServer, výšky v Bpv, buňka 2 m) pro území 1,2 × 0,8 km na levém svahu údolí Vltavy u Roztok; hodinová předpověď větru ve 10, 80 a 120 m z Open-Meteo; parametry kamer z technických listů výrobců (stejné jako ve vizuálu).",
-        "en": "DMR 5G (ČÚZK, ImageServer, heights in Bpv, 2 m cells) for a 1.2 × 0.8 km area on the left slope of the Vltava valley at Roztoky; hourly wind forecast at 10, 80 and 120 m from Open-Meteo; camera parameters from manufacturers' data sheets (same as in the visual).",
-    },
-    "sources": {
-        "cs": [
-            "Digitální model reliéfu České republiky 5. generace (DMR 5G), © ČÚZK, licence CC BY 4.0, služba https://ags.cuzk.cz/arcgis2/rest/services/dmr5g/ImageServer",
-            "Počasí: Open-Meteo.com (CC BY 4.0), https://open-meteo.com",
-            "Parametry kamer: technické listy DJI Zenmuse P1, Mavic 3 Enterprise (3E, 3M) a obecná kamera 1″ 20 Mpx (u Mavic 3M a obecné kamery je nejkratší interval 2 s orientační hodnota); baterie Mavic 3 Enterprise 5000 mAh, 15,4 V (77 Wh).",
-            "Výška letu v otevřené kategorii max. 120 m od nejbližšího bodu zemského povrchu: prováděcí nařízení Komise (EU) 2019/947, příloha, UAS.OPEN.010.",
-        ],
-        "en": [
-            "Digital terrain model of the Czech Republic, 5th generation (DMR 5G), © ČÚZK, licence CC BY 4.0, service https://ags.cuzk.cz/arcgis2/rest/services/dmr5g/ImageServer",
-            "Weather: Open-Meteo.com (CC BY 4.0), https://open-meteo.com",
-            "Camera parameters: data sheets of DJI Zenmuse P1, Mavic 3 Enterprise (3E, 3M) and a generic 1″ 20 MP camera (the shortest interval of 2 s for the Mavic 3M and the generic camera is an indicative value); Mavic 3 Enterprise battery 5000 mAh, 15.4 V (77 Wh).",
-            "Flight height in the open category max. 120 m from the closest point of the surface of the earth: Commission Implementing Regulation (EU) 2019/947, Annex, UAS.OPEN.010.",
-        ],
-    },
+# verze: přípona souboru → území (střed výřezu 1,2 × 0,8 km; svah klesá od západu k východu)
+VARIANTS = {
+    "": dict(lon="14.392", lat="50.152",
+             tit_cs="nad údolím Vltavy", tit_en="over the Vltava valley",
+             lead_cs="svah údolí Vltavy u Roztok", lead_en="the slope of the Vltava valley at Roztoky",
+             data_cs="na levém svahu údolí Vltavy u Roztok", data_en="on the left slope of the Vltava valley at Roztoky",
+             area_cs="svah údolí Vltavy", area_en="the slope of the Vltava valley",
+             takeoff_cs="na planině na západním okraji", takeoff_en="on the plateau at the western edge",
+             plot_cs="levý svah údolí Vltavy u Roztok", plot_en="left slope of the Vltava valley at Roztoky"),
+    "brno": dict(lon="16.4798", lat="49.2467",
+                 tit_cs="nad Brněnskou přehradou", tit_en="over the Brno reservoir",
+                 lead_cs="svah nad Brněnskou přehradou u Kozí horky v Brně-Bystrci", lead_en="the slope above the Brno reservoir at Kozí horka in Brno-Bystrc",
+                 data_cs="na svahu nad Brněnskou přehradou u Kozí horky (Brno-Bystrc)", data_en="on the slope above the Brno reservoir at Kozí horka (Brno-Bystrc)",
+                 area_cs="svah nad Brněnskou přehradou", area_en="the slope above the Brno reservoir",
+                 takeoff_cs="na loukách na horním, západním okraji", takeoff_en="in the meadows at the upper, western edge",
+                 plot_cs="svah nad Brněnskou přehradou (Brno-Bystrc)", plot_en="slope above the Brno reservoir (Brno-Bystrc)"),
+    "hluboka": dict(lon="14.4769", lat="49.0452",
+                    tit_cs="nad údolím u Hosína", tit_en="over a valley near Hosín",
+                    lead_cs="zalesněné údolí s železniční tratí u Hosína, asi 3 km východně od Hluboké nad Vltavou", lead_en="a wooded valley with a railway line near Hosín, about 3 km east of Hluboká nad Vltavou",
+                    data_cs="v údolí u Hosína východně od Hluboké nad Vltavou", data_en="in a valley near Hosín east of Hluboká nad Vltavou",
+                    area_cs="údolí u Hosína", area_en="the valley near Hosín",
+                    takeoff_cs="na poli na horním, západním okraji", takeoff_en="in the field at the upper, western edge",
+                    plot_cs="údolí u Hosína", plot_en="valley near Hosín"),
 }
 
 
-def cells(t):
-    return [
+def meta(P):
+    return {
+        "version": "1.0",
+        "minutes": 50,
+        "title": {"cs": "Plán letu " + P["tit_cs"] + ": GSD, překryvy, terén a vítr", "en": "A flight plan " + P["tit_en"] + ": GSD, overlaps, terrain and wind"},
+        "visual": {"cs": "Plánovač letu dronu", "en": "Drone flight planner"},
+        "lead": {
+            "cs": "Ve vizuálu jsi plánoval let nad rovinou a nad modelovým kopcem. Tady stejné vzorce použiješ na skutečný terén: " + P["lead_cs"] + " z digitálního modelu reliéfu ČÚZK DMR 5G (lidar, buňka 2 m) a na aktuální předpověď větru ve výšce letu.",
+            "en": "In the visual you planned a flight over flat ground and over a model hill. Here you apply the same formulas to real terrain: " + P["lead_en"] + " from the ČÚZK DMR 5G digital terrain model (lidar, 2 m cells), and to the current wind forecast at flight height.",
+        },
+        "goal": {
+            "cs": "spočítat výšku letu pro cílové GSD, rozestup linek, interval a rychlost, rozmazání a zkosení, ukázat, jak terén mění výšku nad zemí a překryv, a naplánovat návrat proti větru.",
+            "en": "compute flight height for a target GSD, line spacing, trigger interval and speed, motion blur and skew, show how terrain changes height above ground and overlap, and plan the return against the wind.",
+        },
+        "data": {
+            "cs": "DMR 5G (ČÚZK, služba ImageServer, výšky v Bpv, buňka 2 m) pro území 1,2 × 0,8 km " + P["data_cs"] + "; hodinová předpověď větru ve 10, 80 a 120 m z Open-Meteo; parametry kamer z technických listů výrobců (stejné jako ve vizuálu).",
+            "en": "DMR 5G (ČÚZK, ImageServer, heights in Bpv, 2 m cells) for a 1.2 × 0.8 km area " + P["data_en"] + "; hourly wind forecast at 10, 80 and 120 m from Open-Meteo; camera parameters from manufacturers' data sheets (same as in the visual).",
+        },
+        "sources": {
+            "cs": [
+                "Digitální model reliéfu České republiky 5. generace (DMR 5G), © ČÚZK, licence CC BY 4.0, služba https://ags.cuzk.cz/arcgis2/rest/services/dmr5g/ImageServer",
+                "Počasí: Open-Meteo.com (CC BY 4.0), https://open-meteo.com",
+                "Parametry kamer: technické listy DJI Zenmuse P1, Mavic 3 Enterprise (3E, 3M) a obecná kamera 1″ 20 Mpx (u Mavic 3M a obecné kamery je nejkratší interval 2 s orientační hodnota); baterie Mavic 3 Enterprise 5000 mAh, 15,4 V (77 Wh).",
+                "Výška letu v otevřené kategorii max. 120 m od nejbližšího bodu zemského povrchu: prováděcí nařízení Komise (EU) 2019/947, příloha, UAS.OPEN.010.",
+            ],
+            "en": [
+                "Digital terrain model of the Czech Republic, 5th generation (DMR 5G), © ČÚZK, licence CC BY 4.0, service https://ags.cuzk.cz/arcgis2/rest/services/dmr5g/ImageServer",
+                "Weather: Open-Meteo.com (CC BY 4.0), https://open-meteo.com",
+                "Camera parameters: data sheets of DJI Zenmuse P1, Mavic 3 Enterprise (3E, 3M) and a generic 1″ 20 MP camera (the shortest interval of 2 s for the Mavic 3M and the generic camera is an indicative value); Mavic 3 Enterprise battery 5000 mAh, 15.4 V (77 Wh).",
+                "Flight height in the open category max. 120 m from the closest point of the surface of the earth: Commission Implementing Regulation (EU) 2019/947, Annex, UAS.OPEN.010.",
+            ],
+        },
+    }
+
+
+def cells(t, P):
+    out = [
         ("md", t("## 1. Příprava", "## 1. Setup")),
         ("code", "%pip install -q rasterio"),
         ("code", '''
@@ -89,28 +118,28 @@ cam_tab.round(1)
             "Proč musí Mavic 3M pro stejné GSD letět mnohem níž než P1? Nastav `gsd_target` na 2 a pak na 4 cm/px. Pro které kamery a GSD by výška překročila 120 m, a tedy limit otevřené kategorie? Jaké má nízký let důsledky (počet snímků, čas, bezpečnost)?",
             "Why does the Mavic 3M have to fly much lower than the P1 for the same GSD? Set `gsd_target` to 2 and then 4 cm/px. For which cameras and GSDs would the height exceed 120 m, the open-category limit? What are the consequences of flying low (number of images, time, safety)?")),
         ("md", t(
-            "## 3. Skutečný terén a plán linek\n\nNačteme DMR 5G pro svah údolí Vltavy. Linky vedou ve směru východ–západ, tedy po spádnici dolů do údolí a zpět. Místo vzletu je na planině na západním okraji.",
-            "## 3. Real terrain and the line plan\n\nWe load DMR 5G for the slope of the Vltava valley. Lines run east–west, i.e. down the fall line into the valley and back. The take-off point is on the plateau at the western edge.")),
+            "## 3. Skutečný terén a plán linek\n\nNačteme DMR 5G pro @AREA_CS@. Linky vedou ve směru východ–západ, tedy po spádnici dolů a zpět nahoru. Místo vzletu je @TAKEOFF_CS@.",
+            "## 3. Real terrain and the line plan\n\nWe load DMR 5G for @AREA_EN@. Lines run east–west, i.e. down the fall line and back up. The take-off point is @TAKEOFF_EN@.")),
         ("code", t('''
-cx, cy = Transformer.from_crs(4326, 5514, always_xy=True).transform(14.392, 50.152)
+cx, cy = Transformer.from_crs(4326, 5514, always_xy=True).transform(@LON@, @LAT@)
 W, Hh = 1200, 800                                  # území: šířka (V–Z) a výška (S–J) v m
 dem, tr = cuzk_raster("dmr5g", cx - W / 2, cy - Hh / 2, cx + W / 2, cy + Hh / 2, res=2)
-z_takeoff = float(np.median(dem[:, :10]))            # planina na západním okraji
+z_takeoff = float(np.median(dem[:, :10]))            # horní, západní okraj území
 print(f"terén {dem.min():.1f}–{dem.max():.1f} m n. m. (Bpv), místo vzletu {z_takeoff:.1f} m n. m.")
 fig, ax = plt.subplots(figsize=(8, 5))
 im = ax.imshow(dem, cmap="terrain", extent=(0, W, 0, Hh)); fig.colorbar(im, label="nadmořská výška (m, Bpv)")
-ax.contour(np.flipud(dem), levels=np.arange(180, 300, 10), colors="k", linewidths=0.4, extent=(0, W, 0, Hh))
-ax.set(xlabel="m (západ → východ)", ylabel="m", title="DMR 5G, levý svah údolí Vltavy u Roztok"); plt.show()
+ax.contour(np.flipud(dem), levels=np.arange(np.floor(dem.min() / 10) * 10, dem.max() + 10, 10), colors="k", linewidths=0.4, extent=(0, W, 0, Hh))
+ax.set(xlabel="m (západ → východ)", ylabel="m", title="DMR 5G, @PLOT_CS@"); plt.show()
 ''', '''
-cx, cy = Transformer.from_crs(4326, 5514, always_xy=True).transform(14.392, 50.152)
+cx, cy = Transformer.from_crs(4326, 5514, always_xy=True).transform(@LON@, @LAT@)
 W, Hh = 1200, 800                                  # area: width (E–W) and height (N–S) in m
 dem, tr = cuzk_raster("dmr5g", cx - W / 2, cy - Hh / 2, cx + W / 2, cy + Hh / 2, res=2)
-z_takeoff = float(np.median(dem[:, :10]))            # plateau at the western edge
+z_takeoff = float(np.median(dem[:, :10]))            # upper, western edge of the area
 print(f"terrain {dem.min():.1f}–{dem.max():.1f} m a.s.l. (Bpv), take-off point {z_takeoff:.1f} m a.s.l.")
 fig, ax = plt.subplots(figsize=(8, 5))
 im = ax.imshow(dem, cmap="terrain", extent=(0, W, 0, Hh)); fig.colorbar(im, label="elevation (m, Bpv)")
-ax.contour(np.flipud(dem), levels=np.arange(180, 300, 10), colors="k", linewidths=0.4, extent=(0, W, 0, Hh))
-ax.set(xlabel="m (west → east)", ylabel="m", title="DMR 5G, left slope of the Vltava valley at Roztoky"); plt.show()
+ax.contour(np.flipud(dem), levels=np.arange(np.floor(dem.min() / 10) * 10, dem.max() + 10, 10), colors="k", linewidths=0.4, extent=(0, W, 0, Hh))
+ax.set(xlabel="m (west → east)", ylabel="m", title="DMR 5G, @PLOT_EN@"); plt.show()
 ''')),
         ("code", t('''
 cam = CAMERAS["Mavic 3E"]     # ◀ parametr: kamera
@@ -187,18 +216,18 @@ for a, (arr, lbl, cm) in zip(ax, [(agl, "height above ground (m)", "viridis"), (
 ax[0].set_title("terrain following" if follow else f"constant {H0} m above take-off"); plt.show()
 ''')),
         ("task", t(
-            "Při stálé výšce 80 m nad planinou: jaký je rozsah GSD a překryvů? Kde je překryv nejmenší, na planině, nebo v údolí, a proč? Kolik území je výš než 120 m nad terénem? Přepni `follow = True`: co se zlepší a co k sledování terénu potřebuješ (model terénu, jeho přesnost, překážky)?",
-            "At a constant 80 m above the plateau: what is the range of GSD and overlaps? Where is the overlap smallest, on the plateau or in the valley, and why? How much of the area is more than 120 m above the terrain? Switch to `follow = True`: what improves and what do you need for terrain following (terrain model, its accuracy, obstacles)?")),
+            "Při stálé výšce 80 m nad místem vzletu: jaký je rozsah GSD a překryvů? Kde je překryv nejmenší, nahoře u místa vzletu, nebo v nejnižších místech, a proč? Kolik území je výš než 120 m nad terénem? Přepni `follow = True`: co se zlepší a co k sledování terénu potřebuješ (model terénu, jeho přesnost, překážky)?",
+            "At a constant 80 m above the take-off point: what is the range of GSD and overlaps? Where is the overlap smallest, at the top near the take-off point or in the lowest places, and why? How much of the area is more than 120 m above the terrain? Switch to `follow = True`: what improves and what do you need for terrain following (terrain model, its accuracy, obstacles)?")),
         ("md", t(
-            "## 5. Skutečný vítr, rozmazání a postupná závěrka\n\nZ Open-Meteo vezmeme předpověď větru pro Roztoky na dnešek. Rozmazání = rychlost vůči zemi · expozice / GSD; zkosení postupnou závěrkou = rychlost vůči zemi · doba vyčtení čipu / GSD. Zenmuse P1 a Mavic 3E mají mechanickou závěrku, takže u nich zkosení prakticky odpadá (t_read = 0); výchozích 30 ms je řádová hodnota pro elektronickou postupnou závěrku.",
-            "## 5. Real wind, motion blur and rolling shutter\n\nWe take today's wind forecast for Roztoky from Open-Meteo. Blur = ground speed · exposure / GSD; rolling-shutter skew = ground speed · sensor readout time / GSD. The Zenmuse P1 and Mavic 3E have a mechanical shutter, so skew practically disappears for them (t_read = 0); the default 30 ms is an order-of-magnitude value for an electronic rolling shutter.")),
+            "## 5. Skutečný vítr, rozmazání a postupná závěrka\n\nZ Open-Meteo vezmeme předpověď větru pro toto území na dnešek. Rozmazání = rychlost vůči zemi · expozice / GSD; zkosení postupnou závěrkou = rychlost vůči zemi · doba vyčtení čipu / GSD. Zenmuse P1 a Mavic 3E mají mechanickou závěrku, takže u nich zkosení prakticky odpadá (t_read = 0); výchozích 30 ms je řádová hodnota pro elektronickou postupnou závěrku.",
+            "## 5. Real wind, motion blur and rolling shutter\n\nWe take today's wind forecast for this area from Open-Meteo. Blur = ground speed · exposure / GSD; rolling-shutter skew = ground speed · sensor readout time / GSD. The Zenmuse P1 and Mavic 3E have a mechanical shutter, so skew practically disappears for them (t_read = 0); the default 30 ms is an order-of-magnitude value for an electronic rolling shutter.")),
         ("code", t('''
-w = open_meteo({"latitude": 50.152, "longitude": 14.392, "forecast_days": 1, "wind_speed_unit": "ms", "timezone": "Europe/Prague",
+w = open_meteo({"latitude": @LAT@, "longitude": @LON@, "forecast_days": 1, "wind_speed_unit": "ms", "timezone": "Europe/Prague",
                 "hourly": "wind_speed_10m,wind_speed_80m,wind_speed_120m,wind_direction_80m,wind_gusts_10m"})
 met = pd.DataFrame(w["hourly"]).set_index("time")
 print(met.iloc[6:20].to_string())
 ''', '''
-w = open_meteo({"latitude": 50.152, "longitude": 14.392, "forecast_days": 1, "wind_speed_unit": "ms", "timezone": "Europe/Prague",
+w = open_meteo({"latitude": @LAT@, "longitude": @LON@, "forecast_days": 1, "wind_speed_unit": "ms", "timezone": "Europe/Prague",
                 "hourly": "wind_speed_10m,wind_speed_80m,wind_speed_120m,wind_direction_80m,wind_gusts_10m"})
 met = pd.DataFrame(w["hourly"]).set_index("time")
 print(met.iloc[6:20].to_string())
@@ -264,4 +293,16 @@ print(f"usable energy {E_use:.1f} Wh → {'enough' if E_mission + E_return <= E_
         ("task", t(
             "Stačí jedna baterie? Nastav `temp_factor = 0.75` a pak zvyš vítr (`headwind = 8`). Proč je „tam po větru, zpátky proti větru“ past? Zkus také vyšší `v_air`: proč při silném větru pomáhá letět rychleji, i když výkon roste?",
             "Is one battery enough? Set `temp_factor = 0.75` and then increase the wind (`headwind = 8`). Why is \"downwind out, upwind back\" a trap? Also try a higher `v_air`: why does flying faster help in strong wind even though power increases?")),
+        ("task", t(
+            "+ Spolužáci mohou mít notebook pro jiné území (Roztoky, Brno-Bystrc, Hosín u Hluboké). Porovnejte převýšení, rozsah výšky nad zemí při stálé výšce 80 m nad místem vzletu a podíl území nad 120 m. Kde by stálá výška byla nejméně vhodná a kolik baterií by na území potřeboval každý z vás?",
+            "+ Classmates may have the notebook for another area (Roztoky, Brno-Bystrc, Hosín near Hluboká). Compare the relief, the range of height above ground at a constant 80 m above the take-off point and the share of the area above 120 m. Where would a constant height be least suitable, and how many batteries would each of you need for the area?")),
     ]
+    tokens = {"@LON@": P["lon"], "@LAT@": P["lat"], "@AREA_CS@": P["area_cs"], "@AREA_EN@": P["area_en"],
+              "@TAKEOFF_CS@": P["takeoff_cs"], "@TAKEOFF_EN@": P["takeoff_en"], "@PLOT_CS@": P["plot_cs"], "@PLOT_EN@": P["plot_en"]}
+    res = []
+    for kind, text in out:
+        for k, v in tokens.items():
+            text = text.replace(k, v)
+        assert not re.search(r"@[A-Z0-9_]+@", text), text[:80]
+        res.append((kind, text))
+    return res
