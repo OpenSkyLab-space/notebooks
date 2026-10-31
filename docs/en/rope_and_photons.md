@@ -1,4 +1,4 @@
-# Photons in the Sentinel-2 bands
+# Photons in the Sentinel-2B bands
 
 Description of the notebook for the visual [Rope and photons](https://openskylab.space/edu_viz_rope_and_photons.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/rope_and_photons_en.ipynb) · version 1.0 · about 40 min · six tasks
 
@@ -61,6 +61,8 @@ Parameters the student changes:
 **Task 5.** A thermal photon has only about four times the energy of k · T, a radar photon is more than a thousand times weaker than k · T. Why are thermal cameras with photon detectors cooled, and why do a microbolometer and a radar antenna measure heating or the electric field of the wave rather than individual photons? Set `T = 77` (liquid nitrogen) and compare.
 
 **Task 6.** At what wavelength does a photon have an energy of 10 eV (the approximate ionisation threshold)? Which part of the spectrum is it? Chemical bonds in molecules have energies of a few eV. Explain why a single UV photon can damage DNA while a strong radar signal carries more energy in total and still breaks no bond and ionises nothing.
+
+**Extension (optional).** Classmates may have the notebook for another Sentinel-2 satellite (2A, 2B or 2C). Compare the central wavelengths of the bands and the E0 values: by how many nanometres do bands of the same name differ, and why must anyone who builds a time series from several satellites take this into account?
 
 ## Requirements
 

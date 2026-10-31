@@ -1,10 +1,10 @@
-# Fotony v pásmech Sentinelu-2
+# Fotony v pásmech Sentinelu-2B
 
 Popis notebooku k vizuálu [Švihadlo a fotony](https://openskylab.space/edu_viz_rope_and_photons.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/rope_and_photons_cs.ipynb) · verze 1.0 · asi 40 min · šest úkolů
 
 ## O čem notebook je
 
-Ve vizuálu jsi viděl, že u vlny na laně platí c = λ · f a že energii nese rozkmit i frekvence. U světla je to jinak: energii jednoho fotonu určuje jen frekvence, E = h · f, jas záření je počet fotonů. Tady to spočítáš pro skutečná pásma družice Sentinel-2.
+Ve vizuálu jsi viděl, že u vlny na laně platí c = λ · f a že energii nese rozkmit i frekvence. U světla je to jinak: energii jednoho fotonu určuje jen frekvence, E = h · f, jas záření je počet fotonů. Tady to spočítáš pro skutečná pásma družice Sentinel-2B.
 
 ## Cíl
 
@@ -61,6 +61,8 @@ Parametry, které student mění:
 **Úkol 5.** Termální foton má energii jen asi čtyřikrát větší než k · T, radarový foton je víc než tisíckrát slabší než k · T. Proč proto termální kamery s fotonovými detektory chladí a proč mikrobolometr a radarová anténa neměří jednotlivé fotony, ale ohřev, resp. elektrické pole vlny? Nastav `T = 77` (kapalný dusík) a porovnej.
 
 **Úkol 6.** Na jaké vlnové délce má foton energii 10 eV (přibližná hranice ionizace)? Do které oblasti spektra patří? Chemické vazby v molekulách mají energii v řádu několika eV. Vysvětli, proč jediný foton UV záření může poškodit DNA, zatímco silný radarový signál nese celkem víc energie, a přesto žádnou vazbu nerozbije ani nic neionizuje.
+
+**Rozšíření (nepovinné).** Spolužáci mohou mít notebook pro jinou družici řady Sentinel-2 (2A, 2B nebo 2C). Porovnejte střední vlnové délky pásem a hodnoty E0: o kolik nanometrů se pásma stejného jména liší a proč s tím musí počítat, kdo skládá časovou řadu ze snímků více družic?
 
 ## Co je potřeba
 
