@@ -40,7 +40,7 @@ Parametry, které student mění:
 
 - `lon, lat, half = 14.42, 50.08, 8000`: střed výřezu (°) a poloviční šířka (m)
 
-**Úkol 2.** Najdi na mapě Vltavu, velké parky nebo lesy (Stromovka, Hvězda, Krč) a zastavěné plochy s halami. Jaké jasové teploty mají? Proč je rozdíl mezi Vltavou a střechami hal kolem poledne tak velký? Proč není jasová teplota totéž co teplota povrchu?
+**Úkol 2.** Najdi na mapě Vltavu, velké parky nebo lesy (Stromovka, Hvězda, Krč) a zastavěné plochy s halami. Jaké jasové teploty mají? Proč je rozdíl mezi vodou a střechami hal kolem poledne tak velký? Proč není jasová teplota totéž co teplota povrchu?
 
 ### 4. Emisivita
 
@@ -65,13 +65,15 @@ Parametry, které student mění:
 
 ### 6. Požár menší než pixel
 
-Pixel je směs: podíl p hoří při teplotě požáru, zbytek má teplotu pozadí. Jako pozadí vezmeme medián skutečné jasové teploty z výřezu Prahy a porovnáme pásmo 3,9 µm (požárová pásma MODIS a VIIRS leží mezi 3,7 a 4,1 µm) s pásmem 10,9 µm.
+Pixel je směs: podíl p hoří při teplotě požáru, zbytek má teplotu pozadí. Jako pozadí vezmeme medián skutečné jasové teploty z výřezu (Praha) a porovnáme pásmo 3,9 µm (požárová pásma MODIS a VIIRS leží mezi 3,7 a 4,1 µm) s pásmem 10,9 µm.
 
 Parametry, které student mění:
 
 - `T_fire = 900`: teplota požáru v K
 
 **Úkol 5.** Při jakém podílu požáru se pixel ohřeje o 10 K ve 3,9 µm a při jakém v 10,9 µm? Jakou plochu to je v pixelu MODIS 1 × 1 km? Vysvětli rozdíl Wienovým zákonem. Proč algoritmy ve dne hlídají i odražené Slunce ve 3,9 µm?
+
+**Rozšíření (nepovinné).** Porovnej se spolužákem, který spustil notebook pro jiné místo a den: jaký rozsah jasových teplot vyšel jemu? Kolik z rozdílu může jít na vrub jiného dne a hodiny, jiné výšky Slunce a jiného složení krajiny?
 
 ## Co je potřeba
 

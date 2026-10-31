@@ -1,39 +1,63 @@
-META = {
-    "version": "1.0",
-    "minutes": 45,
-    "title": {"cs": "Teplota Prahy z Landsatu 8: Planckův zákon v praxi", "en": "The temperature of Prague from Landsat 8: Planck's law in practice"},
-    "visual": {"cs": "Záření černého tělesa", "en": "Blackbody radiation"},
-    "lead": {
-        "cs": "Vizuál ukazuje Planckův zákon, Wienův posun, čtvrtou mocninu Stefanova–Boltzmannova zákona a vliv emisivity. Tady stejné vzorce použiješ na skutečný termální snímek Landsatu 8 z vlny veder 26. června 2019 a z digitálních čísel spočítáš teplotu povrchu Prahy.",
-        "en": "The visual shows Planck's law, Wien's shift, the fourth power of the Stefan–Boltzmann law and the role of emissivity. Here you apply the same formulas to a real Landsat 8 thermal image from the heat wave of 26 June 2019 and turn digital numbers into the surface temperature of Prague.",
-    },
-    "goal": {
-        "cs": "převést termální pásmo Landsatu 8 z DN na zář a jasovou teplotu, opravit ji o emisivitu, odhadnout chybu ze špatné emisivity a odrazu oblohy a ukázat, proč družice hledají malé požáry ve 3,9 µm.",
-        "en": "convert the Landsat 8 thermal band from DN to radiance and brightness temperature, correct it for emissivity, estimate the error from a wrong emissivity and from sky reflection, and show why satellites look for small fires at 3.9 µm.",
-    },
-    "data": {
-        "cs": "Landsat 8 OLI/TIRS, Collection 1 Level-1, scéna `LC08_L1TP_191025_20190626_20190705_01_T1` (26. 6. 2019, 9:51 UTC, oblačnost 0,1 %), pásma B4, B5 a B10 a soubor MTL s kalibračními konstantami z veřejného archivu Google Cloud. Čte se jen výřez 16 × 16 km kolem centra Prahy (asi 3 MB).",
-        "en": "Landsat 8 OLI/TIRS, Collection 1 Level-1, scene `LC08_L1TP_191025_20190626_20190705_01_T1` (26 June 2019, 09:51 UTC, cloud cover 0.1 %), bands B4, B5 and B10 and the MTL file with calibration constants from the Google Cloud public archive. Only a 16 × 16 km window around central Prague is read (about 3 MB).",
-    },
-    "sources": {
-        "cs": [
-            "Landsat 8 OLI/TIRS Collection 1 Level-1, U.S. Geological Survey; veřejný archiv Google Cloud (`gcp-public-data-landsat`). Data USGS jsou volná bez omezení užití (public domain), s uvedením zdroje.",
-            "Převod DN na zář a jasovou teplotu: USGS (2019). *Landsat 8 (L8) Data Users Handbook*, verze 5.0, kap. 5.",
-            "Emisivita z NDVI: Sobrino, J. A., Jiménez-Muñoz, J. C., Paolini, L. (2004). Land surface temperature retrieval from LANDSAT TM 5. *Remote Sensing of Environment* 90, 434–440. https://doi.org/10.1016/j.rse.2004.02.003",
-            "Detekce požárů ve 3,9 a 11 µm: Giglio, L., Schroeder, W., Justice, C. O. (2016). The collection 6 MODIS active fire detection algorithm and fire products. *Remote Sensing of Environment* 178, 31–41. https://doi.org/10.1016/j.rse.2016.02.054",
-        ],
-        "en": [
-            "Landsat 8 OLI/TIRS Collection 1 Level-1, U.S. Geological Survey; Google Cloud public archive (`gcp-public-data-landsat`). USGS data are free of use restrictions (public domain), with attribution.",
-            "DN to radiance and brightness temperature: USGS (2019). *Landsat 8 (L8) Data Users Handbook*, version 5.0, ch. 5.",
-            "Emissivity from NDVI: Sobrino, J. A., Jiménez-Muñoz, J. C., Paolini, L. (2004). Land surface temperature retrieval from LANDSAT TM 5. *Remote Sensing of Environment* 90, 434–440. https://doi.org/10.1016/j.rse.2004.02.003",
-            "Fire detection at 3.9 and 11 µm: Giglio, L., Schroeder, W., Justice, C. O. (2016). The collection 6 MODIS active fire detection algorithm and fire products. *Remote Sensing of Environment* 178, 31–41. https://doi.org/10.1016/j.rse.2016.02.054",
-        ],
-    },
+import re
+
+# místa: přípona souboru → scéna Landsatu 8, střed výřezu a popisy
+VARIANTS = {
+    "": dict(scene="LC08_L1TP_191025_20190626_20190705_01_T1", lon=14.42, lat=50.08, date_cs="26. 6. 2019", date_en="26 June 2019", time="9:51", cc_cs="0,1", cc_en="0.1",
+             place_cs="Praha", place_en="Prague", gen_cs="Prahy", win_cs="kolem centra Prahy", win_en="around central Prague",
+             when_cs="z vlny veder 26. června 2019", when_en="from the heat wave of 26 June 2019",
+             landmarks_cs="Vltavu, velké parky nebo lesy (Stromovka, Hvězda, Krč) a zastavěné plochy s halami",
+             landmarks_en="the Vltava river, large parks or forests (Stromovka, Hvězda, Krč) and built-up areas with large halls"),
+    "brno": dict(scene="LC08_L1TP_190026_20200808_20200821_01_T1", lon=16.61, lat=49.195, date_cs="8. 8. 2020", date_en="8 Aug 2020", time="9:45", cc_cs="2,5", cc_en="2.5",
+                 place_cs="Brno", place_en="Brno", gen_cs="Brna", win_cs="kolem centra Brna", win_en="around central Brno",
+                 when_cs="ze slunečného 8. srpna 2020", when_en="from the sunny 8 August 2020",
+                 landmarks_cs="Svratku a Brněnskou přehradu, lesy (třeba kolem Kohoutovic) a zastavěné plochy s velkými halami (letiště Tuřany, průmyslové areály)",
+                 landmarks_en="the Svratka river and the Brno reservoir, forests (for instance around Kohoutovice) and built-up areas with large halls (Tuřany airport, industrial estates)"),
+    "hluboka": dict(scene="LC08_L1TP_191026_20190626_20190705_01_T1", lon=14.46, lat=49.01, date_cs="26. 6. 2019", date_en="26 June 2019", time="9:51", cc_cs="0,2", cc_en="0.2",
+                    place_cs="České Budějovice a Hluboká", place_en="České Budějovice and Hluboká", gen_cs="Českých Budějovic a Hluboké",
+                    win_cs="mezi Českými Budějovicemi a Hlubokou nad Vltavou", win_en="between České Budějovice and Hluboká nad Vltavou",
+                    when_cs="z vlny veder 26. června 2019", when_en="from the heat wave of 26 June 2019",
+                    landmarks_cs="Vltavu, Malši a rybníky u Hluboké, lesy a zastavěné plochy s velkými halami na okraji Českých Budějovic",
+                    landmarks_en="the Vltava and Malše rivers and the fishponds near Hluboká, forests and built-up areas with large halls on the edge of České Budějovice"),
 }
 
 
-def cells(t):
-    return [
+def meta(P):
+    return {
+        "version": "1.0",
+        "minutes": 45,
+        "title": {"cs": "Teplota " + P["gen_cs"] + " z Landsatu 8: Planckův zákon v praxi", "en": "The temperature of " + P["place_en"] + " from Landsat 8: Planck's law in practice"},
+        "visual": {"cs": "Záření černého tělesa", "en": "Blackbody radiation"},
+        "lead": {
+            "cs": "Vizuál ukazuje Planckův zákon, Wienův posun, čtvrtou mocninu Stefanova–Boltzmannova zákona a vliv emisivity. Tady stejné vzorce použiješ na skutečný termální snímek Landsatu 8 " + P["when_cs"] + " a z digitálních čísel spočítáš teplotu povrchu " + P["gen_cs"] + ".",
+            "en": "The visual shows Planck's law, Wien's shift, the fourth power of the Stefan–Boltzmann law and the role of emissivity. Here you apply the same formulas to a real Landsat 8 thermal image " + P["when_en"] + " and turn digital numbers into the surface temperature of " + P["place_en"] + ".",
+        },
+        "goal": {
+            "cs": "převést termální pásmo Landsatu 8 z DN na zář a jasovou teplotu, opravit ji o emisivitu, odhadnout chybu ze špatné emisivity a odrazu oblohy a ukázat, proč družice hledají malé požáry ve 3,9 µm.",
+            "en": "convert the Landsat 8 thermal band from DN to radiance and brightness temperature, correct it for emissivity, estimate the error from a wrong emissivity and from sky reflection, and show why satellites look for small fires at 3.9 µm.",
+        },
+        "data": {
+            "cs": f"Landsat 8 OLI/TIRS, Collection 1 Level-1, scéna `{P['scene']}` ({P['date_cs']}, {P['time']} UTC, oblačnost {P['cc_cs']} %), pásma B4, B5 a B10 a soubor MTL s kalibračními konstantami z veřejného archivu Google Cloud. Čte se jen výřez 16 × 16 km {P['win_cs']} (asi 3 MB).",
+            "en": f"Landsat 8 OLI/TIRS, Collection 1 Level-1, scene `{P['scene']}` ({P['date_en']}, {P['time']} UTC, cloud cover {P['cc_en']} %), bands B4, B5 and B10 and the MTL file with calibration constants from the Google Cloud public archive. Only a 16 × 16 km window {P['win_en']} is read (about 3 MB).",
+        },
+        "sources": {
+            "cs": [
+                "Landsat 8 OLI/TIRS Collection 1 Level-1, U.S. Geological Survey; veřejný archiv Google Cloud (`gcp-public-data-landsat`). Data USGS jsou volná bez omezení užití (public domain), s uvedením zdroje.",
+                "Převod DN na zář a jasovou teplotu: USGS (2019). *Landsat 8 (L8) Data Users Handbook*, verze 5.0, kap. 5.",
+                "Emisivita z NDVI: Sobrino, J. A., Jiménez-Muñoz, J. C., Paolini, L. (2004). Land surface temperature retrieval from LANDSAT TM 5. *Remote Sensing of Environment* 90, 434–440. https://doi.org/10.1016/j.rse.2004.02.003",
+                "Detekce požárů ve 3,9 a 11 µm: Giglio, L., Schroeder, W., Justice, C. O. (2016). The collection 6 MODIS active fire detection algorithm and fire products. *Remote Sensing of Environment* 178, 31–41. https://doi.org/10.1016/j.rse.2016.02.054",
+            ],
+            "en": [
+                "Landsat 8 OLI/TIRS Collection 1 Level-1, U.S. Geological Survey; Google Cloud public archive (`gcp-public-data-landsat`). USGS data are free of use restrictions (public domain), with attribution.",
+                "DN to radiance and brightness temperature: USGS (2019). *Landsat 8 (L8) Data Users Handbook*, version 5.0, ch. 5.",
+                "Emissivity from NDVI: Sobrino, J. A., Jiménez-Muñoz, J. C., Paolini, L. (2004). Land surface temperature retrieval from LANDSAT TM 5. *Remote Sensing of Environment* 90, 434–440. https://doi.org/10.1016/j.rse.2004.02.003",
+                "Fire detection at 3.9 and 11 µm: Giglio, L., Schroeder, W., Justice, C. O. (2016). The collection 6 MODIS active fire detection algorithm and fire products. *Remote Sensing of Environment* 178, 31–41. https://doi.org/10.1016/j.rse.2016.02.054",
+            ],
+        },
+    }
+
+
+def cells(t, P):
+    out = [
         ("md", t("## 1. Příprava", "## 1. Setup")),
         ("code", t('''
 %pip install -q rasterio
@@ -114,12 +138,12 @@ ax.legend(); plt.show()
             "## 3. Skutečná scéna: z DN na jasovou teplotu\n\nPásmo B10 (10,6–11,2 µm) ukládá digitální čísla (DN). Soubor MTL obsahuje lineární převod na zář, L = M · DN + A, a konstanty K1, K2, kterými se zář převede na jasovou teplotu, T = K2 / ln(K1 / L + 1). Je to Planckův zákon zjednodušený na jedno pásmo.",
             "## 3. A real scene: from DN to brightness temperature\n\nBand B10 (10.6–11.2 µm) stores digital numbers (DN). The MTL file holds the linear conversion to radiance, L = M · DN + A, and the constants K1, K2 that turn radiance into brightness temperature, T = K2 / ln(K1 / L + 1). It is Planck's law simplified for one band.")),
         ("code", t('''
-SCENE = "LC08_L1TP_191025_20190626_20190705_01_T1"
-BASE = f"https://storage.googleapis.com/gcp-public-data-landsat/LC08/01/191/025/{SCENE}/{SCENE}"
+SCENE = "@SCENE@"
+BASE = f"https://storage.googleapis.com/gcp-public-data-landsat/LC08/01/@PATH@/@ROW@/{SCENE}/{SCENE}"
 mtl = dict(l.strip().split(" = ") for l in requests.get(BASE + "_MTL.txt", timeout=60).text.splitlines() if " = " in l)
 num = lambda key: float(mtl[key])
 
-lon, lat, half = 14.42, 50.08, 8000      # ◀ parametr: střed výřezu (°) a poloviční šířka (m)
+lon, lat, half = @LON@, @LAT@, 8000      # ◀ parametr: střed výřezu (°) a poloviční šířka (m)
 
 def read_band(b):
     with rasterio.Env(GDAL_DISABLE_READDIR_ON_OPEN="EMPTY_DIR", GDAL_HTTP_MAX_RETRY=5, GDAL_HTTP_RETRY_DELAY=2):
@@ -135,12 +159,12 @@ print(f"DN {dn10.min():.0f}–{dn10.max():.0f} → zář {L10.min():.2f}–{L10.
       f"jasová teplota {BT.min() - 273.15:.1f} až {BT.max() - 273.15:.1f} °C")
 print(f"kontrola Planckem pro 10,9 µm: {planck_inv(10.9, np.median(L10)) - 273.15:.1f} °C vs. K1/K2: {np.median(BT) - 273.15:.1f} °C")
 ''', '''
-SCENE = "LC08_L1TP_191025_20190626_20190705_01_T1"
-BASE = f"https://storage.googleapis.com/gcp-public-data-landsat/LC08/01/191/025/{SCENE}/{SCENE}"
+SCENE = "@SCENE@"
+BASE = f"https://storage.googleapis.com/gcp-public-data-landsat/LC08/01/@PATH@/@ROW@/{SCENE}/{SCENE}"
 mtl = dict(l.strip().split(" = ") for l in requests.get(BASE + "_MTL.txt", timeout=60).text.splitlines() if " = " in l)
 num = lambda key: float(mtl[key])
 
-lon, lat, half = 14.42, 50.08, 8000      # ◀ parameter: window centre (°) and half-width (m)
+lon, lat, half = @LON@, @LAT@, 8000      # ◀ parameter: window centre (°) and half-width (m)
 
 def read_band(b):
     with rasterio.Env(GDAL_DISABLE_READDIR_ON_OPEN="EMPTY_DIR", GDAL_HTTP_MAX_RETRY=5, GDAL_HTTP_RETRY_DELAY=2):
@@ -160,18 +184,18 @@ print(f"check with Planck at 10.9 µm: {planck_inv(10.9, np.median(L10)) - 273.1
 fig, ax = plt.subplots(figsize=(7.5, 6.5))
 im = ax.imshow(BT - 273.15, cmap="inferno")
 fig.colorbar(im, ax=ax, label="jasová teplota B10 (°C)")
-ax.set_title(f"Praha, {mtl['DATE_ACQUIRED']}, Landsat 8 B10\\n(pixel 30 m, převzorkováno ze 100 m)")
+ax.set_title(f"@PLACE_CS@, {mtl['DATE_ACQUIRED']}, Landsat 8 B10\\n(pixel 30 m, převzorkováno ze 100 m)")
 ax.axis("off"); plt.show()
 ''', '''
 fig, ax = plt.subplots(figsize=(7.5, 6.5))
 im = ax.imshow(BT - 273.15, cmap="inferno")
 fig.colorbar(im, ax=ax, label="B10 brightness temperature (°C)")
-ax.set_title(f"Prague, {mtl['DATE_ACQUIRED']}, Landsat 8 B10\\n(30 m pixel, resampled from 100 m)")
+ax.set_title(f"@PLACE_EN@, {mtl['DATE_ACQUIRED']}, Landsat 8 B10\\n(30 m pixel, resampled from 100 m)")
 ax.axis("off"); plt.show()
 ''')),
         ("task", t(
-            "Najdi na mapě Vltavu, velké parky nebo lesy (Stromovka, Hvězda, Krč) a zastavěné plochy s halami. Jaké jasové teploty mají? Proč je rozdíl mezi Vltavou a střechami hal kolem poledne tak velký? Proč není jasová teplota totéž co teplota povrchu?",
-            "Find the Vltava river, large parks or forests (Stromovka, Hvězda, Krč) and built-up areas with large halls on the map. What brightness temperatures do they have? Why is the difference between the river and hall roofs so large around noon? Why is brightness temperature not the same as surface temperature?")),
+            "Najdi na mapě @LANDMARKS_CS@. Jaké jasové teploty mají? Proč je rozdíl mezi vodou a střechami hal kolem poledne tak velký? Proč není jasová teplota totéž co teplota povrchu?",
+            "Find @LANDMARKS_EN@ on the map. What brightness temperatures do they have? Why is the difference between the water and hall roofs so large around noon? Why is brightness temperature not the same as surface temperature?")),
         ("md", t(
             "## 4. Emisivita\n\nReálné povrchy vyzařují méně než černé těleso: L = ε · B(T). Emisivitu odhadneme z NDVI zjednodušenou metodou prahů podle Sobrina a kol. (2004): holý povrch 0,97, plná vegetace 0,99, mezi tím podle podílu vegetace s opravou na vícenásobné odrazy mezi rostlinami a půdou. Vodě (NDVI < 0) dáme typickou hodnotu 0,991. Odraz oblohy a atmosféru zatím zanedbáme.",
             "## 4. Emissivity\n\nReal surfaces emit less than a blackbody: L = ε · B(T). We estimate emissivity from NDVI with a simplified threshold method after Sobrino et al. (2004): bare surface 0.97, full vegetation 0.99, in between according to the vegetation fraction with a correction for multiple scattering between plants and soil. Water (NDVI < 0) gets a typical value of 0.991. Sky reflection and the atmosphere are ignored for now.")),
@@ -254,8 +278,8 @@ for name, eps_m in [("grass", 0.98), ("concrete", 0.92), ("oxidised sheet metal"
             "Proč lesklý plech pod jasnou oblohou vypadá v termokameře mrazivě studený, i když má 27 °C? Proč při obloze stejně teplé jako povrch nehraje emisivita žádnou roli? Za jakého počasí bys proto plánoval termální snímkování střech?",
             "Why does polished sheet metal under a clear sky look freezing cold in a thermal camera although it is at 27 °C? Why does emissivity not matter at all when the sky is as warm as the surface? In what weather would you therefore plan thermal imaging of roofs?")),
         ("md", t(
-            "## 6. Požár menší než pixel\n\nPixel je směs: podíl p hoří při teplotě požáru, zbytek má teplotu pozadí. Jako pozadí vezmeme medián skutečné jasové teploty z výřezu Prahy a porovnáme pásmo 3,9 µm (požárová pásma MODIS a VIIRS leží mezi 3,7 a 4,1 µm) s pásmem 10,9 µm.",
-            "## 6. A fire smaller than a pixel\n\nA pixel is a mixture: a fraction p burns at the fire temperature, the rest has the background temperature. As background we take the median real brightness temperature of the Prague window and compare the 3.9 µm band (the fire bands of MODIS and VIIRS lie between 3.7 and 4.1 µm) with the 10.9 µm band.")),
+            "## 6. Požár menší než pixel\n\nPixel je směs: podíl p hoří při teplotě požáru, zbytek má teplotu pozadí. Jako pozadí vezmeme medián skutečné jasové teploty z výřezu (@PLACE_CS@) a porovnáme pásmo 3,9 µm (požárová pásma MODIS a VIIRS leží mezi 3,7 a 4,1 µm) s pásmem 10,9 µm.",
+            "## 6. A fire smaller than a pixel\n\nA pixel is a mixture: a fraction p burns at the fire temperature, the rest has the background temperature. As background we take the median real brightness temperature of the window (@PLACE_EN@) and compare the 3.9 µm band (the fire bands of MODIS and VIIRS lie between 3.7 and 4.1 µm) with the 10.9 µm band.")),
         ("code", t('''
 T_fire = 900                     # ◀ parametr: teplota požáru v K
 T_bg = float(np.median(BT))
@@ -290,4 +314,16 @@ for lam_b in (3.9, 10.9):
         ("task", t(
             "Při jakém podílu požáru se pixel ohřeje o 10 K ve 3,9 µm a při jakém v 10,9 µm? Jakou plochu to je v pixelu MODIS 1 × 1 km? Vysvětli rozdíl Wienovým zákonem. Proč algoritmy ve dne hlídají i odražené Slunce ve 3,9 µm?",
             "At what fire fraction does the pixel warm by 10 K at 3.9 µm and at 10.9 µm? What area is that within a 1 × 1 km MODIS pixel? Explain the difference with Wien's law. Why do daytime algorithms also watch for reflected sunlight at 3.9 µm?")),
+        ("task", t(
+        "+ Porovnej se spolužákem, který spustil notebook pro jiné místo a den: jaký rozsah jasových teplot vyšel jemu? Kolik z rozdílu může jít na vrub jiného dne a hodiny, jiné výšky Slunce a jiného složení krajiny?",
+        "+ Compare with a classmate who ran the notebook for another place and day: what range of brightness temperatures did they get? How much of the difference can be due to another day and hour, another sun elevation and a different landscape?")),
     ]
+    tokens = {"@SCENE@": P["scene"], "@PATH@": P["scene"][10:13], "@ROW@": P["scene"][13:16], "@LON@": str(P["lon"]), "@LAT@": str(P["lat"]),
+              "@PLACE_CS@": P["place_cs"], "@PLACE_EN@": P["place_en"], "@LANDMARKS_CS@": P["landmarks_cs"], "@LANDMARKS_EN@": P["landmarks_en"]}
+    res = []
+    for kind, text in out:
+        for k, v in tokens.items():
+            text = text.replace(k, v)
+        assert not re.search(r"@[A-Z0-9_]+@", text), text[:80]
+        res.append((kind, text))
+    return res

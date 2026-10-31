@@ -12,7 +12,7 @@ Convert the Landsat 8 thermal band from DN to radiance and brightness temperatur
 
 ## Data
 
-Landsat 8 OLI/TIRS, Collection 1 Level-1, scene `LC08_L1TP_191025_20190626_20190705_01_T1` (26 June 2019, 09:51 UTC, cloud cover 0.1 %), bands B4, B5 and B10 and the MTL file with calibration constants from the Google Cloud public archive. Only a 16 × 16 km window around central Prague is read (about 3 MB).
+Landsat 8 OLI/TIRS, Collection 1 Level-1, scene `LC08_L1TP_191025_20190626_20190705_01_T1` (26 June 2019, 9:51 UTC, cloud cover 0.1 %), bands B4, B5 and B10 and the MTL file with calibration constants from the Google Cloud public archive. Only a 16 × 16 km window around central Prague is read (about 3 MB).
 
 All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
 
@@ -40,7 +40,7 @@ Parameters the student changes:
 
 - `lon, lat, half = 14.42, 50.08, 8000`: window centre (°) and half-width (m)
 
-**Task 2.** Find the Vltava river, large parks or forests (Stromovka, Hvězda, Krč) and built-up areas with large halls on the map. What brightness temperatures do they have? Why is the difference between the river and hall roofs so large around noon? Why is brightness temperature not the same as surface temperature?
+**Task 2.** Find the Vltava river, large parks or forests (Stromovka, Hvězda, Krč) and built-up areas with large halls on the map. What brightness temperatures do they have? Why is the difference between the water and hall roofs so large around noon? Why is brightness temperature not the same as surface temperature?
 
 ### 4. Emissivity
 
@@ -65,13 +65,15 @@ Parameters the student changes:
 
 ### 6. A fire smaller than a pixel
 
-A pixel is a mixture: a fraction p burns at the fire temperature, the rest has the background temperature. As background we take the median real brightness temperature of the Prague window and compare the 3.9 µm band (the fire bands of MODIS and VIIRS lie between 3.7 and 4.1 µm) with the 10.9 µm band.
+A pixel is a mixture: a fraction p burns at the fire temperature, the rest has the background temperature. As background we take the median real brightness temperature of the window (Prague) and compare the 3.9 µm band (the fire bands of MODIS and VIIRS lie between 3.7 and 4.1 µm) with the 10.9 µm band.
 
 Parameters the student changes:
 
 - `T_fire = 900`: fire temperature in K
 
 **Task 5.** At what fire fraction does the pixel warm by 10 K at 3.9 µm and at 10.9 µm? What area is that within a 1 × 1 km MODIS pixel? Explain the difference with Wien's law. Why do daytime algorithms also watch for reflected sunlight at 3.9 µm?
+
+**Extension (optional).** Compare with a classmate who ran the notebook for another place and day: what range of brightness temperatures did they get? How much of the difference can be due to another day and hour, another sun elevation and a different landscape?
 
 ## Requirements
 
