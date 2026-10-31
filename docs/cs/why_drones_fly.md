@@ -12,7 +12,7 @@ Spočítat vztlak tenkého profilu a jeho mez, indukovanou rychlost a výkon př
 
 ## Data
 
-hodinová teplota, tlak a vlhkost za posledních 92 dní z Open-Meteo pro Prahu, Sněžku a Lomnický štít; hmotnost, průměr vrtulí, baterie a výdrž dronů z technických listů DJI.
+Hodinová teplota, tlak a vlhkost za posledních 92 dní z Open-Meteo pro Prahu, Sněžku a Lomnický štít; hmotnost, průměr vrtulí, baterie a výdrž dronů z technických listů DJI.
 
 Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
 

@@ -12,7 +12,7 @@ Spočítat denní chod teploty povrchů ze skutečného záření, teploty, vlhk
 
 ## Data
 
-hodinová teplota a vlhkost vzduchu, globální záření na vodorovnou i skloněnou plochu, oblačnost, vítr v 10 m a teplota povrchu půdy z Open-Meteo pro kampus v Suchdole, co služba vrátí za posledních 92 dní, obvykle dva až tři měsíce (model počasí, ne měření na místě); tepelné vlastnosti materiálů z literatury.
+Hodinová teplota a vlhkost vzduchu, globální záření na vodorovnou i skloněnou plochu, oblačnost, vítr v 10 m a teplota povrchu půdy z Open-Meteo pro kampus v Suchdole, co služba vrátí za posledních 92 dní, obvykle dva až tři měsíce (model počasí, ne měření na místě); tepelné vlastnosti materiálů z literatury.
 
 Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
 

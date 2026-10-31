@@ -12,7 +12,7 @@ Odhadnout podobnostní (Helmertovu) transformaci z vlícovacích bodů, porovnat
 
 ## Data
 
-trigonometrické a zhušťovací body ČÚZK v okolí Prahy se souřadnicemi S-JTSK, výškou Bpv a souřadnicemi ETRS89 (B, L, elipsoidická výška) ze statického měření GNSS, služba BodovaPole (vrstva 2).
+Trigonometrické a zhušťovací body ČÚZK v okolí Prahy se souřadnicemi S-JTSK, výškou Bpv a souřadnicemi ETRS89 (B, L, elipsoidická výška) ze statického měření GNSS, služba BodovaPole (vrstva 2).
 
 Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
 

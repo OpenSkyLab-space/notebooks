@@ -12,7 +12,7 @@ Convert DN to radiance step by step, compute the calibration coefficient from th
 
 ## Data
 
-two captures (5 bands) from a MicaSense RedEdge camera with DLS 2 from the MicaSense sample data (repository micasense/imageprocessing, MIT licence): IMG_0001 (RP06 panel, 6 April 2022 18:50 UTC) and IMG_0020 (flight 7 minutes later), 47.70° N, 122.14° W.
+Two captures (5 bands) from a MicaSense RedEdge camera with DLS 2 from the MicaSense sample data (repository micasense/imageprocessing, MIT licence): IMG_0001 (RP06 panel, 6 April 2022 18:50 UTC) and IMG_0020 (flight 7 minutes later), 47.70° N, 122.14° W.
 
 All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
 

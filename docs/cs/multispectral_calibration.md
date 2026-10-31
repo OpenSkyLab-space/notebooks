@@ -12,7 +12,7 @@ Převést DN na radianci krok za krokem, z panelu spočítat kalibrační koefic
 
 ## Data
 
-dva snímky (5 pásem) kamery MicaSense RedEdge s DLS 2 z ukázkových dat MicaSense (repozitář micasense/imageprocessing, licence MIT): IMG_0001 (panel RP06, 6. 4. 2022 18:50 UTC) a IMG_0020 (let o 7 minut později), 47,70° s. š., 122,14° z. d.
+Dva snímky (5 pásem) kamery MicaSense RedEdge s DLS 2 z ukázkových dat MicaSense (repozitář micasense/imageprocessing, licence MIT): IMG_0001 (panel RP06, 6. 4. 2022 18:50 UTC) a IMG_0020 (let o 7 minut později), 47,70° s. š., 122,14° z. d.
 
 Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
 

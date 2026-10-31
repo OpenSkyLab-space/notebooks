@@ -12,7 +12,7 @@ Z metadat skutečné scény Sentinel-2 spočítat frekvenci, energii fotonu a to
 
 ## Data
 
-metadata produktu Sentinel-2B L1C, dlaždice 33UVR (okolí Prahy), 21. 7. 2024 (`MTD_MSIL1C.xml` z veřejného archivu Google Cloud): střední vlnové délky, spektrální citlivost pásem a sluneční ozáření nad atmosférou. Stahuje se asi 50 kB.
+Metadata produktu Sentinel-2B L1C, dlaždice 33UVR (okolí Prahy), 21. 7. 2024 (`MTD_MSIL1C.xml` z veřejného archivu Google Cloud): střední vlnové délky, spektrální citlivost pásem a sluneční ozáření nad atmosférou. Stahuje se asi 50 kB.
 
 Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
 

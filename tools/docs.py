@@ -63,7 +63,7 @@ def page(stem, meta, cells_fn, lang):
         "",
         t("## Data", "## Data"),
         "",
-        meta["data"][lang],
+        meta["data"][lang][0].upper() + meta["data"][lang][1:],
         "",
         t("Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. "
           "Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.",

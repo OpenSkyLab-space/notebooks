@@ -12,7 +12,7 @@ Dekódovat METAR, spočítat relativní vlhkost a odhad základny oblačnosti, p
 
 ## Data
 
-zprávy METAR a TAF z letišť Praha (LKPR), Brno (LKTB), Ostrava (LKMT) a Karlovy Vary (LKKV) ze služby NOAA Aviation Weather Center; hodinová předpověď z Open-Meteo pro Roztoky u Prahy. Data se mění každou půlhodinu, tvoje čísla budou jiná než v uloženém notebooku.
+Zprávy METAR a TAF z letišť Praha (LKPR), Brno (LKTB), Ostrava (LKMT) a Karlovy Vary (LKKV) ze služby NOAA Aviation Weather Center; hodinová předpověď z Open-Meteo pro Roztoky u Prahy. Data se mění každou půlhodinu, tvoje čísla budou jiná než v uloženém notebooku.
 
 Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
 

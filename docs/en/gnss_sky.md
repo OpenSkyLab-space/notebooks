@@ -12,7 +12,7 @@ Draw the real GNSS sky over Suchdol, compute HDOP, VDOP and PDOP over a day, ass
 
 ## Data
 
-broadcast ephemerides of GPS, Galileo, GLONASS and BeiDou satellites for one day (RINEX navigation file merged by the IGS, BKG archive, about 1.3 MB); DMR 5G (ČÚZK) for the valley horizon; CZEPOS network stations and densification survey points with both Bpv height and ETRS89 ellipsoidal height from the ČÚZK BodovaPole service.
+Broadcast ephemerides of GPS, Galileo, GLONASS and BeiDou satellites for one day (RINEX navigation file merged by the IGS, BKG archive, about 1.3 MB); DMR 5G (ČÚZK) for the valley horizon; CZEPOS network stations and densification survey points with both Bpv height and ETRS89 ellipsoidal height from the ČÚZK BodovaPole service.
 
 All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
 

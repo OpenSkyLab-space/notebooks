@@ -12,7 +12,7 @@ Sestavit příznaky z časové řady, napsat a ověřit vlastní klasifikátor, 
 
 ## Data
 
-tři snímky Sentinel-2 L2A dlaždice 33UVR (27. 4., 21. 7. a 21. 9. 2024) z katalogu Earth Search na AWS, výřez 4 × 4 km kolem Roztok a Suchdola; reference ESA WorldCover 10 m 2021 v200. Stahuje se asi 60 MB.
+Tři snímky Sentinel-2 L2A dlaždice 33UVR (27. 4., 21. 7. a 21. 9. 2024) z katalogu Earth Search na AWS, výřez 4 × 4 km kolem Roztok a Suchdola; reference ESA WorldCover 10 m 2021 v200. Stahuje se asi 60 MB.
 
 Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
 

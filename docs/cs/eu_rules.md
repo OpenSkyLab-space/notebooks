@@ -12,7 +12,7 @@ Načíst seznam zeměpisných zón a jejich soubory GeoJSON, určit zóny pro za
 
 ## Data
 
-zeměpisné zóny UAS ve formátu GeoJSON (referenční hranice) ze stránky ŘLP https://aim.rlp.cz/?lang=cz&p=uas-gz, stažené v okamžiku spuštění; nadmořská výška terénu z Open-Meteo (Copernicus DEM 90 m).
+Zeměpisné zóny UAS ve formátu GeoJSON (referenční hranice) ze stránky ŘLP https://aim.rlp.cz/?lang=cz&p=uas-gz, stažené v okamžiku spuštění; nadmořská výška terénu z Open-Meteo (Copernicus DEM 90 m).
 
 Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
 

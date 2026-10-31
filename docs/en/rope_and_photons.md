@@ -12,7 +12,7 @@ From the metadata of a real Sentinel-2 scene, compute the frequency, photon ener
 
 ## Data
 
-the product metadata of Sentinel-2B L1C, tile 33UVR (around Prague), 21 July 2024 (`MTD_MSIL1C.xml` from the Google Cloud public archive): central wavelengths, spectral response of the bands and top-of-atmosphere solar irradiance. About 50 kB is downloaded.
+The product metadata of Sentinel-2B L1C, tile 33UVR (around Prague), 21 July 2024 (`MTD_MSIL1C.xml` from the Google Cloud public archive): central wavelengths, spectral response of the bands and top-of-atmosphere solar irradiance. About 50 kB is downloaded.
 
 All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
 

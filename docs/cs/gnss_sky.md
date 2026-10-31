@@ -12,7 +12,7 @@ Nakreslit skutečnou oblohu GNSS nad Suchdolem, spočítat HDOP, VDOP a PDOP bě
 
 ## Data
 
-vysílané efemeridy družic GPS, Galileo, GLONASS a BeiDou za jeden den (soubor RINEX navigačních zpráv sloučený IGS, archiv BKG, asi 1,3 MB); DMR 5G (ČÚZK) pro horizont v údolí; stanice sítě CZEPOS a zhušťovací body bodového pole s výškou v Bpv i elipsoidickou výškou ETRS89 ze služby ČÚZK BodovaPole.
+Vysílané efemeridy družic GPS, Galileo, GLONASS a BeiDou za jeden den (soubor RINEX navigačních zpráv sloučený IGS, archiv BKG, asi 1,3 MB); DMR 5G (ČÚZK) pro horizont v údolí; stanice sítě CZEPOS a zhušťovací body bodového pole s výškou v Bpv i elipsoidickou výškou ETRS89 ze služby ČÚZK BodovaPole.
 
 Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
 

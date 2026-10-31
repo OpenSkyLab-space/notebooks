@@ -12,7 +12,7 @@ Compute the daily course of surface temperatures from real radiation, temperatur
 
 ## Data
 
-hourly air temperature and humidity, global radiation on a horizontal and a tilted surface, cloud cover, wind at 10 m and soil surface temperature from Open-Meteo for the Suchdol campus, whatever the service returns for the last 92 days, usually two to three months (weather model, not an on-site measurement); thermal properties of materials from the literature.
+Hourly air temperature and humidity, global radiation on a horizontal and a tilted surface, cloud cover, wind at 10 m and soil surface temperature from Open-Meteo for the Suchdol campus, whatever the service returns for the last 92 days, usually two to three months (weather model, not an on-site measurement); thermal properties of materials from the literature.
 
 All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
 

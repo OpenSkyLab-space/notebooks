@@ -1,4 +1,4 @@
-# Spectral signatures from Sentinel-2: forest, fields, water and snow
+# Spectral signatures from Sentinel-2: forest, fields, water and snow (Roztoky and Krkonoše)
 
 Description of the notebook for the visual [Spectral signatures](https://openskylab.space/edu_viz_spectral_signatures.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/spectral_signatures_en.ipynb) · version 1.0 · about 45 min · six tasks
 
@@ -26,13 +26,13 @@ Installs the libraries Colab lacks (`rasterio`) and downloads the data.
 
 Loads the libraries and downloads the data.
 
-**Task 1.** Describe the forest curve: why is it low in blue and red, with a small peak in green and a steep rise between 0.70 and 0.78 µm? Why does the field (in late July often ripe grain or stubble) have more red and less NIR than the forest? Why is the spread so large for built-up areas and fields?
+**Task 1.** Describe the forest curve: why is it low in blue and red, with a small peak in green and a steep rise between 0.70 and 0.78 µm? Why does the field (in late July often ripe grain or stubble) have more red and less NIR than the forest? Which surface has the largest spread (width of the band around the curve) in which bands, and why?
 
 ### 3. Red edge position
 
 The red edge is the steep rise in reflectance between red and NIR. We estimate its position (REP) by linear interpolation from bands B4, B5, B6 and B7 (Guyot and Baret 1988). More chlorophyll shifts the edge to longer wavelengths.
 
-**Task 2.** Which surface has the red edge furthest and why? Does it make sense to compute REP for water or built-up areas? Look at the values and explain why the index has no physical meaning without vegetation even though it returns a number.
+**Task 2.** Which vegetated surface has the red edge furthest and why? Does it make sense to compute REP for water or built-up areas? Look at the values and explain why the index has no physical meaning without vegetation even though it returns a number.
 
 ### 4. NDVI saturation during the season
 
@@ -54,13 +54,15 @@ Parameters the student changes:
 
 - `thr = 0.4`: NDSI threshold for snow (MODIS uses 0.4)
 
-**Task 5.** Why does NDSI separate snow from clouds although both are white in the visible? Change the threshold to 0.2 and 0.6: where does the mask change most (snowy forest, shadows, dwarf pine)? Why is the Vltava positive in NDWI and vegetation negative?
+**Task 5.** Why does NDSI separate snow from clouds although both are white in the visible? Change the threshold to 0.2 and 0.6: where does the mask change most (snowy forest, shadows, open ground)? Why is the water (the Vltava) positive in NDWI and vegetation negative?
 
 ### 6. Same index, different number
 
 NDVI can be computed from Sentinel-2 with the broad band B8 (centred near 833 nm, over 100 nm wide, 10 m pixel) or the narrow B8A (865 nm, about 21 nm wide, 20 m pixel). A drone multispectral camera or Landsat have different bands again. We compare both variants on the same pixels.
 
 **Task 6.** How much do the two NDVIs differ and in which direction? Suggest two causes (band position and width, 10 vs 20 m resolution). What follows when you want to compare drone NDVI with Sentinel-2 NDVI, or old and new NDVI maps?
+
+**Extension (optional).** Compare your results with a classmate who ran the notebook for another place: do the forest red edge, the NDVI saturation on the field or the NDVI(B8A) − NDVI(B8) difference differ? What could cause it (crop, forest type, image date)?
 
 ## Requirements
 

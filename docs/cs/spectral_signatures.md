@@ -1,10 +1,10 @@
-# Spektrální signatury ze Sentinelu-2: les, pole, voda a sníh
+# Spektrální signatury ze Sentinelu-2: les, pole, voda a sníh (Roztoky a Krkonoše)
 
 Popis notebooku k vizuálu [Spektrální signatury](https://openskylab.space/edu_viz_spectral_signatures.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/spectral_signatures_cs.ipynb) · verze 1.0 · asi 45 min · šest úkolů
 
 ## O čem notebook je
 
-Vizuál ukazuje, jak chlorofyl, voda v listech, sušina a LAI mění spektrální křivku vegetace a proč NDVI v hustém porostu přestává růst. Tady to ověříš na skutečných pixelech Sentinelu-2 od Roztok a na časové řadě jednoho pole během sezóny 2024.
+Vizuál ukazuje, jak chlorofyl, voda v listech, sušina a LAI mění spektrální křivku vegetace a proč NDVI v hustém porostu přestává růst. Tady to ověříš na skutečných pixelech Sentinelu-2 u Roztok a na časové řadě jednoho pole během sezóny 2024.
 
 ## Cíl
 
@@ -26,13 +26,13 @@ Nainstaluje knihovny, které Colab nemá předem (`rasterio`), a stáhne data.
 
 Načte knihovny a stáhne data.
 
-**Úkol 1.** Popiš křivku lesa: proč je v modré a červené nízko, v zelené malé maximum a mezi 0,70 a 0,78 µm prudký nárůst? Proč má pole (koncem července často zralé obilí nebo strniště) v červené víc a v NIR méně než les? Proč je rozptyl u zástavby a pole tak velký?
+**Úkol 1.** Popiš křivku lesa: proč je v modré a červené nízko, v zelené malé maximum a mezi 0,70 a 0,78 µm prudký nárůst? Proč má pole (koncem července často zralé obilí nebo strniště) v červené víc a v NIR méně než les? Který povrch má v kterých pásmech největší rozptyl (šíři pásu kolem křivky) a proč?
 
 ### 3. Poloha červené hrany
 
 Červená hrana je strmý nárůst odrazivosti mezi červenou a NIR. Její polohu (REP) odhadneme lineární interpolací z pásem B4, B5, B6 a B7 (Guyot a Baret 1988). Víc chlorofylu posouvá hranu k delším vlnovým délkám.
 
-**Úkol 2.** Který povrch má červenou hranu nejdál a proč? Má smysl počítat REP u vody nebo zástavby? Podívej se, jaké hodnoty vyjdou, a vysvětli, proč index bez vegetace nedává fyzikální smysl, i když vrátí číslo.
+**Úkol 2.** Který vegetační povrch má červenou hranu nejdál a proč? Má smysl počítat REP u vody nebo zástavby? Podívej se, jaké hodnoty vyjdou, a vysvětli, proč index bez vegetace nedává fyzikální smysl, i když vrátí číslo.
 
 ### 4. Nasycení NDVI během sezóny
 
@@ -54,13 +54,15 @@ Parametry, které student mění:
 
 - `thr = 0.4`: práh NDSI pro sníh (MODIS používá 0,4)
 
-**Úkol 5.** Proč NDSI odliší sníh od oblaků, i když jsou ve viditelném oba bílé? Změň práh na 0,2 a 0,6: kde se maska mění nejvíc (les se sněhem, stíny, kosodřevina)? Proč je Vltava v NDWI kladná a vegetace záporná?
+**Úkol 5.** Proč NDSI odliší sníh od oblaků, i když jsou ve viditelném oba bílé? Změň práh na 0,2 a 0,6: kde se maska mění nejvíc (zasněžený les, stíny, otevřené plochy)? Proč je voda (Vltava) v NDWI kladná a vegetace záporná?
 
 ### 6. Stejný index, jiné číslo
 
 NDVI lze ze Sentinelu-2 spočítat s širokým pásmem B8 (střed kolem 833 nm, šířka přes 100 nm, pixel 10 m) nebo s úzkým B8A (865 nm, šířka asi 21 nm, pixel 20 m). Dron s multispektrální kamerou nebo Landsat mají zase jiná pásma. Porovnáme obě varianty na stejných pixelech.
 
 **Úkol 6.** O kolik se obě NDVI liší a kterým směrem? Navrhni dvě příčiny (poloha a šířka pásma, rozlišení 10 vs. 20 m). Co z toho plyne, když chceš porovnat NDVI z dronu s NDVI ze Sentinelu-2 nebo staré a nové mapy NDVI?
+
+**Rozšíření (nepovinné).** Porovnej výsledky se spolužákem, který spustil notebook pro jiné místo: liší se červená hrana lesa, nasycení NDVI na poli nebo rozdíl NDVI(B8A) − NDVI(B8)? Čím to může být (plodina, druh lesa, datum snímku)?
 
 ## Co je potřeba
 

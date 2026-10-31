@@ -12,7 +12,7 @@ Build features from a time series, write and check your own classifier, compare 
 
 ## Data
 
-three Sentinel-2 L2A images of tile 33UVR (27 April, 21 July and 21 September 2024) from the Earth Search catalogue on AWS, a 4 × 4 km window around Roztoky and Suchdol; reference ESA WorldCover 10 m 2021 v200. About 60 MB is downloaded.
+Three Sentinel-2 L2A images of tile 33UVR (27 April, 21 July and 21 September 2024) from the Earth Search catalogue on AWS, a 4 × 4 km window around Roztoky and Suchdol; reference ESA WorldCover 10 m 2021 v200. About 60 MB is downloaded.
 
 All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
 
