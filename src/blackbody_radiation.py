@@ -258,7 +258,7 @@ for eps_true in (0.98, 0.95, 0.92, 0.85):
             "## 5. Odraz oblohy\n\nPovrch s emisivitou ε odráží 1 − ε dlouhovlnného záření, které na něj svítí z oblohy. Jasná obloha je v 10 µm velmi studená, zatažená má zhruba teplotu základny oblačnosti. Senzor dostane L = ε · B(T) + (1 − ε) · B(T_obloha).",
             "## 5. Sky reflection\n\nA surface with emissivity ε reflects 1 − ε of the longwave radiation coming from the sky. A clear sky is very cold at 10 µm, an overcast sky has roughly the temperature of the cloud base. The sensor receives L = ε · B(T) + (1 − ε) · B(T_sky).")),
         ("code", t('''
-T_surf = 273.15 + 27           # ◀ parametr: teplota povrchu
+T_surf = z_viz("T_surf", 273.15 + 27)   # ◀ parametr: teplota povrchu
 for name, eps_m in [("tráva", 0.98), ("beton", 0.92), ("zoxidovaný plech", 0.6), ("lesklý hliník", 0.05)]:
     row = []
     for T_sky_c in (-40, -10, 10, 27):       # jasná obloha … nízká oblačnost … obloha teplá jako povrch
@@ -266,7 +266,7 @@ for name, eps_m in [("tráva", 0.98), ("beton", 0.92), ("zoxidovaný plech", 0.6
         row.append(f"{planck_inv(10.9, L) - 273.15:6.1f}")
     print(f"{name:18s} ε={eps_m:.2f}: jasová teplota při obloze −40/−10/+10/+27 °C:", " ".join(row), "°C")
 ''', '''
-T_surf = 273.15 + 27           # ◀ parameter: surface temperature
+T_surf = z_viz("T_surf", 273.15 + 27)   # ◀ parameter: surface temperature
 for name, eps_m in [("grass", 0.98), ("concrete", 0.92), ("oxidised sheet metal", 0.6), ("polished aluminium", 0.05)]:
     row = []
     for T_sky_c in (-40, -10, 10, 27):       # clear sky … low cloud … sky as warm as the surface
@@ -281,7 +281,7 @@ for name, eps_m in [("grass", 0.98), ("concrete", 0.92), ("oxidised sheet metal"
             "## 6. Požár menší než pixel\n\nPixel je směs: podíl p hoří při teplotě požáru, zbytek má teplotu pozadí. Jako pozadí vezmeme medián skutečné jasové teploty z výřezu (@PLACE_CS@) a porovnáme pásmo 3,9 µm (požárová pásma MODIS a VIIRS leží mezi 3,7 a 4,1 µm) s pásmem 10,9 µm.",
             "## 6. A fire smaller than a pixel\n\nA pixel is a mixture: a fraction p burns at the fire temperature, the rest has the background temperature. As background we take the median real brightness temperature of the window (@PLACE_EN@) and compare the 3.9 µm band (the fire bands of MODIS and VIIRS lie between 3.7 and 4.1 µm) with the 10.9 µm band.")),
         ("code", t('''
-T_fire = 900                     # ◀ parametr: teplota požáru v K
+T_fire = z_viz("T_fire", 900)    # ◀ parametr: teplota požáru v K
 T_bg = float(np.median(BT))
 p = np.logspace(-5, -1, 200)     # podíl požáru v pixelu
 fig, ax = plt.subplots(figsize=(8, 3.8))
@@ -296,7 +296,7 @@ for lam_b in (3.9, 10.9):
     p10 = p[np.argmax(planck_inv(lam_b, L) - T_bg > 10)]
     print(f"{lam_b} µm: o 10 K teplejší pixel už při podílu {p10 * 100:.3f} % = {p10 * 1e6:.0f} m² z pixelu 1 × 1 km")
 ''', '''
-T_fire = 900                     # ◀ parameter: fire temperature in K
+T_fire = z_viz("T_fire", 900)    # ◀ parameter: fire temperature in K
 T_bg = float(np.median(BT))
 p = np.logspace(-5, -1, 200)     # fire fraction of the pixel
 fig, ax = plt.subplots(figsize=(8, 3.8))

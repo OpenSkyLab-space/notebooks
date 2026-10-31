@@ -118,7 +118,7 @@ SIG = 5.670e-8
 # albedo, emisivita, tepelná vodivost k (W/m/K), objemová tepelná kapacita C (J/m³/K), odpor průduchů r_s (s/m; inf = bez výparu),
 # node = tepelná kapacita jediné vrstvy (J/m²/K) u povrchů bez vedení do hloubky, rough = násobek přestupu tepla (drsnost), sides = ochlazování z obou stran
 SURF = {
-    "voda":     dict(alb=0.06, eps=0.99, k=0.0,  C=0.0,    rs=0.0,    node=4.18e6 * 1.0),
+    "voda":     dict(alb=0.06, eps=0.98, k=0.0,  C=0.0,    rs=0.0,    node=4.18e6 * 1.0),
     "louka":    dict(alb=0.20, eps=0.98, k=1.2,  C=2.5e6,  rs=70.0),
     "asfalt":   dict(alb=0.08, eps=0.95, k=0.75, C=1.94e6, rs=np.inf),
     "les":      dict(alb=0.12, eps=0.98, k=0.0,  C=0.0,    rs=100.0,  node=3.0e4, rough=3),
@@ -180,7 +180,7 @@ def crossings(a, b):
 
 T = simulate(w)
 DAY = SUNNY                   # ◀ parametr: den, např. "2026-09-10"; výchozí je nejslunečnější den
-A, B = "voda", "louka"        # ◀ parametr: dvojice povrchů
+A, B = z_viz("A", "voda", {"water": "voda", "meadow": "louka", "asphalt": "asfalt", "forest": "les", "pv": "FV panel"}), z_viz("B", "louka", {"water": "voda", "meadow": "louka", "asphalt": "asfalt", "forest": "les", "pv": "FV panel"})   # ◀ parametr: dvojice povrchů
 d = T.loc[str(DAY)]
 ax = d.plot(figsize=(10, 4.5))
 T.attrs["Ta"].loc[str(DAY)].plot(ax=ax, color="k", ls="--", label="vzduch 2 m")
@@ -194,7 +194,7 @@ SIG = 5.670e-8
 # albedo, emissivity, thermal conductivity k (W/m/K), volumetric heat capacity C (J/m³/K), stomatal resistance r_s (s/m; inf = no evaporation),
 # node = heat capacity of a single layer (J/m²/K) for surfaces with no conduction into the ground, rough = multiple of heat transfer (roughness), sides = cooled from both sides
 SURF = {
-    "water":     dict(alb=0.06, eps=0.99, k=0.0,  C=0.0,    rs=0.0,    node=4.18e6 * 1.0),
+    "water":     dict(alb=0.06, eps=0.98, k=0.0,  C=0.0,    rs=0.0,    node=4.18e6 * 1.0),
     "meadow":    dict(alb=0.20, eps=0.98, k=1.2,  C=2.5e6,  rs=70.0),
     "asphalt":   dict(alb=0.08, eps=0.95, k=0.75, C=1.94e6, rs=np.inf),
     "forest":    dict(alb=0.12, eps=0.98, k=0.0,  C=0.0,    rs=100.0,  node=3.0e4, rough=3),
@@ -256,7 +256,7 @@ def crossings(a, b):
 
 T = simulate(w)
 DAY = SUNNY                   # ◀ parameter: day, e.g. "2026-09-10"; the default is the sunniest day
-A, B = "water", "meadow"      # ◀ parameter: pair of surfaces
+A, B = z_viz("A", "water", {"water": "water", "meadow": "meadow", "asphalt": "asphalt", "forest": "forest", "pv": "PV panel"}), z_viz("B", "meadow", {"water": "water", "meadow": "meadow", "asphalt": "asphalt", "forest": "forest", "pv": "PV panel"})   # ◀ parameter: pair of surfaces
 d = T.loc[str(DAY)]
 ax = d.plot(figsize=(10, 4.5))
 T.attrs["Ta"].loc[str(DAY)].plot(ax=ax, color="k", ls="--", label="air 2 m")
@@ -308,7 +308,7 @@ np.atleast_1d(ax)[0].set_ylabel("°C"); np.atleast_1d(ax)[-1].legend(fontsize=8)
             "## 4. Kalendář kontrastu: kdy letět\n\nPro každý den a hodinu spočítáme rozdíl teplot dvojice povrchů. Bílá místa jsou překřížení, kdy se povrchy v termosnímku slijí.",
             "## 4. Contrast calendar: when to fly\n\nFor every day and hour we compute the temperature difference of a pair of surfaces. White areas are crossovers, when the surfaces merge in a thermal image.")),
         ("code", t('''
-A, B = "voda", "louka"        # ◀ parametr: dvojice povrchů
+A, B = z_viz("A", "voda", {"water": "voda", "meadow": "louka", "asphalt": "asfalt", "forest": "les", "pv": "FV panel"}), z_viz("B", "louka", {"water": "voda", "meadow": "louka", "asphalt": "asfalt", "forest": "les", "pv": "FV panel"})   # ◀ parametr: dvojice povrchů
 MIN_DT = 3                    # ◀ parametr: kontrast, který ještě v termosnímku spolehlivě rozlišíš (K)
 h = (T[A] - T[B]).iloc[14 * 1440:].resample("h").mean()
 grid = h.to_frame("d").assign(den=h.index.date, hod=h.index.hour).pivot(index="hod", columns="den", values="d")
@@ -321,7 +321,7 @@ plt.colorbar(im, label=f"{A} − {B} (K)"); plt.show()
 ok = (grid.abs() >= MIN_DT).mean(axis=1) * 100
 print(f"podíl dní, kdy je |{A} − {B}| ≥ {MIN_DT} K, podle hodiny (%):"); print(ok.round(0).to_frame("%").T.to_string())
 ''', '''
-A, B = "water", "meadow"      # ◀ parameter: pair of surfaces
+A, B = z_viz("A", "water", {"water": "water", "meadow": "meadow", "asphalt": "asphalt", "forest": "forest", "pv": "PV panel"}), z_viz("B", "meadow", {"water": "water", "meadow": "meadow", "asphalt": "asphalt", "forest": "forest", "pv": "PV panel"})   # ◀ parameter: pair of surfaces
 MIN_DT = 3                    # ◀ parameter: contrast you can still reliably tell apart in a thermal image (K)
 h = (T[A] - T[B]).iloc[14 * 1440:].resample("h").mean()
 grid = h.to_frame("d").assign(day=h.index.date, hour=h.index.hour).pivot(index="hour", columns="day", values="d")
@@ -370,7 +370,7 @@ pd.DataFrame(tab).round(1)
             "The camera measures the exitance W = ε σ T⁴ + (1 − ε) σ T_refl⁴, where the second term is the reflected surroundings. It computes temperature using the emissivity ε_c and the reflected temperature T_refl set in the camera. Simplification: we compute over the whole spectrum, not only the 8–14 µm band, and take the reflected surroundings to be the sky.\n\n"
             "For inspecting PV plants an irradiance of at least 600 W/m² on the panel is recommended (IEA PVPS). The irradiance of the tilted surface comes from Open-Meteo.")),
         ("code", t('''
-EPS_CAM = 1.00                # ◀ parametr: emisivita nastavená v kameře (zkus 0,95 a 0,85)
+EPS_CAM = z_viz("EPS_CAM", 1.00)   # ◀ parametr: emisivita nastavená v kameře (zkus 0,95 a 0,85)
 T_REFL = 20.0                 # ◀ parametr: odražená teplota nastavená v kameře (°C)
 HOURS = ["05:00", "13:00"]    # ◀ parametr: časy snímků
 DAY_E = SUNNY                 # ◀ parametr: den
@@ -391,7 +391,7 @@ ok = (g >= THRESH).groupby([g.index.to_period("M").rename("měsíc"), g.index.ho
 print(f"\\nPočet hodin s ozářením panelu (sklon {TILT}°, azimut {AZ}°) ≥ {THRESH} W/m² podle měsíce a hodiny:")
 print(ok.loc[:, ok.sum() > 0].to_string())
 ''', '''
-EPS_CAM = 1.00                # ◀ parameter: emissivity set in the camera (try 0.95 and 0.85)
+EPS_CAM = z_viz("EPS_CAM", 1.00)   # ◀ parameter: emissivity set in the camera (try 0.95 and 0.85)
 T_REFL = 20.0                 # ◀ parameter: reflected temperature set in the camera (°C)
 HOURS = ["05:00", "13:00"]    # ◀ parameter: times of the images
 DAY_E = SUNNY                 # ◀ parameter: day

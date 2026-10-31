@@ -44,6 +44,47 @@ def units(stem):
                  lambda t, _v=v: mod.cells(t, _v)) for k, v in mod.VARIANTS.items()]
     return [(stem, dict(mod.META, visual_stem=mod.META.get("visual_stem", stem)), mod.cells)]
 
+# notebooks that take settings from their visual (the cell "Settings from the visual"); advanced versions only where listed
+VIZ_STEMS = {"flight_planner", "thermal_timing", "blackbody_radiation", "why_drones_fly", "drone_weather", "eu_rules", "gnss_sky",
+             "multispectral_calibration"}
+VIZ_PRO = {"eu_rules_pro"}
+
+
+def viz_cell(stem, lang):
+    t = (lambda cs, en: cs if lang == "cs" else en)
+    return "\n".join([
+        t("#@title Nastavení z vizuálu (nepovinné)", "#@title Settings from the visual (optional)"),
+        t("#@markdown Ve vizuálu klikni na odkaz Notebook. Nastavení se zkopíruje; vlož ho sem místo `{}` (Ctrl+V) a buňku spusť.",
+          "#@markdown In the visual, click the Notebook link. The settings are copied; paste them here in place of `{}` (Ctrl+V) and run the cell."),
+        'Z_VIZUALU = {}  #@param {type:"raw"}',
+        f'STEM = "{stem}"',
+        "",
+        "def z_viz(name, default, mapping=None):",
+        t('    """Hodnota parametru z vizuálu, pokud ji vložený kód obsahuje; jinak výchozí hodnota."""',
+          '    """Value of a parameter from the visual if the pasted code contains it; otherwise the default value."""'),
+        '    z = Z_VIZUALU if isinstance(Z_VIZUALU, dict) and Z_VIZUALU.get("osl") == STEM else {}',
+        "    if name not in z:",
+        "        return default",
+        "    v = z[name]",
+        "    if mapping is not None:",
+        "        if v not in mapping:",
+        t('            print(f"{name}: hodnota {v!r} z vizuálu v tomto notebooku není, ponechávám {default!r}")',
+          '            print(f"{name}: value {v!r} from the visual is not in this notebook, keeping {default!r}")'),
+        "            return default",
+        "        v = mapping[v]",
+        "    elif isinstance(default, bool):",
+        "        v = bool(v)",
+        "    elif isinstance(default, int):",
+        "        v = int(round(v))",
+        "    elif isinstance(default, float):",
+        "        v = float(v)",
+        t('    print(f"{name} = {v!r}  (z vizuálu)")', '    print(f"{name} = {v!r}  (from the visual)")'),
+        "    return v",
+        "",
+        'if isinstance(Z_VIZUALU, dict) and Z_VIZUALU and Z_VIZUALU.get("osl") != STEM:',
+        t('''    print(f"Vložený kód je z jiného vizuálu ({Z_VIZUALU.get('osl')}), notebook ho nepoužije.")''',
+          '''    print(f"The pasted code is from another visual ({Z_VIZUALU.get('osl')}), the notebook does not use it.")'''),
+    ])
 
 def header(meta, lang):
     t = (lambda cs, en: cs if lang == "cs" else en)
@@ -122,6 +163,8 @@ def build_one(stem, meta, cells_fn):
         n_all = sum(1 for kind, text in cells_fn(t) if kind == "task" and not text.startswith("+"))
         meta["tasks"] = {"cs": ["", "", "", "", "čtyři", "pět", "šest"][n_all], "en": ["", "", "", "", "four", "five", "six"][n_all]}
         cells = [nbf.v4.new_markdown_cell(header(meta, lang))]
+        if meta["visual_stem"] in VIZ_STEMS and (not stem.endswith("_pro") or stem in VIZ_PRO):
+            cells.append(nbf.v4.new_code_cell(viz_cell(meta["visual_stem"], lang)))
         n_task = 0
         for kind, text in cells_fn(t):
             text = text.strip("\n")

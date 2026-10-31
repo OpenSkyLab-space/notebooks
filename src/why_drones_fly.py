@@ -79,7 +79,7 @@ DRONES = {
             "## 2. Vztlak profilu a pád\n\nPodle teorie tenkého profilu roste součinitel vztlaku lineárně s úhlem náběhu: c_L = 2π (α − α₀), kde α₀ ≈ −2 · prohnutí / hloubka (záporné pro prohnutý profil). Skutečný profil se ale při úhlu kolem 12–16° odtrhne a vztlak spadne. Vztlak L = ½ ρ v² S c_L.",
             "## 2. Airfoil lift and stall\n\nThin airfoil theory says the lift coefficient grows linearly with angle of attack: c_L = 2π (α − α₀), where α₀ ≈ −2 · camber / chord (negative for a cambered airfoil). A real airfoil separates at about 12–16° and lift drops. Lift L = ½ ρ v² S c_L.")),
         ("code", t('''
-camber = 0.04          # ◀ parametr: prohnutí profilu (podíl hloubky; 0 = souměrný, 0,04 = 4 %)
+camber = z_viz("camber", 0.04)   # ◀ parametr: prohnutí profilu (podíl hloubky; 0 = souměrný, 0,04 = 4 %)
 alpha_stall = 14       # ◀ parametr: pádový úhel (°), z měření skutečných profilů zhruba 12–16°
 v, rho, S = 15, 1.2, 0.5     # rychlost (m/s), hustota (kg/m³), plocha křídla (m²): malý dron s pevným křídlem
 alpha = np.linspace(-10, 25, 141)
@@ -93,7 +93,7 @@ for a in (0, 5, 10):
     cl = 2 * np.pi * (np.radians(a) - a0)
     print(f"α = {a:2d}°: c_L = {cl:.2f}, vztlak {0.5 * rho * v**2 * S * cl:5.1f} N (unese {0.5 * rho * v**2 * S * cl / g:.2f} kg)")
 ''', '''
-camber = 0.04          # ◀ parameter: airfoil camber (fraction of chord; 0 = symmetric, 0.04 = 4 %)
+camber = z_viz("camber", 0.04)   # ◀ parameter: airfoil camber (fraction of chord; 0 = symmetric, 0.04 = 4 %)
 alpha_stall = 14       # ◀ parameter: stall angle (°), roughly 12–16° from measurements of real airfoils
 v, rho, S = 15, 1.2, 0.5     # speed (m/s), density (kg/m³), wing area (m²): a small fixed-wing drone
 alpha = np.linspace(-10, 25, 141)

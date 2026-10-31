@@ -331,7 +331,7 @@ plt.show()
             "## 4. The DLS light sensor and its tilt\n\n"
             "The DLS measures irradiance on its top surface. When the drone tilts towards the Sun, the sensor receives more direct radiation than the horizontal ground does. DLS 2 therefore splits irradiance into a direct and a diffuse component and converts it to a horizontal surface: E_hor = E_direct · sin(solar elevation) + E_diffuse.")),
         ("code", t('''
-TILT = 10                     # ◀ parametr: náklon senzoru DLS (°)
+TILT = z_viz("TILT", 10)      # ◀ parametr: náklon senzoru DLS (°)
 rows = {}
 for b in range(1, 6):
     for name, (dn, m) in [("panel", PANEL[b]), ("let", FLIGHT[b])]:
@@ -344,7 +344,7 @@ for direction, sign in [("ke Slunci", 1), ("od Slunce", -1)]:
     E_tilt = m["E_dir"] * cos_g + m["E_sc"]
     print(f"výška Slunce {np.degrees(el):.1f}°, náklon {TILT}° {direction}: senzor změří {E_tilt / m['E_h']:.3f}× vodorovné ozáření (bez korekce chyba odrazivosti {100 * (m['E_h'] / E_tilt - 1):+.1f} %)")
 ''', '''
-TILT = 10                     # ◀ parameter: tilt of the DLS sensor (°)
+TILT = z_viz("TILT", 10)      # ◀ parameter: tilt of the DLS sensor (°)
 rows = {}
 for b in range(1, 6):
     for name, (dn, m) in [("panel", PANEL[b]), ("flight", FLIGHT[b])]:

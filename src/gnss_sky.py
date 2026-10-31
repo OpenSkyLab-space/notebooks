@@ -330,7 +330,7 @@ LAT, LON = 50.130, 14.373          # ◀ parametr: místo (kampus v Suchdole)
 T0 = datetime(DAY.year, DAY.month, DAY.day, tzinfo=timezone.utc)
 T_SKY = T0 + timedelta(hours=12)   # ◀ parametr: čas obrázku oblohy (UTC)
 sky = az_el(T_SKY, LAT, LON)
-mask = 10                          # ◀ parametr: elevační maska (°)
+mask = z_viz("mask", 10)           # ◀ parametr: elevační maska (°)
 vis = sky[sky.el > mask]
 print(f"{T_SKY:%Y-%m-%d %H:%M} UTC: nad maskou {mask}° je {len(vis)} družic:", vis.systém.value_counts().to_dict())
 COL = {"GPS": "tab:blue", "Galileo": "tab:orange", "GLONASS": "tab:red", "BeiDou": "tab:green"}
@@ -365,7 +365,7 @@ LAT, LON = 50.130, 14.373          # ◀ parameter: site (Suchdol campus)
 T0 = datetime(DAY.year, DAY.month, DAY.day, tzinfo=timezone.utc)
 T_SKY = T0 + timedelta(hours=12)   # ◀ parameter: time of the sky plot (UTC)
 sky = az_el(T_SKY, LAT, LON)
-mask = 10                          # ◀ parameter: elevation mask (°)
+mask = z_viz("mask", 10)           # ◀ parameter: elevation mask (°)
 vis = sky[sky.el > mask]
 print(f"{T_SKY:%Y-%m-%d %H:%M} UTC: {len(vis)} satellites above the {mask}° mask:", vis.system.value_counts().to_dict())
 COL = {"GPS": "tab:blue", "Galileo": "tab:orange", "GLONASS": "tab:red", "BeiDou": "tab:green"}

@@ -142,10 +142,10 @@ ax.contour(np.flipud(dem), levels=np.arange(np.floor(dem.min() / 10) * 10, dem.m
 ax.set(xlabel="m (west → east)", ylabel="m", title="DMR 5G, @PLOT_EN@"); plt.show()
 ''')),
         ("code", t('''
-cam = CAMERAS["Mavic 3E"]     # ◀ parametr: kamera
-H0 = 80                       # ◀ parametr: výška letu nad místem vzletu (m)
-fo, so = 0.80, 0.70           # ◀ parametr: podélný a příčný překryv
-v_air = 10.0                  # ◀ parametr: rychlost vůči vzduchu (m/s)
+cam = CAMERAS[z_viz("cam", "Mavic 3E", {"rgb": "RGB 1″ 20 Mpx", "p1": "P1 35 mm", "m3e": "Mavic 3E", "m3m": "Mavic 3M (MS)"})]     # ◀ parametr: kamera
+H0 = z_viz("H0", 80)          # ◀ parametr: výška letu nad místem vzletu (m)
+fo, so = z_viz("fo", 0.80), z_viz("so", 0.70)   # ◀ parametr: podélný a příčný překryv
+v_air = z_viz("v_air", 10.0)  # ◀ parametr: rychlost vůči vzduchu (m/s)
 long_across = True            # ◀ parametr: delší strana snímku napříč letem?
 
 p = cam["sw"] / cam["pw"] / 1000                                   # m
@@ -162,10 +162,10 @@ print(f"linek {n_lines}, snímků {photos}, interval {interval:.2f} s (kamera zv
 if interval < cam["tmin"]:
     print(f"POZOR: kamera nestihne; nejvyšší rychlost je {base / cam['tmin']:.1f} m/s")
 ''', '''
-cam = CAMERAS["Mavic 3E"]     # ◀ parameter: camera
-H0 = 80                       # ◀ parameter: flight height above the take-off point (m)
-fo, so = 0.80, 0.70           # ◀ parameter: forward and side overlap
-v_air = 10.0                  # ◀ parameter: airspeed (m/s)
+cam = CAMERAS[z_viz("cam", "Mavic 3E", {"rgb": "RGB 1″ 20 Mpx", "p1": "P1 35 mm", "m3e": "Mavic 3E", "m3m": "Mavic 3M (MS)"})]     # ◀ parameter: camera
+H0 = z_viz("H0", 80)          # ◀ parameter: flight height above the take-off point (m)
+fo, so = z_viz("fo", 0.80), z_viz("so", 0.70)   # ◀ parameter: forward and side overlap
+v_air = z_viz("v_air", 10.0)  # ◀ parameter: airspeed (m/s)
 long_across = True            # ◀ parameter: long side of the image across the flight direction?
 
 p = cam["sw"] / cam["pw"] / 1000                                   # m
@@ -234,8 +234,8 @@ print(met.iloc[6:20].to_string())
 ''')),
         ("code", t('''
 hour = 6 + int(met.wind_speed_80m.values[6:21].argmax())   # ◀ parametr: hodina letu (místní čas); výchozí je největrnější hodina mezi 6 a 20 h
-t_exp = 1 / 1000               # ◀ parametr: expoziční čas (s)
-t_read = 0.030                 # ◀ parametr: doba vyčtení čipu u postupné závěrky (s); 0 = globální závěrka
+t_exp = z_viz("t_exp", 1 / 1000)   # ◀ parametr: expoziční čas (s)
+t_read = z_viz("t_read", 0.030)    # ◀ parametr: doba vyčtení čipu u postupné závěrky (s); 0 = globální závěrka
 wind = met.wind_speed_80m.iloc[hour]
 wdir = met.wind_direction_80m.iloc[hour]
 # linky vedou V–Z; složka větru podél linek a napříč nimi
@@ -246,8 +246,8 @@ for leg, sign in [("linka na východ", -1), ("linka na západ", +1)]:
 print(f"{met.index[hour]}: vítr v 80 m: {wind:.1f} m/s od {wdir:.0f}°; složka k východu {-along:+.1f} m/s, k severu {cross:+.1f} m/s")
 ''', '''
 hour = 6 + int(met.wind_speed_80m.values[6:21].argmax())   # ◀ parameter: hour of the flight (local time); default is the windiest hour between 6 and 20 h
-t_exp = 1 / 1000               # ◀ parameter: exposure time (s)
-t_read = 0.030                 # ◀ parameter: sensor readout time of a rolling shutter (s); 0 = global shutter
+t_exp = z_viz("t_exp", 1 / 1000)   # ◀ parameter: exposure time (s)
+t_read = z_viz("t_read", 0.030)    # ◀ parameter: sensor readout time of a rolling shutter (s); 0 = global shutter
 wind = met.wind_speed_80m.iloc[hour]
 wdir = met.wind_direction_80m.iloc[hour]
 # lines run E–W; wind component along and across the lines

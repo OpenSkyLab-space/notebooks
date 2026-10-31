@@ -241,7 +241,7 @@ hits if len(hits) else print("no site lies in a downloaded zone")
             "## 3. Svislé hranice zón\n\nZóna platí jen mezi svou dolní a horní hranicí. Hranice se udávají nad terénem (AGL), nad střední hladinou moře (AMSL) nebo jako letová hladina (FL, stovky stop při standardním tlaku 1013,25 hPa; zde ji pro jednoduchost bereme jako výšku AMSL). 1 ft = 0,3048 m. Nadmořskou výšku terénu vezmeme z digitálního modelu reliéfu DMR 5G (ČÚZK).",
             "## 3. Vertical limits of zones\n\nA zone applies only between its lower and upper limit. Limits are given above ground (AGL), above mean sea level (AMSL) or as a flight level (FL, hundreds of feet at the standard pressure of 1013.25 hPa; here we treat it as an AMSL height for simplicity). 1 ft = 0.3048 m. Terrain elevation comes from the DMR 5G digital terrain model (ČÚZK).")),
         ("code", t(CUZK_HELPER["cs"] + '''
-FLIGHT_AGL = 120              # ◀ parametr: plánovaná výška letu nad terénem (m)
+FLIGHT_AGL = z_viz("FLIGHT_AGL", 120)   # ◀ parametr: plánovaná výška letu nad terénem (m)
 def level(txt, ground):
     """Převede jednu hranici (např. 'GND', '3500 ft AMSL', '120 m AGL', 'FL95') na metry nad terénem."""
     s = txt.strip().upper().replace(" ", "")
@@ -268,7 +268,7 @@ if len(hits):
 airspace = pd.DataFrame([{"prostor": p.get("ident"), "svislé hranice": p.get("vertical_limit")} for _, p in layers.get("LKR320A", [])])
 print("\\nLetecké prostory LKR320A podle svislých hranic:"); print(airspace["svislé hranice"].value_counts().head(10).to_string())
 ''', CUZK_HELPER["en"] + '''
-FLIGHT_AGL = 120              # ◀ parameter: planned flight height above ground (m)
+FLIGHT_AGL = z_viz("FLIGHT_AGL", 120)   # ◀ parameter: planned flight height above ground (m)
 def level(txt, ground):
     """Convert one limit (e.g. 'GND', '3500 ft AMSL', '120 m AGL', 'FL95') to metres above ground."""
     s = txt.strip().upper().replace(" ", "")

@@ -339,7 +339,7 @@ print(f"today {today:%Y-%m-%d}, next AIRAC date {nxt:%Y-%m-%d}")
         ("code", t('''
 A = (49.2467, 16.4798)        # ◀ parametr: začátek profilu (Bystrc, Kozí horka)
 B = (49.1510, 16.6940)        # ◀ parametr: konec profilu (letiště Brno-Tuřany)
-FLIGHT_AGL = 120              # ◀ parametr: plánovaná výška letu nad terénem (m)
+FLIGHT_AGL = z_viz("FLIGHT_AGL", 120)   # ◀ parametr: plánovaná výška letu nad terénem (m)
 T_JTSK = Transformer.from_crs(4326, 5514, always_xy=True)
 (xa, xb), (ya, yb) = T_JTSK.transform([A[1], B[1]], [A[0], B[0]])
 dem, tr = cuzk_raster("dmr5g", min(xa, xb) - 100, min(ya, yb) - 100, max(xa, xb) + 100, max(ya, yb) + 100, res=10.0)
@@ -382,7 +382,7 @@ print(f"let ve {FLIGHT_AGL} m nad terénem je podle sítí možný na {100 * ok.
 ''', '''
 A = (49.2467, 16.4798)        # ◀ parameter: start of the profile (Bystrc, Kozí horka)
 B = (49.1510, 16.6940)        # ◀ parameter: end of the profile (Brno-Tuřany airport)
-FLIGHT_AGL = 120              # ◀ parameter: planned flight height above ground (m)
+FLIGHT_AGL = z_viz("FLIGHT_AGL", 120)   # ◀ parameter: planned flight height above ground (m)
 T_JTSK = Transformer.from_crs(4326, 5514, always_xy=True)
 (xa, xb), (ya, yb) = T_JTSK.transform([A[1], B[1]], [A[0], B[0]])
 dem, tr = cuzk_raster("dmr5g", min(xa, xb) - 100, min(ya, yb) - 100, max(xa, xb) + 100, max(ya, yb) + 100, res=10.0)

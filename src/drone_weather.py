@@ -69,11 +69,15 @@ import matplotlib.pyplot as plt
 ''' + t(OPEN_METEO_HELPER["cs"], OPEN_METEO_HELPER["en"])),
         ("code", t('''
 STATIONS = "@STATIONS@"          # ◀ parametr: kódy letišť ICAO
+ST_VIZ = z_viz("STATION", "@MAIN@")                            # letiště ze zprávy METAR vložené do vizuálu
+if ST_VIZ not in STATIONS.split(","): STATIONS += "," + ST_VIZ
 raw = requests.get("https://aviationweather.gov/api/data/metar", params={"ids": STATIONS, "format": "raw", "hours": 24}, timeout=60).text.strip().splitlines()
 taf = requests.get("https://aviationweather.gov/api/data/taf", params={"ids": "@MAIN@", "format": "raw"}, timeout=60).text.strip()
 print(f"{len(raw)} zpráv; nejnovější:"); print("\\n".join(raw[:6])); print("\\nTAF @TAF_CS@:\\n" + taf)
 ''', '''
 STATIONS = "@STATIONS@"          # ◀ parameter: ICAO airport codes
+ST_VIZ = z_viz("STATION", "@MAIN@")                            # airport of the METAR report pasted into the visual
+if ST_VIZ not in STATIONS.split(","): STATIONS += "," + ST_VIZ
 raw = requests.get("https://aviationweather.gov/api/data/metar", params={"ids": STATIONS, "format": "raw", "hours": 24}, timeout=60).text.strip().splitlines()
 taf = requests.get("https://aviationweather.gov/api/data/taf", params={"ids": "@MAIN@", "format": "raw"}, timeout=60).text.strip()
 print(f"{len(raw)} reports; latest:"); print("\\n".join(raw[:6])); print("\\nTAF @TAF_EN@:\\n" + taf)
@@ -169,7 +173,8 @@ def wind_at(z, u10, z0=0.03, d=0.0, zb=60.0):
     return np.where(z <= zb, site, above)
 
 TERRAIN = {"voda": (0.0002, 0), "pole, tráva": (0.03, 0), "předměstí": (0.5, 6), "les 25 m": (2.5, 17)}
-u10 = float(met[met["stanice"] == "@MAIN@"]["vítr m/s"].iloc[0])     # ◀ parametr: vítr v 10 m (výchozí je poslední METAR @MAIN_FROM_CS@)
+ST_U = ST_VIZ if (met["stanice"] == ST_VIZ).any() else "@MAIN@"
+u10 = float(met[met["stanice"] == ST_U]["vítr m/s"].iloc[0])     # ◀ parametr: vítr v 10 m (výchozí je poslední METAR @MAIN_FROM_CS@)
 z = np.linspace(1, 150, 300)
 plt.figure(figsize=(6, 4.5))
 for name, (z0, d) in TERRAIN.items():
@@ -187,7 +192,8 @@ def wind_at(z, u10, z0=0.03, d=0.0, zb=60.0):
     return np.where(z <= zb, site, above)
 
 TERRAIN = {"water": (0.0002, 0), "field, grass": (0.03, 0), "suburb": (0.5, 6), "forest 25 m": (2.5, 17)}
-u10 = float(met[met["station"] == "@MAIN@"]["wind m/s"].iloc[0])     # ◀ parameter: wind at 10 m (default is the latest @TAF_EN@ METAR)
+ST_U = ST_VIZ if (met["station"] == ST_VIZ).any() else "@MAIN@"
+u10 = float(met[met["station"] == ST_U]["wind m/s"].iloc[0])     # ◀ parameter: wind at 10 m (default is the latest @TAF_EN@ METAR)
 z = np.linspace(1, 150, 300)
 plt.figure(figsize=(6, 4.5))
 for name, (z0, d) in TERRAIN.items():
