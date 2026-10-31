@@ -12,7 +12,7 @@ Load the list of geographical zones and their GeoJSON files, determine the zones
 
 ## Data
 
-UAS geographical zones as GeoJSON (reference boundaries) from the ŘLP page https://aim.rlp.cz/?lang=cz&p=uas-gz, downloaded at run time; terrain elevation from Open-Meteo (Copernicus DEM 90 m).
+UAS geographical zones as GeoJSON (reference boundaries) from the ŘLP page https://aim.rlp.cz/?lang=cz&p=uas-gz, downloaded at run time; terrain elevation from the Digital terrain model of the Czech Republic, 5th generation (DMR 5G, ČÚZK).
 
 All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
 
@@ -20,7 +20,7 @@ All data are open and are downloaded inside the notebook when it runs, with no r
 
 ### 1. Setup and the list of zones
 
-Installs the libraries Colab lacks (`pyproj`, `shapely`) and downloads the data.
+Installs the libraries Colab lacks (`pyproj`, `rasterio`, `shapely`) and downloads the data.
 
 ### 2. Which zones do the flight sites fall into?
 
@@ -35,7 +35,7 @@ Parameters the student changes:
 
 ### 3. Vertical limits of zones
 
-A zone applies only between its lower and upper limit. Limits are given above ground (AGL), above mean sea level (AMSL) or as a flight level (FL, hundreds of feet at the standard pressure of 1013.25 hPa; here we treat it as an AMSL height for simplicity). 1 ft = 0.3048 m. Terrain elevation comes from Open-Meteo.
+A zone applies only between its lower and upper limit. Limits are given above ground (AGL), above mean sea level (AMSL) or as a flight level (FL, hundreds of feet at the standard pressure of 1013.25 hPa; here we treat it as an AMSL height for simplicity). 1 ft = 0.3048 m. Terrain elevation comes from the DMR 5G digital terrain model (ČÚZK).
 
 Parameters the student changes:
 
@@ -71,6 +71,8 @@ Besides the current zones, ŘLP also publishes releases that will take effect in
 
 **Task 5.** Which layers change in the next release, and how many zones and how much area are added or removed? Why must a drone have current data for its geo-awareness function, and why is it not enough to check the zones once when planning a project that lasts several weeks?
 
+**Extension (optional).** Classmates may have the notebook for the Brno area or for Hluboká nad Vltavou. Compare which zones and which allowed heights from the grid the flight sites near the airport and outside towns have, and how the grid around a controlled and an uncontrolled airport differ.
+
 ## Requirements
 
 A Google account and a browser; the notebook runs in Google Colab and nothing is installed on the computer. Cells are run in order from top to bottom, answers go into the *Your answer* cells below the tasks.
@@ -80,7 +82,7 @@ A Google account and a browser; the notebook runs in Google Colab and nothing is
 - UAS geographical zones: Air Navigation Services of the Czech Republic (ŘLP ČR), AIM, https://aim.rlp.cz/?lang=en&p=uas-gz; zone map: https://dronemap.gov.cz
 - Commission Implementing Regulation (EU) 2019/947 on the rules and procedures for the operation of unmanned aircraft, Article 15 (UAS geographical zones); Delegated Regulation (EU) 2019/945.
 - Civil Aviation Authority of the Czech Republic: measures of general nature on UAS geographical zones (LKR311 to LKR320), https://www.caa.gov.cz
-- Terrain elevation: Open-Meteo Elevation API (Copernicus DEM GLO-90), https://open-meteo.com (CC BY 4.0).
+- Terrain elevation: Digital terrain model of the Czech Republic, 5th generation (DMR 5G), © ČÚZK, licence CC BY 4.0, service https://ags.cuzk.cz/arcgis2/rest/services/dmr5g/ImageServer
 
 ---
 

@@ -12,7 +12,7 @@ Načíst seznam zeměpisných zón a jejich soubory GeoJSON, určit zóny pro za
 
 ## Data
 
-Zeměpisné zóny UAS ve formátu GeoJSON (referenční hranice) ze stránky ŘLP https://aim.rlp.cz/?lang=cz&p=uas-gz, stažené v okamžiku spuštění; nadmořská výška terénu z Open-Meteo (Copernicus DEM 90 m).
+Zeměpisné zóny UAS ve formátu GeoJSON (referenční hranice) ze stránky ŘLP https://aim.rlp.cz/?lang=cz&p=uas-gz, stažené v okamžiku spuštění; nadmořská výška terénu z Digitálního modelu reliéfu ČR 5. generace (DMR 5G, ČÚZK).
 
 Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
 
@@ -20,7 +20,7 @@ Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění
 
 ### 1. Příprava a seznam zón
 
-Nainstaluje knihovny, které Colab nemá předem (`pyproj`, `shapely`), a stáhne data.
+Nainstaluje knihovny, které Colab nemá předem (`pyproj`, `rasterio`, `shapely`), a stáhne data.
 
 ### 2. Do kterých zón padají místa letu?
 
@@ -35,7 +35,7 @@ Parametry, které student mění:
 
 ### 3. Svislé hranice zón
 
-Zóna platí jen mezi svou dolní a horní hranicí. Hranice se udávají nad terénem (AGL), nad střední hladinou moře (AMSL) nebo jako letová hladina (FL, stovky stop při standardním tlaku 1013,25 hPa; zde ji pro jednoduchost bereme jako výšku AMSL). 1 ft = 0,3048 m. Výšku terénu vezmeme z Open-Meteo.
+Zóna platí jen mezi svou dolní a horní hranicí. Hranice se udávají nad terénem (AGL), nad střední hladinou moře (AMSL) nebo jako letová hladina (FL, stovky stop při standardním tlaku 1013,25 hPa; zde ji pro jednoduchost bereme jako výšku AMSL). 1 ft = 0,3048 m. Nadmořskou výšku terénu vezmeme z digitálního modelu reliéfu DMR 5G (ČÚZK).
 
 Parametry, které student mění:
 
@@ -71,6 +71,8 @@ Parametry, které student mění:
 
 **Úkol 5.** Které vrstvy se v příštím vydání mění, kolik zón a plochy přibude nebo ubude? Proč musí mít dron aktuální data pro funkci geografického povědomí (geo-awareness) a proč nestačí zóny zkontrolovat jednou při plánování projektu, který trvá několik týdnů?
 
+**Rozšíření (nepovinné).** Spolužáci mohou mít notebook pro okolí Brna nebo Hluboké nad Vltavou. Porovnejte, jaké zóny a jaké povolené výšky ze sítě mají místa letu kolem letiště a mimo města, a čím se liší síť kolem řízeného a neřízeného letiště.
+
 ## Co je potřeba
 
 Google účet a prohlížeč; notebook běží v Google Colab a nic se neinstaluje do počítače. Buňky se spouštějí popořadě shora dolů, odpovědi se píšou do buněk *Tvoje odpověď* pod úkoly.
@@ -80,7 +82,7 @@ Google účet a prohlížeč; notebook běží v Google Colab a nic se neinstalu
 - Zeměpisné zóny UAS: Řízení letového provozu České republiky, s. p., AIM, https://aim.rlp.cz/?lang=cz&p=uas-gz; mapa zón: https://dronemap.gov.cz
 - Prováděcí nařízení Komise (EU) 2019/947 o pravidlech a postupech pro provoz bezpilotních letadel, čl. 15 (zeměpisné zóny UAS); nařízení v přenesené pravomoci (EU) 2019/945.
 - Úřad pro civilní letectví: opatření obecné povahy k zeměpisným zónám UAS (LKR311 až LKR320), https://www.caa.gov.cz
-- Výška terénu: Open-Meteo Elevation API (Copernicus DEM GLO-90), https://open-meteo.com (CC BY 4.0).
+- Výška terénu: Digitální model reliéfu ČR 5. generace (DMR 5G), © ČÚZK, licence CC BY 4.0, služba https://ags.cuzk.cz/arcgis2/rest/services/dmr5g/ImageServer
 
 ---
 
