@@ -181,8 +181,8 @@ for season, s in L8.items():
           f"in self-shadow (cos i < 0) {np.mean(s['cosi'] < 0):.1%} of pixels")
 ''')),
         ("task", t(
-            "Porovnej mapy cos i v létě a na podzim. Proč se na podzim osvětlení jižních a severních svahů liší mnohem víc a kolik pixelů je ve vlastním stínu? Proč vzorec odrazivosti TOA z notebooku k vizuálu (dělení sinem výšky Slunce) na svahu nedává skutečnou odrazivost povrchu?",
-            "Compare the cos i maps in summer and in autumn. Why do south- and north-facing slopes differ much more in autumn, and how many pixels are in self-shadow? Why does the TOA reflectance formula from the visual's notebook (dividing by the sine of the sun elevation) not give the true surface reflectance on a slope?")),
+            "Porovnej mapy cos i v létě a na podzim. Proč se na podzim osvětlení jižních a severních svahů liší mnohem víc a kolik pixelů je ve vlastním stínu? Proč vzorec odrazivosti TOA z notebooku k laboratoři (dělení sinem výšky Slunce) na svahu nedává skutečnou odrazivost povrchu?",
+            "Compare the cos i maps in summer and in autumn. Why do south- and north-facing slopes differ much more in autumn, and how many pixels are in self-shadow? Why does the TOA reflectance formula from the lab's notebook (dividing by the sine of the sun elevation) not give the true surface reflectance on a slope?")),
         ("md", t(
             "## 3. Jak silně terén mění odrazivost lesa\n\nVezmeme lesní pixely podle WorldCoveru a proložíme přímku ρ = m · cos i + b. Kdyby svah osvětlovalo jen přímé Slunce a les odrážel stejně do všech směrů, byla by odrazivost úměrná cos i a posun b by byl nulový. Poměr C = b/m je základem C-korekce (Teillet a kol. 1982).",
             "## 3. How strongly the terrain changes forest reflectance\n\nWe take forest pixels according to WorldCover and fit a line ρ = m · cos i + b. If the slope were lit only by direct sun and the forest reflected equally in all directions, reflectance would be proportional to cos i and the offset b would be zero. The ratio C = b/m is the basis of the C-correction (Teillet et al. 1982).")),

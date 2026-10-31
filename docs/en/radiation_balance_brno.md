@@ -1,10 +1,10 @@
 # Where sunlight goes: surface balance from Sentinel-2 (Brno and the Jeseníky)
 
-Description of the notebook for the visual [Where radiation goes](https://openskylab.space/edu_viz_radiation_balance.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/radiation_balance_brno_en.ipynb) · version 1.0 · about 40 min · six tasks
+Description of the notebook for the lab [Where radiation goes](https://openskylab.space/edu_viz_radiation_balance.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/radiation_balance_brno_en.ipynb) · version 1.0 · about 40 min · six tasks
 
 ## What the notebook is about
 
-In the visual, incoming radiation splits into reflected, absorbed and transmitted parts, ρ + α + τ = 1, and Kirchhoff's law gives ε = α. Here you measure reflectance on real Sentinel-2 pixels (forest, meadow, field, built-up area, water and snow), compute how much radiation the surfaces absorb in real weather and estimate how warm they get.
+In the lab, incoming radiation splits into reflected, absorbed and transmitted parts, ρ + α + τ = 1, and Kirchhoff's law gives ε = α. Here you measure reflectance on real Sentinel-2 pixels (forest, meadow, field, built-up area, water and snow), compute how much radiation the surfaces absorb in real weather and estimate how warm they get.
 
 ## Goal
 

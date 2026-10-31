@@ -1,6 +1,6 @@
 # From pixel to class, advanced: time series, spatial validation and area estimates
 
-Description of the notebook for the visual [From pixel to class](https://openskylab.space/edu_viz_image_classification.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/image_classification_pro_en.ipynb) · version 1.0 · about 75 min · five tasks
+Description of the notebook for the lab [From pixel to class](https://openskylab.space/edu_viz_image_classification.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/image_classification_pro_en.ipynb) · version 1.0 · about 75 min · five tasks
 
 ## What the notebook is about
 

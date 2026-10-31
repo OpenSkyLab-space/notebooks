@@ -1,10 +1,10 @@
 # From pixel to class: classifying Sentinel-2 near Roztoky
 
-Description of the notebook for the visual [From pixel to class](https://openskylab.space/edu_viz_image_classification.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/image_classification_en.ipynb) · version 1.0 · about 50 min · six tasks
+Description of the notebook for the lab [From pixel to class](https://openskylab.space/edu_viz_image_classification.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/image_classification_en.ipynb) · version 1.0 · about 50 min · six tasks
 
 ## What the notebook is about
 
-In the visual you split pixels with an index threshold, compared classic classifiers and watched a neural network overfit. Here you do the same on a real Sentinel-2 image near Roztoky with ESA WorldCover as reference and assess accuracy with a confusion matrix.
+In the lab you split pixels with an index threshold, compared classic classifiers and watched a neural network overfit. Here you do the same on a real Sentinel-2 image near Roztoky with ESA WorldCover as reference and assess accuracy with a confusion matrix.
 
 ## Goal
 

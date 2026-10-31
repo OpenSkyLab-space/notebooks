@@ -22,17 +22,17 @@ def main():
                 for lang in ("cs", "en"))
             docs = f"[CS](docs/cs/{stem}.md) [EN](docs/en/{stem}.md)"
             rows.append(f"| [{meta['visual']['cs']}]({SITE}/edu_viz_{meta['visual_stem']}.html) | {meta['title']['cs']} | {meta['minutes']} | {links} | {docs} |")
-    text = f"""# OpenSkyLab · notebooky k vizuálům / notebooks for the visuals
+    text = f"""# OpenSkyLab · notebooky k laboratořím / notebooks for the labs
 
-Notebooky pro Google Colab k interaktivním výukovým vizuálům [OpenSkyLab]({SITE}) o dálkovém průzkumu a dronech.
+Notebooky pro Google Colab k interaktivním laboratořím [OpenSkyLab]({SITE}) o dálkovém průzkumu a dronech.
 Každý notebook pracuje se skutečnými otevřenými daty, má 4 až 6 úkolů a parametry, které student mění.
 Každý existuje česky (`_cs`) a anglicky (`_en`). Ke každému je popis toho, co se v něm dělá, ve složce `docs/`.
 
-Google Colab notebooks for the [OpenSkyLab]({SITE}) interactive teaching visuals on remote sensing and drones.
+Google Colab notebooks for the [OpenSkyLab]({SITE}) interactive labs on remote sensing and drones.
 Every notebook works with real open data, has 4 to 6 tasks and parameters for the student to change.
 Each one exists in Czech (`_cs`) and English (`_en`). A description of what each one does is in the `docs/` folder.
 
-| Vizuál / visual | Notebook | min | Colab | Popis / description |
+| Laboratoř / lab | Notebook | min | Colab | Popis / description |
 |---|---|---|---|---|
 {chr(10).join(rows)}
 

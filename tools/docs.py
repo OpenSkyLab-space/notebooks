@@ -5,7 +5,7 @@ Usage:
     python tools/docs.py gnss_sky ... # only these stems
 
 The description lists what the notebook does step by step, its parameters and tasks, the data and
-the sources, so it can go on the web next to the visual without drifting from the notebook.
+the sources, so it can go on the web next to the lab without drifting from the notebook.
 """
 import re
 import sys
@@ -48,9 +48,9 @@ def page(stem, meta, cells_fn, lang):
     lines = [
         f"# {meta['title'][lang]}",
         "",
-        t(f"Popis notebooku k vizuálu [{meta['visual']['cs']}]({SITE}/edu_viz_{viz}.html). "
+        t(f"Popis notebooku k laboratoři [{meta['visual']['cs']}]({SITE}/edu_viz_{viz}.html). "
           f"[Otevřít v Google Colab]({colab}) · verze {meta['version']} · asi {meta['minutes']} min · {COUNT['cs'][n_tasks]} úkolů",
-          f"Description of the notebook for the visual [{meta['visual']['en']}]({SITE}/edu_viz_{viz}.html). "
+          f"Description of the notebook for the lab [{meta['visual']['en']}]({SITE}/edu_viz_{viz}.html). "
           f"[Open in Google Colab]({colab}) · version {meta['version']} · about {meta['minutes']} min · {COUNT['en'][n_tasks]} tasks"),
         "",
         t("## O čem notebook je", "## What the notebook is about"),

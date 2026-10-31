@@ -1,6 +1,6 @@
 # Švihadlo a fotony, pokročilá verze: kolik fotonů zachytí pixel Sentinelu-2 a dronu
 
-Popis notebooku k vizuálu [Švihadlo a fotony](https://openskylab.space/edu_viz_rope_and_photons.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/rope_and_photons_pro_cs.ipynb) · verze 1.0 · asi 60 min · pět úkolů
+Popis notebooku k laboratoři [Švihadlo a fotony](https://openskylab.space/edu_viz_rope_and_photons.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/rope_and_photons_pro_cs.ipynb) · verze 1.0 · asi 60 min · pět úkolů
 
 ## O čem notebook je
 

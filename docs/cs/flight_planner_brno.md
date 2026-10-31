@@ -1,10 +1,10 @@
 # Plán letu nad Brněnskou přehradou: GSD, překryvy, terén a vítr
 
-Popis notebooku k vizuálu [Plánovač letu dronu](https://openskylab.space/edu_viz_flight_planner.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/flight_planner_brno_cs.ipynb) · verze 1.0 · asi 50 min · pět úkolů
+Popis notebooku k laboratoři [Plánovač letu dronu](https://openskylab.space/edu_viz_flight_planner.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/flight_planner_brno_cs.ipynb) · verze 1.0 · asi 50 min · pět úkolů
 
 ## O čem notebook je
 
-Ve vizuálu jsi plánoval let nad rovinou a nad modelovým kopcem. Tady stejné vzorce použiješ na skutečný terén: svah nad Brněnskou přehradou u Kozí horky v Brně-Bystrci z digitálního modelu reliéfu ČÚZK DMR 5G (lidar, buňka 2 m) a na aktuální předpověď větru ve výšce letu.
+V laboratoři jsi plánoval let nad rovinou a nad modelovým kopcem. Tady stejné vzorce použiješ na skutečný terén: svah nad Brněnskou přehradou u Kozí horky v Brně-Bystrci z digitálního modelu reliéfu ČÚZK DMR 5G (lidar, buňka 2 m) a na aktuální předpověď větru ve výšce letu.
 
 ## Cíl
 
@@ -12,7 +12,7 @@ Spočítat výšku letu pro cílové GSD, rozestup linek, interval a rychlost, r
 
 ## Data
 
-DMR 5G (ČÚZK, služba ImageServer, výšky v Bpv, buňka 2 m) pro území 1,2 × 0,8 km na svahu nad Brněnskou přehradou u Kozí horky (Brno-Bystrc); hodinová předpověď větru ve 10, 80 a 120 m z Open-Meteo; parametry kamer z technických listů výrobců (stejné jako ve vizuálu).
+DMR 5G (ČÚZK, služba ImageServer, výšky v Bpv, buňka 2 m) pro území 1,2 × 0,8 km na svahu nad Brněnskou přehradou u Kozí horky (Brno-Bystrc); hodinová předpověď větru ve 10, 80 a 120 m z Open-Meteo; parametry kamer z technických listů výrobců (stejné jako v laboratoři).
 
 Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
 
@@ -38,10 +38,10 @@ Načteme DMR 5G pro svah nad Brněnskou přehradou. Linky vedou ve směru výcho
 
 Parametry, které student mění:
 
-- `cam = CAMERAS["Mavic 3E"]`: kamera
-- `H0 = 80`: výška letu nad místem vzletu (m)
-- `fo, so = 0.80, 0.70`: podélný a příčný překryv
-- `v_air = 10.0`: rychlost vůči vzduchu (m/s)
+- `cam = CAMERAS[z_viz("cam", "Mavic 3E", {"rgb": "RGB 1″ 20 Mpx", "p1": "P1 35 mm", "m3e": "Mavic 3E", "m3m": "Mavic 3M (MS)"})]`: kamera
+- `H0 = z_viz("H0", 80)`: výška letu nad místem vzletu (m)
+- `fo, so = z_viz("fo", 0.80), z_viz("so", 0.70)`: podélný a příčný překryv
+- `v_air = z_viz("v_air", 10.0)`: rychlost vůči vzduchu (m/s)
 - `long_across = True`: delší strana snímku napříč letem?
 
 **Úkol 2.** Zvyšuj `v_air`, dokud se neobjeví upozornění, že kamera nestihne. Jaká je nejvyšší rychlost? Přepni `long_across = False`: jak se změní báze, nejvyšší rychlost, počet linek a čas letu? Proč otočený snímek dovolí rychlejší let, a přesto může let trvat déle? Nastav podélný překryv 0,85 jako pro vegetaci.
@@ -63,8 +63,8 @@ Z Open-Meteo vezmeme předpověď větru pro toto území na dnešek. Rozmazán�
 Parametry, které student mění:
 
 - `hour = 6 + int(met.wind_speed_80m.values[6:21].argmax())`: hodina letu (místní čas); výchozí je největrnější hodina mezi 6 a 20 h
-- `t_exp = 1 / 1000`: expoziční čas (s)
-- `t_read = 0.030`: doba vyčtení čipu u postupné závěrky (s); 0 = globální závěrka
+- `t_exp = z_viz("t_exp", 1 / 1000)`: expoziční čas (s)
+- `t_read = z_viz("t_read", 0.030)`: doba vyčtení čipu u postupné závěrky (s); 0 = globální závěrka
 
 **Úkol 4.** Jaký vítr hlásí předpověď ve 10, 80 a 120 m a proč se liší? Jak se liší rozmazání a zkosení na lince po větru a proti větru? Proč zkosení nezmenší kratší expozice? Kdy bys linky raději otočil podél větru, nebo napříč?
 

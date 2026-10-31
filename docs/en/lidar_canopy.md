@@ -1,10 +1,10 @@
 # Lidar and photogrammetry in a forest: ČÚZK point clouds and models
 
-Description of the notebook for the visual [LiDAR vs photogrammetry under canopy](https://openskylab.space/edu_viz_lidar_canopy.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/lidar_canopy_en.ipynb) · version 1.0 · about 50 min · six tasks
+Description of the notebook for the lab [LiDAR vs photogrammetry under canopy](https://openskylab.space/edu_viz_lidar_canopy.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/lidar_canopy_en.ipynb) · version 1.0 · about 50 min · six tasks
 
 ## What the notebook is about
 
-The visual shows why a laser pulse finds the ground even under tree crowns while photogrammetry sees only the surface. Here you check it on real ČÚZK data from the Roztoky forest near Suchdol: ground and surface points from airborne laser scanning and a surface from image matching of aerial photographs.
+The lab shows why a laser pulse finds the ground even under tree crowns while photogrammetry sees only the surface. Here you check it on real ČÚZK data from the Roztoky forest near Suchdol: ground and surface points from airborne laser scanning and a surface from image matching of aerial photographs.
 
 ## Goal
 

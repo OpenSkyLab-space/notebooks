@@ -1,6 +1,6 @@
 # Calibrating a multispectral camera, advanced: band geometry, NDVI errors, thermal and panchromatic bands
 
-Description of the notebook for the visual [Calibrating a multispectral camera](https://openskylab.space/edu_viz_multispectral_calibration.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/multispectral_calibration_pro_en.ipynb) · version 1.0 · about 60 min · five tasks
+Description of the notebook for the lab [Calibrating a multispectral camera](https://openskylab.space/edu_viz_multispectral_calibration.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/multispectral_calibration_pro_en.ipynb) · version 1.0 · about 60 min · five tasks
 
 ## What the notebook is about
 

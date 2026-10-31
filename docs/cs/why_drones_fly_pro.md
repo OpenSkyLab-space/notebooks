@@ -1,6 +1,6 @@
 # Proč dron letí, pokročilá verze: výkon v dopředném letu, vítr, hustota vzduchu a vliv země
 
-Popis notebooku k vizuálu [Proč dron letí](https://openskylab.space/edu_viz_why_drones_fly.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/why_drones_fly_pro_cs.ipynb) · verze 1.0 · asi 55 min · pět úkolů
+Popis notebooku k laboratoři [Proč dron letí](https://openskylab.space/edu_viz_why_drones_fly.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/why_drones_fly_pro_cs.ipynb) · verze 1.0 · asi 55 min · pět úkolů
 
 ## O čem notebook je
 

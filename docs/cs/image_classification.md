@@ -1,10 +1,10 @@
 # Od pixelu ke třídě: klasifikace Sentinelu-2 u Roztok
 
-Popis notebooku k vizuálu [Od pixelu ke třídě](https://openskylab.space/edu_viz_image_classification.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/image_classification_cs.ipynb) · verze 1.0 · asi 50 min · šest úkolů
+Popis notebooku k laboratoři [Od pixelu ke třídě](https://openskylab.space/edu_viz_image_classification.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/image_classification_cs.ipynb) · verze 1.0 · asi 50 min · šest úkolů
 
 ## O čem notebook je
 
-Ve vizuálu jsi dělil pixely prahem indexu, porovnával klasické klasifikátory a sledoval, jak se neuronová síť přeučí. Tady totéž uděláš na skutečném snímku Sentinel-2 u Roztok s referencí ESA WorldCover a přesnost vyhodnotíš chybovou maticí.
+V laboratoři jsi dělil pixely prahem indexu, porovnával klasické klasifikátory a sledoval, jak se neuronová síť přeučí. Tady totéž uděláš na skutečném snímku Sentinel-2 u Roztok s referencí ESA WorldCover a přesnost vyhodnotíš chybovou maticí.
 
 ## Cíl
 

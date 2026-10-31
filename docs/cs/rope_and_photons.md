@@ -1,10 +1,10 @@
 # Fotony v pásmech Sentinelu-2B
 
-Popis notebooku k vizuálu [Švihadlo a fotony](https://openskylab.space/edu_viz_rope_and_photons.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/rope_and_photons_cs.ipynb) · verze 1.0 · asi 40 min · šest úkolů
+Popis notebooku k laboratoři [Švihadlo a fotony](https://openskylab.space/edu_viz_rope_and_photons.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/rope_and_photons_cs.ipynb) · verze 1.0 · asi 40 min · šest úkolů
 
 ## O čem notebook je
 
-Ve vizuálu jsi viděl, že u vlny na laně platí c = λ · f a že energii nese rozkmit i frekvence. U světla je to jinak: energii jednoho fotonu určuje jen frekvence, E = h · f, jas záření je počet fotonů. Tady to spočítáš pro skutečná pásma družice Sentinel-2B.
+V laboratoři jsi viděl, že u vlny na laně platí c = λ · f a že energii nese rozkmit i frekvence. U světla je to jinak: energii jednoho fotonu určuje jen frekvence, E = h · f, jas záření je počet fotonů. Tady to spočítáš pro skutečná pásma družice Sentinel-2B.
 
 ## Cíl
 
@@ -26,7 +26,7 @@ Načte knihovny a stáhne data.
 
 Načte knihovny a stáhne data.
 
-**Úkol 1.** Sloupec `lambda_x_f` je u všech pásem stejný. Co vyjadřuje a čemu odpovídá na laně ve vizuálu? Kolikrát vyšší frekvenci má pásmo B2 (modrá) než B12 (SWIR 2)?
+**Úkol 1.** Sloupec `lambda_x_f` je u všech pásem stejný. Co vyjadřuje a čemu odpovídá na laně v laboratoři? Kolikrát vyšší frekvenci má pásmo B2 (modrá) než B12 (SWIR 2)?
 
 ### 3. Energie jednoho fotonu
 

@@ -1,10 +1,10 @@
 # Kde smím létat: zeměpisné zóny UAS z dat ŘLP
 
-Popis notebooku k vizuálu [Kde a jak smím létat](https://openskylab.space/edu_viz_eu_rules.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/eu_rules_cs.ipynb) · verze 1.0 · asi 45 min · pět úkolů
+Popis notebooku k laboratoři [Kde a jak smím létat](https://openskylab.space/edu_viz_eu_rules.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/eu_rules_cs.ipynb) · verze 1.0 · asi 45 min · pět úkolů
 
 ## O čem notebook je
 
-Vizuál vede rozhodovacím stromem evropských pravidel pro drony. Jednu jeho větev, zeměpisné zóny UAS, tady projdeš na skutečných datech: stáhneš aktuální zóny, které zveřejňuje Řízení letového provozu ČR, zjistíš, do kterých zón padají plánovaná místa letu, jak vysoko se v okolí letišť smí létat a jak se zóny mění v čase. Je to výuková pomůcka, ne právní posouzení: před letem vždy ověř zóny v aplikaci DroneMap a podmínky v opatřeních obecné povahy ÚCL.
+Laboratoř vede rozhodovacím stromem evropských pravidel pro drony. Jednu jeho větev, zeměpisné zóny UAS, tady projdeš na skutečných datech: stáhneš aktuální zóny, které zveřejňuje Řízení letového provozu ČR, zjistíš, do kterých zón padají plánovaná místa letu, jak vysoko se v okolí letišť smí létat a jak se zóny mění v čase. Je to výuková pomůcka, ne právní posouzení: před letem vždy ověř zóny v aplikaci DroneMap a podmínky v opatřeních obecné povahy ÚCL.
 
 ## Cíl
 
@@ -39,7 +39,7 @@ Zóna platí jen mezi svou dolní a horní hranicí. Hranice se udávají nad te
 
 Parametry, které student mění:
 
-- `FLIGHT_AGL = 120`: plánovaná výška letu nad terénem (m)
+- `FLIGHT_AGL = z_viz("FLIGHT_AGL", 120)`: plánovaná výška letu nad terénem (m)
 
 **Úkol 2.** Vnější i vnitřní zóna CTR Praha (LKR314C a LKR314D) má horní hranici 3500 ft AMSL: kolik je to metrů nad terénem v Suchdole? Proč se některé letecké prostory LKR320A dronu ve 120 m vůbec netýkají? Proč u hranic v AMSL nebo FL záleží na výšce terénu, a co to znamená pro let na horách (Pec pod Sněžkou)?
 

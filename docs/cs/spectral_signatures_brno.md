@@ -1,10 +1,10 @@
 # Spektrální signatury ze Sentinelu-2: les, pole, voda a sníh (Brno a Jeseníky)
 
-Popis notebooku k vizuálu [Spektrální signatury](https://openskylab.space/edu_viz_spectral_signatures.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/spectral_signatures_brno_cs.ipynb) · verze 1.0 · asi 45 min · šest úkolů
+Popis notebooku k laboratoři [Spektrální signatury](https://openskylab.space/edu_viz_spectral_signatures.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/spectral_signatures_brno_cs.ipynb) · verze 1.0 · asi 45 min · šest úkolů
 
 ## O čem notebook je
 
-Vizuál ukazuje, jak chlorofyl, voda v listech, sušina a LAI mění spektrální křivku vegetace a proč NDVI v hustém porostu přestává růst. Tady to ověříš na skutečných pixelech Sentinelu-2 u Brněnské přehrady a na časové řadě jednoho pole během sezóny 2024.
+Laboratoř ukazuje, jak chlorofyl, voda v listech, sušina a LAI mění spektrální křivku vegetace a proč NDVI v hustém porostu přestává růst. Tady to ověříš na skutečných pixelech Sentinelu-2 u Brněnské přehrady a na časové řadě jednoho pole během sezóny 2024.
 
 ## Cíl
 

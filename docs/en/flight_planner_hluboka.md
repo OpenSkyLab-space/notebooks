@@ -1,10 +1,10 @@
 # A flight plan over a valley near Hosín: GSD, overlaps, terrain and wind
 
-Description of the notebook for the visual [Drone flight planner](https://openskylab.space/edu_viz_flight_planner.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/flight_planner_hluboka_en.ipynb) · version 1.0 · about 50 min · five tasks
+Description of the notebook for the lab [Drone flight planner](https://openskylab.space/edu_viz_flight_planner.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/flight_planner_hluboka_en.ipynb) · version 1.0 · about 50 min · five tasks
 
 ## What the notebook is about
 
-In the visual you planned a flight over flat ground and over a model hill. Here you apply the same formulas to real terrain: a wooded valley with a railway line near Hosín, about 3 km east of Hluboká nad Vltavou from the ČÚZK DMR 5G digital terrain model (lidar, 2 m cells), and to the current wind forecast at flight height.
+In the lab you planned a flight over flat ground and over a model hill. Here you apply the same formulas to real terrain: a wooded valley with a railway line near Hosín, about 3 km east of Hluboká nad Vltavou from the ČÚZK DMR 5G digital terrain model (lidar, 2 m cells), and to the current wind forecast at flight height.
 
 ## Goal
 
@@ -12,7 +12,7 @@ Compute flight height for a target GSD, line spacing, trigger interval and speed
 
 ## Data
 
-DMR 5G (ČÚZK, ImageServer, heights in Bpv, 2 m cells) for a 1.2 × 0.8 km area in a valley near Hosín east of Hluboká nad Vltavou; hourly wind forecast at 10, 80 and 120 m from Open-Meteo; camera parameters from manufacturers' data sheets (same as in the visual).
+DMR 5G (ČÚZK, ImageServer, heights in Bpv, 2 m cells) for a 1.2 × 0.8 km area in a valley near Hosín east of Hluboká nad Vltavou; hourly wind forecast at 10, 80 and 120 m from Open-Meteo; camera parameters from manufacturers' data sheets (same as in the lab).
 
 All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
 
@@ -38,10 +38,10 @@ We load DMR 5G for the valley near Hosín. Lines run east–west, i.e. down the 
 
 Parameters the student changes:
 
-- `cam = CAMERAS["Mavic 3E"]`: camera
-- `H0 = 80`: flight height above the take-off point (m)
-- `fo, so = 0.80, 0.70`: forward and side overlap
-- `v_air = 10.0`: airspeed (m/s)
+- `cam = CAMERAS[z_viz("cam", "Mavic 3E", {"rgb": "RGB 1″ 20 Mpx", "p1": "P1 35 mm", "m3e": "Mavic 3E", "m3m": "Mavic 3M (MS)"})]`: camera
+- `H0 = z_viz("H0", 80)`: flight height above the take-off point (m)
+- `fo, so = z_viz("fo", 0.80), z_viz("so", 0.70)`: forward and side overlap
+- `v_air = z_viz("v_air", 10.0)`: airspeed (m/s)
 - `long_across = True`: long side of the image across the flight direction?
 
 **Task 2.** Increase `v_air` until the warning that the camera cannot keep up appears. What is the highest speed? Switch `long_across = False`: how do base, maximum speed, number of lines and flight time change? Why does a rotated image allow faster flight and yet the flight may take longer? Set the forward overlap to 0.85 as for vegetation.
@@ -63,8 +63,8 @@ We take today's wind forecast for this area from Open-Meteo. Blur = ground speed
 Parameters the student changes:
 
 - `hour = 6 + int(met.wind_speed_80m.values[6:21].argmax())`: hour of the flight (local time); default is the windiest hour between 6 and 20 h
-- `t_exp = 1 / 1000`: exposure time (s)
-- `t_read = 0.030`: sensor readout time of a rolling shutter (s); 0 = global shutter
+- `t_exp = z_viz("t_exp", 1 / 1000)`: exposure time (s)
+- `t_read = z_viz("t_read", 0.030)`: sensor readout time of a rolling shutter (s); 0 = global shutter
 
 **Task 4.** What wind does the forecast give at 10, 80 and 120 m and why do they differ? How do blur and skew differ on the downwind and upwind legs? Why does a shorter exposure not reduce the skew? When would you rather orient the lines along or across the wind?
 

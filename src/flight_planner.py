@@ -35,16 +35,16 @@ def meta(P):
         "title": {"cs": "Plán letu " + P["tit_cs"] + ": GSD, překryvy, terén a vítr", "en": "A flight plan " + P["tit_en"] + ": GSD, overlaps, terrain and wind"},
         "visual": {"cs": "Plánovač letu dronu", "en": "Drone flight planner"},
         "lead": {
-            "cs": "Ve vizuálu jsi plánoval let nad rovinou a nad modelovým kopcem. Tady stejné vzorce použiješ na skutečný terén: " + P["lead_cs"] + " z digitálního modelu reliéfu ČÚZK DMR 5G (lidar, buňka 2 m) a na aktuální předpověď větru ve výšce letu.",
-            "en": "In the visual you planned a flight over flat ground and over a model hill. Here you apply the same formulas to real terrain: " + P["lead_en"] + " from the ČÚZK DMR 5G digital terrain model (lidar, 2 m cells), and to the current wind forecast at flight height.",
+            "cs": "V laboratoři jsi plánoval let nad rovinou a nad modelovým kopcem. Tady stejné vzorce použiješ na skutečný terén: " + P["lead_cs"] + " z digitálního modelu reliéfu ČÚZK DMR 5G (lidar, buňka 2 m) a na aktuální předpověď větru ve výšce letu.",
+            "en": "In the lab you planned a flight over flat ground and over a model hill. Here you apply the same formulas to real terrain: " + P["lead_en"] + " from the ČÚZK DMR 5G digital terrain model (lidar, 2 m cells), and to the current wind forecast at flight height.",
         },
         "goal": {
             "cs": "spočítat výšku letu pro cílové GSD, rozestup linek, interval a rychlost, rozmazání a zkosení, ukázat, jak terén mění výšku nad zemí a překryv, a naplánovat návrat proti větru.",
             "en": "compute flight height for a target GSD, line spacing, trigger interval and speed, motion blur and skew, show how terrain changes height above ground and overlap, and plan the return against the wind.",
         },
         "data": {
-            "cs": "DMR 5G (ČÚZK, služba ImageServer, výšky v Bpv, buňka 2 m) pro území 1,2 × 0,8 km " + P["data_cs"] + "; hodinová předpověď větru ve 10, 80 a 120 m z Open-Meteo; parametry kamer z technických listů výrobců (stejné jako ve vizuálu).",
-            "en": "DMR 5G (ČÚZK, ImageServer, heights in Bpv, 2 m cells) for a 1.2 × 0.8 km area " + P["data_en"] + "; hourly wind forecast at 10, 80 and 120 m from Open-Meteo; camera parameters from manufacturers' data sheets (same as in the visual).",
+            "cs": "DMR 5G (ČÚZK, služba ImageServer, výšky v Bpv, buňka 2 m) pro území 1,2 × 0,8 km " + P["data_cs"] + "; hodinová předpověď větru ve 10, 80 a 120 m z Open-Meteo; parametry kamer z technických listů výrobců (stejné jako v laboratoři).",
+            "en": "DMR 5G (ČÚZK, ImageServer, heights in Bpv, 2 m cells) for a 1.2 × 0.8 km area " + P["data_en"] + "; hourly wind forecast at 10, 80 and 120 m from Open-Meteo; camera parameters from manufacturers' data sheets (same as in the lab).",
         },
         "sources": {
             "cs": [

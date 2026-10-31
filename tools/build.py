@@ -1,4 +1,4 @@
-"""Build the Czech and English notebooks from one source file per visual.
+"""Build the Czech and English notebooks from one source file per lab.
 
 Usage:
     python tools/build.py              # all sources in src/
@@ -44,7 +44,7 @@ def units(stem):
                  lambda t, _v=v: mod.cells(t, _v)) for k, v in mod.VARIANTS.items()]
     return [(stem, dict(mod.META, visual_stem=mod.META.get("visual_stem", stem)), mod.cells)]
 
-# notebooks that take settings from their visual (the cell "Settings from the visual"); advanced versions only where listed
+# notebooks that take settings from their lab (the cell "Settings from the lab"); advanced versions only where listed
 VIZ_STEMS = {"flight_planner", "thermal_timing", "blackbody_radiation", "why_drones_fly", "drone_weather", "eu_rules", "gnss_sky",
              "multispectral_calibration"}
 VIZ_PRO = {"eu_rules_pro"}
@@ -53,23 +53,23 @@ VIZ_PRO = {"eu_rules_pro"}
 def viz_cell(stem, lang):
     t = (lambda cs, en: cs if lang == "cs" else en)
     return "\n".join([
-        t("#@title Nastavení z vizuálu (nepovinné)", "#@title Settings from the visual (optional)"),
-        t("#@markdown Ve vizuálu klikni na odkaz Notebook. Nastavení se zkopíruje; vlož ho sem místo `{}` (Ctrl+V) a buňku spusť.",
-          "#@markdown In the visual, click the Notebook link. The settings are copied; paste them here in place of `{}` (Ctrl+V) and run the cell."),
+        t("#@title Nastavení z laboratoře (nepovinné)", "#@title Settings from the lab (optional)"),
+        t("#@markdown V laboratoři klikni na odkaz Notebook. Nastavení se zkopíruje; vlož ho sem místo `{}` (Ctrl+V) a buňku spusť.",
+          "#@markdown In the lab, click the Notebook link. The settings are copied; paste them here in place of `{}` (Ctrl+V) and run the cell."),
         'Z_VIZUALU = {}  #@param {type:"raw"}',
         f'STEM = "{stem}"',
         "",
         "def z_viz(name, default, mapping=None):",
-        t('    """Hodnota parametru z vizuálu, pokud ji vložený kód obsahuje; jinak výchozí hodnota."""',
-          '    """Value of a parameter from the visual if the pasted code contains it; otherwise the default value."""'),
+        t('    """Hodnota parametru z laboratoře, pokud ji vložený kód obsahuje; jinak výchozí hodnota."""',
+          '    """Value of a parameter from the lab if the pasted code contains it; otherwise the default value."""'),
         '    z = Z_VIZUALU if isinstance(Z_VIZUALU, dict) and Z_VIZUALU.get("osl") == STEM else {}',
         "    if name not in z:",
         "        return default",
         "    v = z[name]",
         "    if mapping is not None:",
         "        if v not in mapping:",
-        t('            print(f"{name}: hodnota {v!r} z vizuálu v tomto notebooku není, ponechávám {default!r}")',
-          '            print(f"{name}: value {v!r} from the visual is not in this notebook, keeping {default!r}")'),
+        t('            print(f"{name}: hodnota {v!r} z laboratoře v tomto notebooku není, ponechávám {default!r}")',
+          '            print(f"{name}: value {v!r} from the lab is not in this notebook, keeping {default!r}")'),
         "            return default",
         "        v = mapping[v]",
         "    elif isinstance(default, bool):",
@@ -78,12 +78,12 @@ def viz_cell(stem, lang):
         "        v = int(round(v))",
         "    elif isinstance(default, float):",
         "        v = float(v)",
-        t('    print(f"{name} = {v!r}  (z vizuálu)")', '    print(f"{name} = {v!r}  (from the visual)")'),
+        t('    print(f"{name} = {v!r}  (z laboratoře)")', '    print(f"{name} = {v!r}  (from the lab)")'),
         "    return v",
         "",
         'if isinstance(Z_VIZUALU, dict) and Z_VIZUALU and Z_VIZUALU.get("osl") != STEM:',
-        t('''    print(f"Vložený kód je z jiného vizuálu ({Z_VIZUALU.get('osl')}), notebook ho nepoužije.")''',
-          '''    print(f"The pasted code is from another visual ({Z_VIZUALU.get('osl')}), the notebook does not use it.")'''),
+        t('''    print(f"Vložený kód je z jiné laboratoře ({Z_VIZUALU.get('osl')}), notebook ho nepoužije.")''',
+          '''    print(f"The pasted code is from another lab ({Z_VIZUALU.get('osl')}), the notebook does not use it.")'''),
     ])
 
 def header(meta, lang):
@@ -98,8 +98,8 @@ def header(meta, lang):
         "",
         f"[![{t('Otevřít v Google Colab', 'Open in Google Colab')}](https://colab.research.google.com/assets/colab-badge.svg)]({colab})",
         "",
-        t(f"**OpenSkyLab · notebook k vizuálu** [{meta['visual']['cs']}]({viz}) · [English version]({stem}_{other}.ipynb)",
-          f"**OpenSkyLab · notebook for the visual** [{meta['visual']['en']}]({viz}) · [česká verze]({stem}_{other}.ipynb)"),
+        t(f"**OpenSkyLab · notebook k laboratoři** [{meta['visual']['cs']}]({viz}) · [English version]({stem}_{other}.ipynb)",
+          f"**OpenSkyLab · notebook for the lab** [{meta['visual']['en']}]({viz}) · [česká verze]({stem}_{other}.ipynb)"),
         "",
         meta["lead"][lang],
         "",

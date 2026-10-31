@@ -1,10 +1,10 @@
 # Vlícovací a kontrolní body: přesnost transformace na skutečném bodovém poli
 
-Popis notebooku k vizuálu [Vlícovací body a přesnost](https://openskylab.space/edu_viz_gcp_accuracy.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/gcp_accuracy_cs.ipynb) · verze 1.0 · asi 45 min · čtyři úkolů
+Popis notebooku k laboratoři [Vlícovací body a přesnost](https://openskylab.space/edu_viz_gcp_accuracy.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/gcp_accuracy_cs.ipynb) · verze 1.0 · asi 45 min · čtyři úkolů
 
 ## O čem notebook je
 
-Vizuál simuluje, jak rozmístění vlícovacích bodů a způsob georeferencování ovlivní přesnost mapy z dronu. Tady stejné principy ověříš na skutečných bodech bodového pole ČÚZK: každý bod má souřadnice z GNSS v ETRS89 a zároveň souřadnice v S-JTSK a nadmořskou výšku v Bpv. Převod mezi systémy odhadneš z několika vlícovacích bodů a jeho přesnost změříš na ostatních, nezávislých kontrolních bodech. Je to stejná úloha jako georeferencování bloku snímků, jen na území desítek kilometrů.
+Laboratoř simuluje, jak rozmístění vlícovacích bodů a způsob georeferencování ovlivní přesnost mapy z dronu. Tady stejné principy ověříš na skutečných bodech bodového pole ČÚZK: každý bod má souřadnice z GNSS v ETRS89 a zároveň souřadnice v S-JTSK a nadmořskou výšku v Bpv. Převod mezi systémy odhadneš z několika vlícovacích bodů a jeho přesnost změříš na ostatních, nezávislých kontrolních bodech. Je to stejná úloha jako georeferencování bloku snímků, jen na území desítek kilometrů.
 
 ## Cíl
 

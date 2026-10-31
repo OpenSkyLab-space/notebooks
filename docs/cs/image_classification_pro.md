@@ -1,6 +1,6 @@
 # Od pixelu ke třídě, pokročilá verze: časová řada, prostorová validace a odhad ploch
 
-Popis notebooku k vizuálu [Od pixelu ke třídě](https://openskylab.space/edu_viz_image_classification.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/image_classification_pro_cs.ipynb) · verze 1.0 · asi 75 min · pět úkolů
+Popis notebooku k laboratoři [Od pixelu ke třídě](https://openskylab.space/edu_viz_image_classification.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/image_classification_pro_cs.ipynb) · verze 1.0 · asi 75 min · pět úkolů
 
 ## O čem notebook je
 

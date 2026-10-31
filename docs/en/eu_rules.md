@@ -1,10 +1,10 @@
 # Where may I fly: UAS geographical zones from ANS CR data
 
-Description of the notebook for the visual [Where and how may I fly](https://openskylab.space/edu_viz_eu_rules.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/eu_rules_en.ipynb) · version 1.0 · about 45 min · five tasks
+Description of the notebook for the lab [Where and how may I fly](https://openskylab.space/edu_viz_eu_rules.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/eu_rules_en.ipynb) · version 1.0 · about 45 min · five tasks
 
 ## What the notebook is about
 
-The visual walks through the decision tree of the European drone rules. Here you go through one of its branches, UAS geographical zones, on real data: you download the current zones published by Air Navigation Services of the Czech Republic (ŘLP), find out which zones the planned flight sites fall into, how high you may fly near airports and how zones change over time. This is a teaching aid, not legal advice: before a flight always check the zones in the DroneMap app and the conditions in the CAA measures of general nature (OOP).
+The lab walks through the decision tree of the European drone rules. Here you go through one of its branches, UAS geographical zones, on real data: you download the current zones published by Air Navigation Services of the Czech Republic (ŘLP), find out which zones the planned flight sites fall into, how high you may fly near airports and how zones change over time. This is a teaching aid, not legal advice: before a flight always check the zones in the DroneMap app and the conditions in the CAA measures of general nature (OOP).
 
 ## Goal
 
@@ -39,7 +39,7 @@ A zone applies only between its lower and upper limit. Limits are given above gr
 
 Parameters the student changes:
 
-- `FLIGHT_AGL = 120`: planned flight height above ground (m)
+- `FLIGHT_AGL = z_viz("FLIGHT_AGL", 120)`: planned flight height above ground (m)
 
 **Task 2.** Both the outer and the inner zone of the Prague CTR (LKR314C and LKR314D) have an upper limit of 3500 ft AMSL: how many metres above ground is that in Suchdol? Why do some LKR320A airspace areas not concern a drone at 120 m at all? Why does terrain elevation matter for limits in AMSL or FL, and what does that mean for a flight in the mountains (Pec pod Sněžkou)?
 

@@ -18,8 +18,8 @@ def meta(P):
         "title": {"cs": "Fotony v pásmech " + P["sat_gen_cs"], "en": "Photons in the " + P["sat"] + " bands"},
         "visual": {"cs": "Švihadlo a fotony", "en": "Rope and photons"},
         "lead": {
-            "cs": "Ve vizuálu jsi viděl, že u vlny na laně platí c = λ · f a že energii nese rozkmit i frekvence. U světla je to jinak: energii jednoho fotonu určuje jen frekvence, E = h · f, jas záření je počet fotonů. Tady to spočítáš pro skutečná pásma družice " + P["sat"] + ".",
-            "en": "In the visual you saw that a wave on a rope obeys c = λ · f and that both amplitude and frequency carry energy. Light is different: the energy of one photon depends only on frequency, E = h · f, and brightness is the number of photons. Here you compute it for the real bands of the Sentinel-2 satellite.",
+            "cs": "V laboratoři jsi viděl, že u vlny na laně platí c = λ · f a že energii nese rozkmit i frekvence. U světla je to jinak: energii jednoho fotonu určuje jen frekvence, E = h · f, jas záření je počet fotonů. Tady to spočítáš pro skutečná pásma družice " + P["sat"] + ".",
+            "en": "In the lab you saw that a wave on a rope obeys c = λ · f and that both amplitude and frequency carry energy. Light is different: the energy of one photon depends only on frequency, E = h · f, and brightness is the number of photons. Here you compute it for the real bands of the Sentinel-2 satellite.",
         },
         "goal": {
             "cs": "z metadat skutečné scény Sentinel-2 spočítat frekvenci, energii fotonu a tok fotonů v každém pásmu a odvodit z nich, jaký detektor které pásmo potřebuje.",
@@ -131,8 +131,8 @@ bands["lambda_x_f"] = lam * bands.f_THz * 1e12
 bands[["lambda_nm", "f_THz", "lambda_x_f"]].round(1)
 ''')),
         ("task", t(
-            "Sloupec `lambda_x_f` je u všech pásem stejný. Co vyjadřuje a čemu odpovídá na laně ve vizuálu? Kolikrát vyšší frekvenci má pásmo B2 (modrá) než B12 (SWIR 2)?",
-            "The `lambda_x_f` column is the same for every band. What does it express and what does it correspond to on the rope in the visual? How many times higher is the frequency of band B2 (blue) than of B12 (SWIR 2)?")),
+            "Sloupec `lambda_x_f` je u všech pásem stejný. Co vyjadřuje a čemu odpovídá na laně v laboratoři? Kolikrát vyšší frekvenci má pásmo B2 (modrá) než B12 (SWIR 2)?",
+            "The `lambda_x_f` column is the same for every band. What does it express and what does it correspond to on the rope in the lab? How many times higher is the frequency of band B2 (blue) than of B12 (SWIR 2)?")),
         ("md", t("## 3. Energie jednoho fotonu", "## 3. Energy of one photon")),
         ("code", t('''
 bands["E_photon_eV"] = h * c / lam / e     # E = h·f = h·c/λ, převedeno na elektronvolty

@@ -1,6 +1,6 @@
 # From DN to reflectance, advanced: topographic correction in the Krkonoše mountains
 
-Description of the notebook for the visual [From DN to reflectance](https://openskylab.space/edu_viz_dn_to_reflectance.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/dn_to_reflectance_pro_en.ipynb) · version 1.0 · about 70 min · five tasks
+Description of the notebook for the lab [From DN to reflectance](https://openskylab.space/edu_viz_dn_to_reflectance.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/dn_to_reflectance_pro_en.ipynb) · version 1.0 · about 70 min · five tasks
 
 ## What the notebook is about
 
@@ -31,7 +31,7 @@ Parameters the student changes:
 
 On flat ground direct sunlight arrives at the zenith angle θ_s, on a slope with gradient s and aspect a at the angle i: cos i = cos θ_s · cos s + sin θ_s · sin s · cos(φ_s − a), where φ_s is the sun azimuth. The direct irradiance of the slope is proportional to cos i; diffuse skylight arrives from all directions and depends much less on the slope aspect.
 
-**Task 1.** Compare the cos i maps in summer and in autumn. Why do south- and north-facing slopes differ much more in autumn, and how many pixels are in self-shadow? Why does the TOA reflectance formula from the visual's notebook (dividing by the sine of the sun elevation) not give the true surface reflectance on a slope?
+**Task 1.** Compare the cos i maps in summer and in autumn. Why do south- and north-facing slopes differ much more in autumn, and how many pixels are in self-shadow? Why does the TOA reflectance formula from the lab's notebook (dividing by the sine of the sun elevation) not give the true surface reflectance on a slope?
 
 ### 3. How strongly the terrain changes forest reflectance
 

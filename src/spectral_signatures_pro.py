@@ -8,8 +8,8 @@ META = {
               "en": "Spectral signatures, advanced: the PROSAIL model, index saturation and LAI retrieval"},
     "visual": {"cs": "Spektrální signatury", "en": "Spectral signatures"},
     "lead": {
-        "cs": "Pokročilá verze notebooku ke spektrálním signaturám. Křivky z vizuálu tu počítá skutečný model přenosu záření PROSAIL, který spojuje optiku listu (PROSPECT) s porostem (SAIL). Ukážeš v něm, proč se NDVI nasycuje, sestavíš tabulku simulací a z ní odhadneš LAI pro každý pixel dvou snímků Sentinel-2 u Roztok, včetně nejistoty a míst, kde model selhává.",
-        "en": "The advanced version of the spectral signatures notebook. The curves from the visual are computed here by a real radiative transfer model, PROSAIL, which couples leaf optics (PROSPECT) with the canopy (SAIL). You use it to show why NDVI saturates, build a table of simulations and from it estimate LAI for every pixel of two Sentinel-2 images near Roztoky, with its uncertainty and the places where the model fails.",
+        "cs": "Pokročilá verze notebooku ke spektrálním signaturám. Křivky z laboratoře tu počítá skutečný model přenosu záření PROSAIL, který spojuje optiku listu (PROSPECT) s porostem (SAIL). Ukážeš v něm, proč se NDVI nasycuje, sestavíš tabulku simulací a z ní odhadneš LAI pro každý pixel dvou snímků Sentinel-2 u Roztok, včetně nejistoty a míst, kde model selhává.",
+        "en": "The advanced version of the spectral signatures notebook. The curves from the lab are computed here by a real radiative transfer model, PROSAIL, which couples leaf optics (PROSPECT) with the canopy (SAIL). You use it to show why NDVI saturates, build a table of simulations and from it estimate LAI for every pixel of two Sentinel-2 images near Roztoky, with its uncertainty and the places where the model fails.",
     },
     "goal": {
         "cs": "zjistit, která pásma nesou informaci o chlorofylu, vodě, sušině a LAI, porovnat nasycení NDVI, NDRE a CIre v modelu, pochopit, proč je inverze modelu nejednoznačná, a odhadnout LAI z inverze tabulkou simulací se znalostí jejích mezí.",

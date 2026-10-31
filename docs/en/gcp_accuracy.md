@@ -1,10 +1,10 @@
 # Ground control and check points: transformation accuracy on a real survey network
 
-Description of the notebook for the visual [Ground control points and accuracy](https://openskylab.space/edu_viz_gcp_accuracy.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/gcp_accuracy_en.ipynb) · version 1.0 · about 45 min · four tasks
+Description of the notebook for the lab [Ground control points and accuracy](https://openskylab.space/edu_viz_gcp_accuracy.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/gcp_accuracy_en.ipynb) · version 1.0 · about 45 min · four tasks
 
 ## What the notebook is about
 
-The visual simulates how the layout of ground control points and the georeferencing method affect the accuracy of a drone map. Here you test the same principles on real points of the ČÚZK survey network: every point has GNSS coordinates in ETRS89 as well as coordinates in S-JTSK and an elevation in Bpv. You estimate the conversion between the systems from a few ground control points and measure its accuracy on the other, independent check points. It is the same task as georeferencing an image block, only over tens of kilometres.
+The lab simulates how the layout of ground control points and the georeferencing method affect the accuracy of a drone map. Here you test the same principles on real points of the ČÚZK survey network: every point has GNSS coordinates in ETRS89 as well as coordinates in S-JTSK and an elevation in Bpv. You estimate the conversion between the systems from a few ground control points and measure its accuracy on the other, independent check points. It is the same task as georeferencing an image block, only over tens of kilometres.
 
 ## Goal
 

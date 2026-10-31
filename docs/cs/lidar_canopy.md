@@ -1,10 +1,10 @@
 # Lidar a fotogrammetrie v lese: mračna bodů a modely ČÚZK
 
-Popis notebooku k vizuálu [LiDAR a fotogrammetrie v porostu](https://openskylab.space/edu_viz_lidar_canopy.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/lidar_canopy_cs.ipynb) · verze 1.0 · asi 50 min · šest úkolů
+Popis notebooku k laboratoři [LiDAR a fotogrammetrie v porostu](https://openskylab.space/edu_viz_lidar_canopy.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/lidar_canopy_cs.ipynb) · verze 1.0 · asi 50 min · šest úkolů
 
 ## O čem notebook je
 
-Vizuál ukazuje, proč laserový pulz najde terén i pod korunami, zatímco fotogrammetrie vidí jen povrch. Tady to ověříš na skutečných datech ČÚZK z Roztockého háje u Suchdola: body terénu a povrchu z leteckého laserového skenování a povrch z obrazové korelace leteckých snímků.
+Laboratoř ukazuje, proč laserový pulz najde terén i pod korunami, zatímco fotogrammetrie vidí jen povrch. Tady to ověříš na skutečných datech ČÚZK z Roztockého háje u Suchdola: body terénu a povrchu z leteckého laserového skenování a povrch z obrazové korelace leteckých snímků.
 
 ## Cíl
 

@@ -1,6 +1,6 @@
 # Plánovač letu, pokročilá verze: pokrytí snímky, sledování terénu, vítr a baterie
 
-Popis notebooku k vizuálu [Plánovač letu dronu](https://openskylab.space/edu_viz_flight_planner.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/flight_planner_pro_cs.ipynb) · verze 1.0 · asi 60 min · pět úkolů
+Popis notebooku k laboratoři [Plánovač letu dronu](https://openskylab.space/edu_viz_flight_planner.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/flight_planner_pro_cs.ipynb) · verze 1.0 · asi 60 min · pět úkolů
 
 ## O čem notebook je
 

@@ -1,6 +1,6 @@
 # Kalibrace multispektrální kamery, pokročilá verze: geometrie pásem, chyby NDVI, termální a panchromatické pásmo
 
-Popis notebooku k vizuálu [Kalibrace multispektrální kamery](https://openskylab.space/edu_viz_multispectral_calibration.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/multispectral_calibration_pro_cs.ipynb) · verze 1.0 · asi 60 min · pět úkolů
+Popis notebooku k laboratoři [Kalibrace multispektrální kamery](https://openskylab.space/edu_viz_multispectral_calibration.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/multispectral_calibration_pro_cs.ipynb) · verze 1.0 · asi 60 min · pět úkolů
 
 ## O čem notebook je
 

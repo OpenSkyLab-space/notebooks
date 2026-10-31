@@ -1,10 +1,10 @@
 # Can I fly? Real METAR reports and wind at flight height
 
-Description of the notebook for the visual [Can I fly? Weather for drones](https://openskylab.space/edu_viz_drone_weather.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/drone_weather_hluboka_en.ipynb) · version 1.0 · about 45 min · five tasks
+Description of the notebook for the lab [Can I fly? Weather for drones](https://openskylab.space/edu_viz_drone_weather.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/drone_weather_hluboka_en.ipynb) · version 1.0 · about 45 min · five tasks
 
 ## What the notebook is about
 
-In the visual you decoded example METAR reports, converted the airport wind to the flight site and height and decided with a traffic light. Here you download real METAR reports from Czech airports for the last 24 hours, decode them yourself and compare the result with a model forecast of wind at 80 and 120 m.
+In the lab you decoded example METAR reports, converted the airport wind to the flight site and height and decided with a traffic light. Here you download real METAR reports from Czech airports for the last 24 hours, decode them yourself and compare the result with a model forecast of wind at 80 and 120 m.
 
 ## Goal
 
@@ -40,7 +40,7 @@ Airports measure wind 10 m above grass (roughness length z0 = 0.03 m). At a blen
 
 Parameters the student changes:
 
-- `u10 = float(met[met["station"] == "LOWL"]["wind m/s"].iloc[0])`: wind at 10 m (default is the latest Linz METAR)
+- `u10 = float(met[met["station"] == ST_U]["wind m/s"].iloc[0])`: wind at 10 m (default is the latest Linz METAR)
 
 **Task 3.** Why is the mean wind at 30 m weaker over forest than over water, but almost the same at 100 m? A colleague says: "The airport reports 6 m/s, the drone handles 12 m/s, we have a twofold margin." Set `u10 = 6` and answer with numbers for 100 m. How does the 80 m / 10 m ratio from the Open-Meteo model differ from our profile and why (stability during day and night)?
 

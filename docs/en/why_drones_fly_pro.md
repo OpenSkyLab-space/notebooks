@@ -1,6 +1,6 @@
 # Why a drone flies, advanced: power in forward flight, wind, air density and ground effect
 
-Description of the notebook for the visual [Why a drone flies](https://openskylab.space/edu_viz_why_drones_fly.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/why_drones_fly_pro_en.ipynb) · version 1.0 · about 55 min · five tasks
+Description of the notebook for the lab [Why a drone flies](https://openskylab.space/edu_viz_why_drones_fly.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/why_drones_fly_pro_en.ipynb) · version 1.0 · about 55 min · five tasks
 
 ## What the notebook is about
 

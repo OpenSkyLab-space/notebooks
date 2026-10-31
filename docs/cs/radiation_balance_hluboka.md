@@ -1,10 +1,10 @@
 # Kam zmizí sluneční záření: bilance povrchů ze Sentinelu-2 (Hluboká a Šumava)
 
-Popis notebooku k vizuálu [Kam zmizí záření](https://openskylab.space/edu_viz_radiation_balance.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/radiation_balance_hluboka_cs.ipynb) · verze 1.0 · asi 40 min · šest úkolů
+Popis notebooku k laboratoři [Kam zmizí záření](https://openskylab.space/edu_viz_radiation_balance.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/radiation_balance_hluboka_cs.ipynb) · verze 1.0 · asi 40 min · šest úkolů
 
 ## O čem notebook je
 
-Ve vizuálu se dopadající záření dělí na odražené, pohlcené a prošlé, ρ + α + τ = 1, a podle Kirchhoffova zákona platí ε = α. Tady odrazivost změříš na skutečných pixelech Sentinelu-2 (les, louka, pole, zástavba, voda a sníh), spočítáš, kolik záření povrchy pohltí za skutečného počasí, a odhadneš, jak se ohřejí.
+V laboratoři se dopadající záření dělí na odražené, pohlcené a prošlé, ρ + α + τ = 1, a podle Kirchhoffova zákona platí ε = α. Tady odrazivost změříš na skutečných pixelech Sentinelu-2 (les, louka, pole, zástavba, voda a sníh), spočítáš, kolik záření povrchy pohltí za skutečného počasí, a odhadneš, jak se ohřejí.
 
 ## Cíl
 

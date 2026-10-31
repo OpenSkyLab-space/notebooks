@@ -1,10 +1,10 @@
 # When to fly a thermal camera: surface temperatures from real weather
 
-Description of the notebook for the visual [When to fly a thermal camera](https://openskylab.space/edu_viz_thermal_timing.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/thermal_timing_brno_en.ipynb) · version 1.0 · about 45 min · six tasks
+Description of the notebook for the lab [When to fly a thermal camera](https://openskylab.space/edu_viz_thermal_timing.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/thermal_timing_brno_en.ipynb) · version 1.0 · about 45 min · six tasks
 
 ## What the notebook is about
 
-The visual shows how water, meadow, asphalt, forest and photovoltaics warm up and cool down during the day, and when two surfaces merge in a thermal image. Here you drive the same kind of model (surface energy balance with heat conduction into the ground) with real hourly weather from the last months in Brno and look for the best flight time for a given task.
+The lab shows how water, meadow, asphalt, forest and photovoltaics warm up and cool down during the day, and when two surfaces merge in a thermal image. Here you drive the same kind of model (surface energy balance with heat conduction into the ground) with real hourly weather from the last months in Brno and look for the best flight time for a given task.
 
 ## Goal
 
@@ -41,7 +41,7 @@ Solar radiation, temperature, humidity, cloud cover and wind are real hourly val
 Parameters the student changes:
 
 - `DAY = SUNNY`: day, e.g. "2026-09-10"; the default is the sunniest day
-- `A, B = "water", "meadow"`: pair of surfaces
+- `A, B = z_viz("A", "water", {"water": "water", "meadow": "meadow", "asphalt": "asphalt", "forest": "forest", "pv": "PV panel"}), z_viz("B", "meadow", {"water": "water", "meadow": "meadow", "asphalt": "asphalt", "forest": "forest", "pv": "PV panel"})`: pair of surfaces
 
 **Task 1.** Read off the times of both crossovers of water and meadow. Why is water warmer than the meadow at night and colder at noon? Compare the modelled meadow with the soil surface temperature from Open-Meteo (dotted): where do they differ most and why might that be (it is a model too, not a measurement)? Try the pair asphalt × forest.
 
@@ -61,7 +61,7 @@ For every day and hour we compute the temperature difference of a pair of surfac
 
 Parameters the student changes:
 
-- `A, B = "water", "meadow"`: pair of surfaces
+- `A, B = z_viz("A", "water", {"water": "water", "meadow": "meadow", "asphalt": "asphalt", "forest": "forest", "pv": "PV panel"}), z_viz("B", "meadow", {"water": "water", "meadow": "meadow", "asphalt": "asphalt", "forest": "forest", "pv": "PV panel"})`: pair of surfaces
 - `MIN_DT = 3`: contrast you can still reliably tell apart in a thermal image (K)
 
 **Task 3.** In which hours is the contrast between water and meadow reliably large, and in which do the surfaces merge? How do the crossovers shift from summer to autumn and why? You are looking for wet spots in a meadow (pair meadow × water): when would you fly and why rather in the morning than at noon?
@@ -85,7 +85,7 @@ For inspecting PV plants an irradiance of at least 600 W/m² on the panel is rec
 
 Parameters the student changes:
 
-- `EPS_CAM = 1.00`: emissivity set in the camera (try 0.95 and 0.85)
+- `EPS_CAM = z_viz("EPS_CAM", 1.00)`: emissivity set in the camera (try 0.95 and 0.85)
 - `T_REFL = 20.0`: reflected temperature set in the camera (°C)
 - `HOURS = ["05:00", "13:00"]`: times of the images
 - `DAY_E = SUNNY`: day

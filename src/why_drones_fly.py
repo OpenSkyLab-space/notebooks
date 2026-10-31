@@ -23,8 +23,8 @@ def meta(P):
         "title": {"cs": "Proč dron letí: vztlak, hybnost a skutečná hustota vzduchu", "en": "Why a drone flies: lift, momentum and real air density"},
         "visual": {"cs": "Proč dron letí", "en": "Why a drone flies"},
         "lead": {
-            "cs": "Vizuál vysvětluje vztlak profilu, pádový úhel, teorii hybnosti rotoru a nebezpečné režimy klesání. Tady teorii hybnosti použiješ na skutečné drony (DJI Mavic 3 Enterprise a Matrice 350 RTK) a na skutečnou hustotu vzduchu, kterou spočítáš z měřeného a modelovaného počasí na horách i v nížině.",
-            "en": "The visual explains airfoil lift, the stall angle, rotor momentum theory and dangerous descent regimes. Here you apply momentum theory to real drones (DJI Mavic 3 Enterprise and Matrice 350 RTK) and to real air density computed from weather in the mountains and in the lowlands.",
+            "cs": "Laboratoř vysvětluje vztlak profilu, pádový úhel, teorii hybnosti rotoru a nebezpečné režimy klesání. Tady teorii hybnosti použiješ na skutečné drony (DJI Mavic 3 Enterprise a Matrice 350 RTK) a na skutečnou hustotu vzduchu, kterou spočítáš z měřeného a modelovaného počasí na horách i v nížině.",
+            "en": "The lab explains airfoil lift, the stall angle, rotor momentum theory and dangerous descent regimes. Here you apply momentum theory to real drones (DJI Mavic 3 Enterprise and Matrice 350 RTK) and to real air density computed from weather in the mountains and in the lowlands.",
         },
         "goal": {
             "cs": "spočítat vztlak tenkého profilu a jeho mez, indukovanou rychlost a výkon při visení, ukázat, jak hustota vzduchu mění výdrž, a odhadnout rychlost klesání, při které hrozí vírový prstenec.",

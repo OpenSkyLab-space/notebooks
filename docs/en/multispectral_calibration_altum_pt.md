@@ -1,10 +1,10 @@
 # Calibrating a multispectral camera: from DN to reflectance on real images
 
-Description of the notebook for the visual [Calibrating a multispectral camera](https://openskylab.space/edu_viz_multispectral_calibration.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/multispectral_calibration_altum_pt_en.ipynb) · version 1.0 · about 45 min · five tasks
+Description of the notebook for the lab [Calibrating a multispectral camera](https://openskylab.space/edu_viz_multispectral_calibration.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/multispectral_calibration_altum_pt_en.ipynb) · version 1.0 · about 45 min · five tasks
 
 ## What the notebook is about
 
-The visual shows what a cloud, drone tilt, vignetting and a small panel do to reflectance. Here you go through the whole chain on real images from a MicaSense Altum-PT camera: an image of the calibration panel before the flight and an image from the flight over a road, an orchard, a dry meadow and a polytunnel. Everything you need (black level, vignetting, calibration coefficients, panel reflectance, readings of the DLS 2 light sensor) is stored directly in the TIFF files.
+The lab shows what a cloud, drone tilt, vignetting and a small panel do to reflectance. Here you go through the whole chain on real images from a MicaSense Altum-PT camera: an image of the calibration panel before the flight and an image from the flight over a road, an orchard, a dry meadow and a polytunnel. Everything you need (black level, vignetting, calibration coefficients, panel reflectance, readings of the DLS 2 light sensor) is stored directly in the TIFF files.
 
 ## Goal
 
@@ -56,7 +56,7 @@ The DLS measures irradiance on its top surface. When the drone tilts towards the
 
 Parameters the student changes:
 
-- `TILT = 10`: tilt of the DLS sensor (°)
+- `TILT = z_viz("TILT", 10)`: tilt of the DLS sensor (°)
 
 **Task 3.** By what percentage did the horizontal irradiance change between the panel image and the flight image (the first cell printed the image times)? How large a reflectance error does a tilt of 10° and 20° towards and away from the Sun cause? Why is the error larger with a low Sun, and why does a large diffuse component (overcast) help?
 

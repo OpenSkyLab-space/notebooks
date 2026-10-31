@@ -1,10 +1,10 @@
 # Spectral signatures, advanced: the PROSAIL model, index saturation and LAI retrieval
 
-Description of the notebook for the visual [Spectral signatures](https://openskylab.space/edu_viz_spectral_signatures.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/spectral_signatures_pro_en.ipynb) · version 1.0 · about 75 min · five tasks
+Description of the notebook for the lab [Spectral signatures](https://openskylab.space/edu_viz_spectral_signatures.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/spectral_signatures_pro_en.ipynb) · version 1.0 · about 75 min · five tasks
 
 ## What the notebook is about
 
-The advanced version of the spectral signatures notebook. The curves from the visual are computed here by a real radiative transfer model, PROSAIL, which couples leaf optics (PROSPECT) with the canopy (SAIL). You use it to show why NDVI saturates, build a table of simulations and from it estimate LAI for every pixel of two Sentinel-2 images near Roztoky, with its uncertainty and the places where the model fails.
+The advanced version of the spectral signatures notebook. The curves from the lab are computed here by a real radiative transfer model, PROSAIL, which couples leaf optics (PROSPECT) with the canopy (SAIL). You use it to show why NDVI saturates, build a table of simulations and from it estimate LAI for every pixel of two Sentinel-2 images near Roztoky, with its uncertainty and the places where the model fails.
 
 ## Goal
 

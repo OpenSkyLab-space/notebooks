@@ -1,6 +1,6 @@
 # Kdy letět s termokamerou, pokročilá verze: svahy, stíny a les na skutečném terénu
 
-Popis notebooku k vizuálu [Kdy letět s termokamerou](https://openskylab.space/edu_viz_thermal_timing.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/thermal_timing_pro_cs.ipynb) · verze 1.0 · asi 55 min · čtyři úkolů
+Popis notebooku k laboratoři [Kdy letět s termokamerou](https://openskylab.space/edu_viz_thermal_timing.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/thermal_timing_pro_cs.ipynb) · verze 1.0 · asi 55 min · čtyři úkolů
 
 ## O čem notebook je
 

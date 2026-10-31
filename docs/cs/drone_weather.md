@@ -1,10 +1,10 @@
 # Můžu letět? Skutečné zprávy METAR a vítr ve výšce letu
 
-Popis notebooku k vizuálu [Můžu letět? Počasí pro drony](https://openskylab.space/edu_viz_drone_weather.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/drone_weather_cs.ipynb) · verze 1.0 · asi 45 min · pět úkolů
+Popis notebooku k laboratoři [Můžu letět? Počasí pro drony](https://openskylab.space/edu_viz_drone_weather.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/drone_weather_cs.ipynb) · verze 1.0 · asi 45 min · pět úkolů
 
 ## O čem notebook je
 
-Ve vizuálu jsi dekódoval ukázkové zprávy METAR, přepočítal vítr z letiště na místo a výšku letu a rozhodoval podle semaforu. Tady stáhneš skutečné zprávy METAR z českých letišť za posledních 24 hodin, sám je dekóduješ a výsledek porovnáš s modelovou předpovědí větru ve 80 a 120 m.
+V laboratoři jsi dekódoval ukázkové zprávy METAR, přepočítal vítr z letiště na místo a výšku letu a rozhodoval podle semaforu. Tady stáhneš skutečné zprávy METAR z českých letišť za posledních 24 hodin, sám je dekóduješ a výsledek porovnáš s modelovou předpovědí větru ve 80 a 120 m.
 
 ## Cíl
 
@@ -40,7 +40,7 @@ Letiště měří vítr v 10 m nad trávou (délka drsnosti z0 = 0,03 m). Ve vý
 
 Parametry, které student mění:
 
-- `u10 = float(met[met["stanice"] == "LKPR"]["vítr m/s"].iloc[0])`: vítr v 10 m (výchozí je poslední METAR z Prahy)
+- `u10 = float(met[met["stanice"] == ST_U]["vítr m/s"].iloc[0])`: vítr v 10 m (výchozí je poslední METAR z Prahy)
 
 **Úkol 3.** Proč nad lesem vychází ve 30 m slabší průměrný vítr než nad vodou, ale ve 100 m skoro stejný? Kolega říká: „Letiště hlásí 6 m/s, dron snese 12 m/s, máme dvojnásobnou rezervu.“ Nastav `u10 = 6` a odpověz mu čísly pro výšku 100 m. Jak se poměr 80 m / 10 m z modelu Open-Meteo liší od našeho profilu a proč (zvrstvení během dne a noci)?
 

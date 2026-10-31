@@ -20,8 +20,8 @@ def meta(P):
         "title": {"cs": "Kdy letět s termokamerou: teplota povrchů ze skutečného počasí", "en": "When to fly a thermal camera: surface temperatures from real weather"},
         "visual": {"cs": "Kdy letět s termokamerou", "en": "When to fly a thermal camera"},
         "lead": {
-            "cs": "Vizuál ukazuje, jak se voda, louka, asfalt, les a fotovoltaika během dne ohřívají a chladnou a kdy se dva povrchy v termosnímku slijí. Tady stejný typ modelu (energetická bilance povrchu s vedením tepla do hloubky) poženeš skutečným hodinovým počasím za poslední měsíce " + P["loc_cs"] + " a hledáš nejlepší čas letu podle úlohy.",
-            "en": "The visual shows how water, meadow, asphalt, forest and photovoltaics warm up and cool down during the day, and when two surfaces merge in a thermal image. Here you drive the same kind of model (surface energy balance with heat conduction into the ground) with real hourly weather from the last months " + P["at_en"] + " and look for the best flight time for a given task.",
+            "cs": "Laboratoř ukazuje, jak se voda, louka, asfalt, les a fotovoltaika během dne ohřívají a chladnou a kdy se dva povrchy v termosnímku slijí. Tady stejný typ modelu (energetická bilance povrchu s vedením tepla do hloubky) poženeš skutečným hodinovým počasím za poslední měsíce " + P["loc_cs"] + " a hledáš nejlepší čas letu podle úlohy.",
+            "en": "The lab shows how water, meadow, asphalt, forest and photovoltaics warm up and cool down during the day, and when two surfaces merge in a thermal image. Here you drive the same kind of model (surface energy balance with heat conduction into the ground) with real hourly weather from the last months " + P["at_en"] + " and look for the best flight time for a given task.",
         },
         "goal": {
             "cs": "spočítat denní chod teploty povrchů ze skutečného záření, teploty, vlhkosti, oblačnosti a větru, najít časy, kdy se dva povrchy teplotně překříží, porovnat jasný a zatažený den, ukázat vliv větru a emisivity nastavené v kameře a najít hodiny vhodné pro kontrolu fotovoltaiky.",

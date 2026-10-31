@@ -1,10 +1,10 @@
 # Kdy letět s termokamerou: teplota povrchů ze skutečného počasí
 
-Popis notebooku k vizuálu [Kdy letět s termokamerou](https://openskylab.space/edu_viz_thermal_timing.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/thermal_timing_hluboka_cs.ipynb) · verze 1.0 · asi 45 min · šest úkolů
+Popis notebooku k laboratoři [Kdy letět s termokamerou](https://openskylab.space/edu_viz_thermal_timing.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/thermal_timing_hluboka_cs.ipynb) · verze 1.0 · asi 45 min · šest úkolů
 
 ## O čem notebook je
 
-Vizuál ukazuje, jak se voda, louka, asfalt, les a fotovoltaika během dne ohřívají a chladnou a kdy se dva povrchy v termosnímku slijí. Tady stejný typ modelu (energetická bilance povrchu s vedením tepla do hloubky) poženeš skutečným hodinovým počasím za poslední měsíce v Hluboké nad Vltavou a hledáš nejlepší čas letu podle úlohy.
+Laboratoř ukazuje, jak se voda, louka, asfalt, les a fotovoltaika během dne ohřívají a chladnou a kdy se dva povrchy v termosnímku slijí. Tady stejný typ modelu (energetická bilance povrchu s vedením tepla do hloubky) poženeš skutečným hodinovým počasím za poslední měsíce v Hluboké nad Vltavou a hledáš nejlepší čas letu podle úlohy.
 
 ## Cíl
 
@@ -41,7 +41,7 @@ Sluneční záření, teplota, vlhkost, oblačnost a vítr jsou skutečné hodin
 Parametry, které student mění:
 
 - `DAY = SUNNY`: den, např. "2026-09-10"; výchozí je nejslunečnější den
-- `A, B = "voda", "louka"`: dvojice povrchů
+- `A, B = z_viz("A", "voda", {"water": "voda", "meadow": "louka", "asphalt": "asfalt", "forest": "les", "pv": "FV panel"}), z_viz("B", "louka", {"water": "voda", "meadow": "louka", "asphalt": "asfalt", "forest": "les", "pv": "FV panel"})`: dvojice povrchů
 
 **Úkol 1.** Odečti časy obou překřížení vody a louky. Proč je voda v noci teplejší než louka a v poledne chladnější? Porovnej modelovanou louku s teplotou povrchu půdy z Open-Meteo (tečkovaně): kde se liší nejvíc a čím to může být (je to taky model, ne měření)? Zkus dvojici asfalt × les.
 
@@ -61,7 +61,7 @@ Pro každý den a hodinu spočítáme rozdíl teplot dvojice povrchů. Bílá m�
 
 Parametry, které student mění:
 
-- `A, B = "voda", "louka"`: dvojice povrchů
+- `A, B = z_viz("A", "voda", {"water": "voda", "meadow": "louka", "asphalt": "asfalt", "forest": "les", "pv": "FV panel"}), z_viz("B", "louka", {"water": "voda", "meadow": "louka", "asphalt": "asfalt", "forest": "les", "pv": "FV panel"})`: dvojice povrchů
 - `MIN_DT = 3`: kontrast, který ještě v termosnímku spolehlivě rozlišíš (K)
 
 **Úkol 3.** Ve kterých hodinách je kontrast vody a louky spolehlivě velký a ve kterých se povrchy slévají? Jak se překřížení posouvají od léta k podzimu a proč? Hledáš vlhká místa v louce (dvojice louka × voda): kdy bys letěl a proč spíš ráno než v poledne?
@@ -85,7 +85,7 @@ Pro kontrolu FV elektráren se doporučuje ozáření panelu aspoň 600 W/m² (I
 
 Parametry, které student mění:
 
-- `EPS_CAM = 1.00`: emisivita nastavená v kameře (zkus 0,95 a 0,85)
+- `EPS_CAM = z_viz("EPS_CAM", 1.00)`: emisivita nastavená v kameře (zkus 0,95 a 0,85)
 - `T_REFL = 20.0`: odražená teplota nastavená v kameře (°C)
 - `HOURS = ["05:00", "13:00"]`: časy snímků
 - `DAY_E = SUNNY`: den

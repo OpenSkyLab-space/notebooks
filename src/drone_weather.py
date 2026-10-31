@@ -27,8 +27,8 @@ def meta(P):
         "title": {"cs": "Můžu letět? Skutečné zprávy METAR a vítr ve výšce letu", "en": "Can I fly? Real METAR reports and wind at flight height"},
         "visual": {"cs": "Můžu letět? Počasí pro drony", "en": "Can I fly? Weather for drones"},
         "lead": {
-            "cs": "Ve vizuálu jsi dekódoval ukázkové zprávy METAR, přepočítal vítr z letiště na místo a výšku letu a rozhodoval podle semaforu. Tady stáhneš skutečné zprávy METAR z českých letišť za posledních 24 hodin, sám je dekóduješ a výsledek porovnáš s modelovou předpovědí větru ve 80 a 120 m.",
-            "en": "In the visual you decoded example METAR reports, converted the airport wind to the flight site and height and decided with a traffic light. Here you download real METAR reports from Czech airports for the last 24 hours, decode them yourself and compare the result with a model forecast of wind at 80 and 120 m.",
+            "cs": "V laboratoři jsi dekódoval ukázkové zprávy METAR, přepočítal vítr z letiště na místo a výšku letu a rozhodoval podle semaforu. Tady stáhneš skutečné zprávy METAR z českých letišť za posledních 24 hodin, sám je dekóduješ a výsledek porovnáš s modelovou předpovědí větru ve 80 a 120 m.",
+            "en": "In the lab you decoded example METAR reports, converted the airport wind to the flight site and height and decided with a traffic light. Here you download real METAR reports from Czech airports for the last 24 hours, decode them yourself and compare the result with a model forecast of wind at 80 and 120 m.",
         },
         "goal": {
             "cs": "dekódovat METAR, spočítat relativní vlhkost a odhad základny oblačnosti, přepočítat vítr v 10 m na výšku letu nad jiným terénem, odhadnout návrat proti větru a rozhodnout o letu na příštích 24 hodin.",
@@ -69,14 +69,14 @@ import matplotlib.pyplot as plt
 ''' + t(OPEN_METEO_HELPER["cs"], OPEN_METEO_HELPER["en"])),
         ("code", t('''
 STATIONS = "@STATIONS@"          # ◀ parametr: kódy letišť ICAO
-ST_VIZ = z_viz("STATION", "@MAIN@")                            # letiště ze zprávy METAR vložené do vizuálu
+ST_VIZ = z_viz("STATION", "@MAIN@")                            # letiště ze zprávy METAR vložené do laboratoře
 if ST_VIZ not in STATIONS.split(","): STATIONS += "," + ST_VIZ
 raw = requests.get("https://aviationweather.gov/api/data/metar", params={"ids": STATIONS, "format": "raw", "hours": 24}, timeout=60).text.strip().splitlines()
 taf = requests.get("https://aviationweather.gov/api/data/taf", params={"ids": "@MAIN@", "format": "raw"}, timeout=60).text.strip()
 print(f"{len(raw)} zpráv; nejnovější:"); print("\\n".join(raw[:6])); print("\\nTAF @TAF_CS@:\\n" + taf)
 ''', '''
 STATIONS = "@STATIONS@"          # ◀ parameter: ICAO airport codes
-ST_VIZ = z_viz("STATION", "@MAIN@")                            # airport of the METAR report pasted into the visual
+ST_VIZ = z_viz("STATION", "@MAIN@")                            # airport of the METAR report pasted into the lab
 if ST_VIZ not in STATIONS.split(","): STATIONS += "," + ST_VIZ
 raw = requests.get("https://aviationweather.gov/api/data/metar", params={"ids": STATIONS, "format": "raw", "hours": 24}, timeout=60).text.strip().splitlines()
 taf = requests.get("https://aviationweather.gov/api/data/taf", params={"ids": "@MAIN@", "format": "raw"}, timeout=60).text.strip()

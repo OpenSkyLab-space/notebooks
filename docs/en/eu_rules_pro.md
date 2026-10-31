@@ -1,6 +1,6 @@
 # Where may I fly, advanced: zone geometry, a map of allowed height, flight levels and the AIRAC cycle
 
-Description of the notebook for the visual [Where and how may I fly](https://openskylab.space/edu_viz_eu_rules.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/eu_rules_pro_en.ipynb) · version 1.0 · about 60 min · five tasks
+Description of the notebook for the lab [Where and how may I fly](https://openskylab.space/edu_viz_eu_rules.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/eu_rules_pro_en.ipynb) · version 1.0 · about 60 min · five tasks
 
 ## What the notebook is about
 
@@ -71,7 +71,7 @@ Parameters the student changes:
 
 - `A = (49.2467, 16.4798)`: start of the profile (Bystrc, Kozí horka)
 - `B = (49.1510, 16.6940)`: end of the profile (Brno-Tuřany airport)
-- `FLIGHT_AGL = 120`: planned flight height above ground (m)
+- `FLIGHT_AGL = z_viz("FLIGHT_AGL", 120)`: planned flight height above ground (m)
 
 **Task 5.** Along what percentage of the profile may you fly at 120 m above ground according to the grids, and where does the allowed height drop to zero? Which zones does the profile cross from the ground and which start high above the drone? Set FLIGHT_AGL to 50 m: how does the result change? Why is it not enough for a drone flight to know only the zones the take-off site falls into?
 

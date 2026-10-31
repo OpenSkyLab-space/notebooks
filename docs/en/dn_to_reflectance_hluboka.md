@@ -1,10 +1,10 @@
 # From DN to reflectance: Landsat 8 over Hluboká nad Vltavou
 
-Description of the notebook for the visual [From DN to reflectance](https://openskylab.space/edu_viz_dn_to_reflectance.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/dn_to_reflectance_hluboka_en.ipynb) · version 1.0 · about 45 min · five tasks
+Description of the notebook for the lab [From DN to reflectance](https://openskylab.space/edu_viz_dn_to_reflectance.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/dn_to_reflectance_hluboka_en.ipynb) · version 1.0 · about 45 min · five tasks
 
 ## What the notebook is about
 
-The visual walks through the chain from digital number to radiance to top-of-atmosphere (TOA) and surface (BOA) reflectance and shows what dark object subtraction (DOS) and the empirical line correct. Here you compute the whole chain on two real Landsat 8 images of Hluboká nad Vltavou and compare the result with Sentinel-2 L2A reflectance from the same week.
+The lab walks through the chain from digital number to radiance to top-of-atmosphere (TOA) and surface (BOA) reflectance and shows what dark object subtraction (DOS) and the empirical line correct. Here you compute the whole chain on two real Landsat 8 images of Hluboká nad Vltavou and compare the result with Sentinel-2 L2A reflectance from the same week.
 
 ## Goal
 

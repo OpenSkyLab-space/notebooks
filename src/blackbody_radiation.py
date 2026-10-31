@@ -28,8 +28,8 @@ def meta(P):
         "title": {"cs": "Teplota " + P["gen_cs"] + " z Landsatu 8: Planckův zákon v praxi", "en": "The temperature of " + P["place_en"] + " from Landsat 8: Planck's law in practice"},
         "visual": {"cs": "Záření černého tělesa", "en": "Blackbody radiation"},
         "lead": {
-            "cs": "Vizuál ukazuje Planckův zákon, Wienův posun, čtvrtou mocninu Stefanova–Boltzmannova zákona a vliv emisivity. Tady stejné vzorce použiješ na skutečný termální snímek Landsatu 8 " + P["when_cs"] + " a z digitálních čísel spočítáš teplotu povrchu " + P["gen_cs"] + ".",
-            "en": "The visual shows Planck's law, Wien's shift, the fourth power of the Stefan–Boltzmann law and the role of emissivity. Here you apply the same formulas to a real Landsat 8 thermal image " + P["when_en"] + " and turn digital numbers into the surface temperature of " + P["place_en"] + ".",
+            "cs": "Laboratoř ukazuje Planckův zákon, Wienův posun, čtvrtou mocninu Stefanova–Boltzmannova zákona a vliv emisivity. Tady stejné vzorce použiješ na skutečný termální snímek Landsatu 8 " + P["when_cs"] + " a z digitálních čísel spočítáš teplotu povrchu " + P["gen_cs"] + ".",
+            "en": "The lab shows Planck's law, Wien's shift, the fourth power of the Stefan–Boltzmann law and the role of emissivity. Here you apply the same formulas to a real Landsat 8 thermal image " + P["when_en"] + " and turn digital numbers into the surface temperature of " + P["place_en"] + ".",
         },
         "goal": {
             "cs": "převést termální pásmo Landsatu 8 z DN na zář a jasovou teplotu, opravit ji o emisivitu, odhadnout chybu ze špatné emisivity a odrazu oblohy a ukázat, proč družice hledají malé požáry ve 3,9 µm.",

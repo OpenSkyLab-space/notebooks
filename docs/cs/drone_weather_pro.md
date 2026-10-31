@@ -1,6 +1,6 @@
 # Můžu letět?, pokročilá verze: jak přesný je model, profil větru a létavé hodiny
 
-Popis notebooku k vizuálu [Můžu letět? Počasí pro drony](https://openskylab.space/edu_viz_drone_weather.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/drone_weather_pro_cs.ipynb) · verze 1.0 · asi 50 min · pět úkolů
+Popis notebooku k laboratoři [Můžu letět? Počasí pro drony](https://openskylab.space/edu_viz_drone_weather.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/drone_weather_pro_cs.ipynb) · verze 1.0 · asi 50 min · pět úkolů
 
 ## O čem notebook je
 

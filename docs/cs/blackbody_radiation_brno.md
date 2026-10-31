@@ -1,10 +1,10 @@
 # Teplota Brna z Landsatu 8: Planckův zákon v praxi
 
-Popis notebooku k vizuálu [Záření černého tělesa](https://openskylab.space/edu_viz_blackbody_radiation.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/blackbody_radiation_brno_cs.ipynb) · verze 1.0 · asi 45 min · pět úkolů
+Popis notebooku k laboratoři [Záření černého tělesa](https://openskylab.space/edu_viz_blackbody_radiation.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/blackbody_radiation_brno_cs.ipynb) · verze 1.0 · asi 45 min · pět úkolů
 
 ## O čem notebook je
 
-Vizuál ukazuje Planckův zákon, Wienův posun, čtvrtou mocninu Stefanova–Boltzmannova zákona a vliv emisivity. Tady stejné vzorce použiješ na skutečný termální snímek Landsatu 8 ze slunečného 8. srpna 2020 a z digitálních čísel spočítáš teplotu povrchu Brna.
+Laboratoř ukazuje Planckův zákon, Wienův posun, čtvrtou mocninu Stefanova–Boltzmannova zákona a vliv emisivity. Tady stejné vzorce použiješ na skutečný termální snímek Landsatu 8 ze slunečného 8. srpna 2020 a z digitálních čísel spočítáš teplotu povrchu Brna.
 
 ## Cíl
 
@@ -59,7 +59,7 @@ Povrch s emisivitou ε odráží 1 − ε dlouhovlnného záření, které na n�
 
 Parametry, které student mění:
 
-- `T_surf = 273.15 + 27`: teplota povrchu
+- `T_surf = z_viz("T_surf", 273.15 + 27)`: teplota povrchu
 
 **Úkol 4.** Proč lesklý plech pod jasnou oblohou vypadá v termokameře mrazivě studený, i když má 27 °C? Proč při obloze stejně teplé jako povrch nehraje emisivita žádnou roli? Za jakého počasí bys proto plánoval termální snímkování střech?
 
@@ -69,7 +69,7 @@ Pixel je směs: podíl p hoří při teplotě požáru, zbytek má teplotu pozad
 
 Parametry, které student mění:
 
-- `T_fire = 900`: teplota požáru v K
+- `T_fire = z_viz("T_fire", 900)`: teplota požáru v K
 
 **Úkol 5.** Při jakém podílu požáru se pixel ohřeje o 10 K ve 3,9 µm a při jakém v 10,9 µm? Jakou plochu to je v pixelu MODIS 1 × 1 km? Vysvětli rozdíl Wienovým zákonem. Proč algoritmy ve dne hlídají i odražené Slunce ve 3,9 µm?
 

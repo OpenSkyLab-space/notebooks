@@ -1,6 +1,6 @@
 # Rope and photons, advanced: how many photons a Sentinel-2 pixel and a drone pixel collect
 
-Description of the notebook for the visual [Rope and photons](https://openskylab.space/edu_viz_rope_and_photons.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/rope_and_photons_pro_en.ipynb) · version 1.0 · about 60 min · five tasks
+Description of the notebook for the lab [Rope and photons](https://openskylab.space/edu_viz_rope_and_photons.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/rope_and_photons_pro_en.ipynb) · version 1.0 · about 60 min · five tasks
 
 ## What the notebook is about
 

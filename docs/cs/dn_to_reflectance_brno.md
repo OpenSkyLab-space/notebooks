@@ -1,10 +1,10 @@
 # Od DN k odrazivosti: Landsat 8 nad Brnem
 
-Popis notebooku k vizuálu [Od DN k odrazivosti](https://openskylab.space/edu_viz_dn_to_reflectance.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/dn_to_reflectance_brno_cs.ipynb) · verze 1.0 · asi 45 min · pět úkolů
+Popis notebooku k laboratoři [Od DN k odrazivosti](https://openskylab.space/edu_viz_dn_to_reflectance.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/dn_to_reflectance_brno_cs.ipynb) · verze 1.0 · asi 45 min · pět úkolů
 
 ## O čem notebook je
 
-Vizuál prochází řetězec od digitálního čísla přes zář k odrazivosti nad atmosférou (TOA) a na povrchu (BOA) a ukazuje, co opraví metoda tmavého objektu (DOS) a empirická přímka. Tady celý řetězec spočítáš na dvou skutečných snímcích Landsatu 8 nad Brnem a výsledek porovnáš s odrazivostí Sentinelu-2 L2A z téhož týdne.
+Laboratoř prochází řetězec od digitálního čísla přes zář k odrazivosti nad atmosférou (TOA) a na povrchu (BOA) a ukazuje, co opraví metoda tmavého objektu (DOS) a empirická přímka. Tady celý řetězec spočítáš na dvou skutečných snímcích Landsatu 8 nad Brnem a výsledek porovnáš s odrazivostí Sentinelu-2 L2A z téhož týdne.
 
 ## Cíl
 

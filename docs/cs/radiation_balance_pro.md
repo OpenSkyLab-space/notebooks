@@ -1,6 +1,6 @@
 # Kam zmizí sluneční záření, pokročilá verze: denní chod teploty povrchu
 
-Popis notebooku k vizuálu [Kam zmizí záření](https://openskylab.space/edu_viz_radiation_balance.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/radiation_balance_pro_cs.ipynb) · verze 1.0 · asi 60 min · pět úkolů
+Popis notebooku k laboratoři [Kam zmizí záření](https://openskylab.space/edu_viz_radiation_balance.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/radiation_balance_pro_cs.ipynb) · verze 1.0 · asi 60 min · pět úkolů
 
 ## O čem notebook je
 

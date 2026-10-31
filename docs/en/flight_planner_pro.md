@@ -1,6 +1,6 @@
 # Drone flight planner, advanced: image coverage, terrain following, wind and batteries
 
-Description of the notebook for the visual [Drone flight planner](https://openskylab.space/edu_viz_flight_planner.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/flight_planner_pro_en.ipynb) · version 1.0 · about 60 min · five tasks
+Description of the notebook for the lab [Drone flight planner](https://openskylab.space/edu_viz_flight_planner.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/flight_planner_pro_en.ipynb) · version 1.0 · about 60 min · five tasks
 
 ## What the notebook is about
 

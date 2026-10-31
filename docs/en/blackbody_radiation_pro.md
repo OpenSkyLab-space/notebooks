@@ -1,6 +1,6 @@
 # Blackbody radiation, advanced: surface temperature, heat island and drought from Landsat 8
 
-Description of the notebook for the visual [Blackbody radiation](https://openskylab.space/edu_viz_blackbody_radiation.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/blackbody_radiation_pro_en.ipynb) · version 1.0 · about 65 min · four tasks
+Description of the notebook for the lab [Blackbody radiation](https://openskylab.space/edu_viz_blackbody_radiation.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/blackbody_radiation_pro_en.ipynb) · version 1.0 · about 65 min · four tasks
 
 ## What the notebook is about
 

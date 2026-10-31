@@ -37,8 +37,8 @@ def meta(P):
         "title": {"cs": "Spektrální signatury ze Sentinelu-2: les, pole, voda a sníh (" + P["title_cs"] + ")", "en": "Spectral signatures from Sentinel-2: forest, fields, water and snow (" + P["title_en"] + ")"},
         "visual": {"cs": "Spektrální signatury", "en": "Spectral signatures"},
         "lead": {
-            "cs": "Vizuál ukazuje, jak chlorofyl, voda v listech, sušina a LAI mění spektrální křivku vegetace a proč NDVI v hustém porostu přestává růst. Tady to ověříš na skutečných pixelech Sentinelu-2 " + P["near_cs"] + " a na časové řadě jednoho pole během sezóny " + str(P["year"]) + ".",
-            "en": "The visual shows how chlorophyll, leaf water, dry matter and LAI shape the spectral curve of vegetation and why NDVI stops growing in dense canopies. Here you check it on real Sentinel-2 pixels " + P["near_en"] + " and on a time series of one field over the " + str(P["year"]) + " season.",
+            "cs": "Laboratoř ukazuje, jak chlorofyl, voda v listech, sušina a LAI mění spektrální křivku vegetace a proč NDVI v hustém porostu přestává růst. Tady to ověříš na skutečných pixelech Sentinelu-2 " + P["near_cs"] + " a na časové řadě jednoho pole během sezóny " + str(P["year"]) + ".",
+            "en": "The lab shows how chlorophyll, leaf water, dry matter and LAI shape the spectral curve of vegetation and why NDVI stops growing in dense canopies. Here you check it on real Sentinel-2 pixels " + P["near_en"] + " and on a time series of one field over the " + str(P["year"]) + " season.",
         },
         "goal": {
             "cs": "porovnat skutečné spektrální křivky povrchů, najít polohu červené hrany, ukázat nasycení NDVI na časové řadě pole a vysvětlit, proč stejný index z jiných pásem dává jiné číslo.",

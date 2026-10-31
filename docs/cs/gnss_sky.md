@@ -1,10 +1,10 @@
 # GNSS pod oblohou: skutečné družice, DOP, terén a výška v Bpv
 
-Popis notebooku k vizuálu [GNSS pod oblohou](https://openskylab.space/edu_viz_gnss_sky.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/gnss_sky_cs.ipynb) · verze 1.0 · asi 50 min · pět úkolů
+Popis notebooku k laboratoři [GNSS pod oblohou](https://openskylab.space/edu_viz_gnss_sky.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/gnss_sky_cs.ipynb) · verze 1.0 · asi 50 min · pět úkolů
 
 ## O čem notebook je
 
-Vizuál ukazuje, jak počet a rozložení družic určují DOP, co udělají překážky a elevační maska a proč je výška z GNSS méně přesná než poloha. Tady spočítáš polohy skutečných družic GPS, Galileo, GLONASS a BeiDou z vysílaných efemerid, skutečný horizont v údolí Vltavy z modelu terénu ČÚZK a převod elipsoidické výšky na výšku v Bpv z bodů bodového pole.
+Laboratoř ukazuje, jak počet a rozložení družic určují DOP, co udělají překážky a elevační maska a proč je výška z GNSS méně přesná než poloha. Tady spočítáš polohy skutečných družic GPS, Galileo, GLONASS a BeiDou z vysílaných efemerid, skutečný horizont v údolí Vltavy z modelu terénu ČÚZK a převod elipsoidické výšky na výšku v Bpv z bodů bodového pole.
 
 ## Cíl
 
@@ -36,7 +36,7 @@ Parametry, které student mění:
 - `RANK = 1`: se kterou další efemeridou porovnat (1 = sousední, 3 = o tři dál)
 - `LAT, LON = 50.130, 14.373`: místo (kampus v Suchdole)
 - `T_SKY = T0 + timedelta(hours=12)`: čas obrázku oblohy (UTC)
-- `mask = 10`: elevační maska (°)
+- `mask = z_viz("mask", 10)`: elevační maska (°)
 
 **Úkol 1.** Jak daleko od středu Země obíhají družice jednotlivých systémů? Proč má BeiDou v tabulce i družice daleko výš (geostacionární a na šikmých geosynchronních drahách)? O kolik metrů se liší poloha téže družice ze dvou sousedních efemerid? Nastav `RANK = 3` a pak 6 a sleduj stáří porovnávané efemeridy i rozdíl polohy. Proč je u GPS při stejném `RANK` porovnávaná efemerida mnohem starší než u Galilea? Jak roste rozdíl se stářím a proč roste u GLONASS rychleji než u GPS (vysílaný stav a integrace, nebo dráhové prvky s opravami)? Proč se efemeridy musí vysílat stále znovu?
 

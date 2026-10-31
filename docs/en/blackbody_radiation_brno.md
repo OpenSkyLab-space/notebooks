@@ -1,10 +1,10 @@
 # The temperature of Brno from Landsat 8: Planck's law in practice
 
-Description of the notebook for the visual [Blackbody radiation](https://openskylab.space/edu_viz_blackbody_radiation.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/blackbody_radiation_brno_en.ipynb) · version 1.0 · about 45 min · five tasks
+Description of the notebook for the lab [Blackbody radiation](https://openskylab.space/edu_viz_blackbody_radiation.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/blackbody_radiation_brno_en.ipynb) · version 1.0 · about 45 min · five tasks
 
 ## What the notebook is about
 
-The visual shows Planck's law, Wien's shift, the fourth power of the Stefan–Boltzmann law and the role of emissivity. Here you apply the same formulas to a real Landsat 8 thermal image from the sunny 8 August 2020 and turn digital numbers into the surface temperature of Brno.
+The lab shows Planck's law, Wien's shift, the fourth power of the Stefan–Boltzmann law and the role of emissivity. Here you apply the same formulas to a real Landsat 8 thermal image from the sunny 8 August 2020 and turn digital numbers into the surface temperature of Brno.
 
 ## Goal
 
@@ -59,7 +59,7 @@ A surface with emissivity ε reflects 1 − ε of the longwave radiation coming 
 
 Parameters the student changes:
 
-- `T_surf = 273.15 + 27`: surface temperature
+- `T_surf = z_viz("T_surf", 273.15 + 27)`: surface temperature
 
 **Task 4.** Why does polished sheet metal under a clear sky look freezing cold in a thermal camera although it is at 27 °C? Why does emissivity not matter at all when the sky is as warm as the surface? In what weather would you therefore plan thermal imaging of roofs?
 
@@ -69,7 +69,7 @@ A pixel is a mixture: a fraction p burns at the fire temperature, the rest has t
 
 Parameters the student changes:
 
-- `T_fire = 900`: fire temperature in K
+- `T_fire = z_viz("T_fire", 900)`: fire temperature in K
 
 **Task 5.** At what fire fraction does the pixel warm by 10 K at 3.9 µm and at 10.9 µm? What area is that within a 1 × 1 km MODIS pixel? Explain the difference with Wien's law. Why do daytime algorithms also watch for reflected sunlight at 3.9 µm?
 

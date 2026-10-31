@@ -1,10 +1,10 @@
 # Photons in the Sentinel-2B bands
 
-Description of the notebook for the visual [Rope and photons](https://openskylab.space/edu_viz_rope_and_photons.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/rope_and_photons_en.ipynb) · version 1.0 · about 40 min · six tasks
+Description of the notebook for the lab [Rope and photons](https://openskylab.space/edu_viz_rope_and_photons.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/rope_and_photons_en.ipynb) · version 1.0 · about 40 min · six tasks
 
 ## What the notebook is about
 
-In the visual you saw that a wave on a rope obeys c = λ · f and that both amplitude and frequency carry energy. Light is different: the energy of one photon depends only on frequency, E = h · f, and brightness is the number of photons. Here you compute it for the real bands of the Sentinel-2 satellite.
+In the lab you saw that a wave on a rope obeys c = λ · f and that both amplitude and frequency carry energy. Light is different: the energy of one photon depends only on frequency, E = h · f, and brightness is the number of photons. Here you compute it for the real bands of the Sentinel-2 satellite.
 
 ## Goal
 
@@ -26,7 +26,7 @@ Loads the libraries and downloads the data.
 
 Loads the libraries and downloads the data.
 
-**Task 1.** The `lambda_x_f` column is the same for every band. What does it express and what does it correspond to on the rope in the visual? How many times higher is the frequency of band B2 (blue) than of B12 (SWIR 2)?
+**Task 1.** The `lambda_x_f` column is the same for every band. What does it express and what does it correspond to on the rope in the lab? How many times higher is the frequency of band B2 (blue) than of B12 (SWIR 2)?
 
 ### 3. Energy of one photon
 

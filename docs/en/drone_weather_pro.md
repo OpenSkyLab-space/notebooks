@@ -1,6 +1,6 @@
 # Can I fly?, advanced: how accurate the model is, the wind profile and flyable hours
 
-Description of the notebook for the visual [Can I fly? Weather for drones](https://openskylab.space/edu_viz_drone_weather.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/drone_weather_pro_en.ipynb) · version 1.0 · about 50 min · five tasks
+Description of the notebook for the lab [Can I fly? Weather for drones](https://openskylab.space/edu_viz_drone_weather.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/drone_weather_pro_en.ipynb) · version 1.0 · about 50 min · five tasks
 
 ## What the notebook is about
 

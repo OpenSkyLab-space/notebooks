@@ -1,10 +1,10 @@
 # Spectral signatures from Sentinel-2: forest, fields, water and snow (Roztoky and Krkonoše)
 
-Description of the notebook for the visual [Spectral signatures](https://openskylab.space/edu_viz_spectral_signatures.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/spectral_signatures_en.ipynb) · version 1.0 · about 45 min · six tasks
+Description of the notebook for the lab [Spectral signatures](https://openskylab.space/edu_viz_spectral_signatures.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/spectral_signatures_en.ipynb) · version 1.0 · about 45 min · six tasks
 
 ## What the notebook is about
 
-The visual shows how chlorophyll, leaf water, dry matter and LAI shape the spectral curve of vegetation and why NDVI stops growing in dense canopies. Here you check it on real Sentinel-2 pixels near Roztoky and on a time series of one field over the 2024 season.
+The lab shows how chlorophyll, leaf water, dry matter and LAI shape the spectral curve of vegetation and why NDVI stops growing in dense canopies. Here you check it on real Sentinel-2 pixels near Roztoky and on a time series of one field over the 2024 season.
 
 ## Goal
 

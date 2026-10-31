@@ -1,6 +1,6 @@
 # Kde smím létat, pokročilá verze: geometrie zón, mapa povolené výšky, letové hladiny a cyklus AIRAC
 
-Popis notebooku k vizuálu [Kde a jak smím létat](https://openskylab.space/edu_viz_eu_rules.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/eu_rules_pro_cs.ipynb) · verze 1.0 · asi 60 min · pět úkolů
+Popis notebooku k laboratoři [Kde a jak smím létat](https://openskylab.space/edu_viz_eu_rules.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/eu_rules_pro_cs.ipynb) · verze 1.0 · asi 60 min · pět úkolů
 
 ## O čem notebook je
 
@@ -71,7 +71,7 @@ Parametry, které student mění:
 
 - `A = (49.2467, 16.4798)`: začátek profilu (Bystrc, Kozí horka)
 - `B = (49.1510, 16.6940)`: konec profilu (letiště Brno-Tuřany)
-- `FLIGHT_AGL = 120`: plánovaná výška letu nad terénem (m)
+- `FLIGHT_AGL = z_viz("FLIGHT_AGL", 120)`: plánovaná výška letu nad terénem (m)
 
 **Úkol 5.** Na kolika procentech délky profilu smíš podle sítí letět ve 120 m nad terénem a kde povolená výška klesá k nule? Které zóny profil protíná od země a které začínají vysoko nad dronem? Nastav FLIGHT_AGL na 50 m: jak se výsledek změní? Proč pro let dronu nestačí znát jen zóny, do kterých padá místo startu?
 

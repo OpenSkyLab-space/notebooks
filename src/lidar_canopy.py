@@ -6,8 +6,8 @@ META = {
     "title": {"cs": "Lidar a fotogrammetrie v lese: mračna bodů a modely ČÚZK", "en": "Lidar and photogrammetry in a forest: ČÚZK point clouds and models"},
     "visual": {"cs": "LiDAR a fotogrammetrie v porostu", "en": "LiDAR vs photogrammetry under canopy"},
     "lead": {
-        "cs": "Vizuál ukazuje, proč laserový pulz najde terén i pod korunami, zatímco fotogrammetrie vidí jen povrch. Tady to ověříš na skutečných datech ČÚZK z Roztockého háje u Suchdola: body terénu a povrchu z leteckého laserového skenování a povrch z obrazové korelace leteckých snímků.",
-        "en": "The visual shows why a laser pulse finds the ground even under tree crowns while photogrammetry sees only the surface. Here you check it on real ČÚZK data from the Roztoky forest near Suchdol: ground and surface points from airborne laser scanning and a surface from image matching of aerial photographs.",
+        "cs": "Laboratoř ukazuje, proč laserový pulz najde terén i pod korunami, zatímco fotogrammetrie vidí jen povrch. Tady to ověříš na skutečných datech ČÚZK z Roztockého háje u Suchdola: body terénu a povrchu z leteckého laserového skenování a povrch z obrazové korelace leteckých snímků.",
+        "en": "The lab shows why a laser pulse finds the ground even under tree crowns while photogrammetry sees only the surface. Here you check it on real ČÚZK data from the Roztoky forest near Suchdol: ground and surface points from airborne laser scanning and a surface from image matching of aerial photographs.",
     },
     "goal": {
         "cs": "načíst a prohlédnout mračna bodů LAZ, zjistit, z kolikátého odrazu pocházejí body terénu v lese a na volné ploše, spočítat model výšky porostu CHM = DSM − DTM z lidaru i z fotogrammetrie, porovnat je v profilu, najít vrcholy stromů a vysvětlit rozdíly.",

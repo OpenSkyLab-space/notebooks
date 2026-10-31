@@ -1,14 +1,14 @@
-# OpenSkyLab · notebooky k vizuálům / notebooks for the visuals
+# OpenSkyLab · notebooky k laboratořím / notebooks for the labs
 
-Notebooky pro Google Colab k interaktivním výukovým vizuálům [OpenSkyLab](https://openskylab.space) o dálkovém průzkumu a dronech.
+Notebooky pro Google Colab k interaktivním laboratořím [OpenSkyLab](https://openskylab.space) o dálkovém průzkumu a dronech.
 Každý notebook pracuje se skutečnými otevřenými daty, má 4 až 6 úkolů a parametry, které student mění.
 Každý existuje česky (`_cs`) a anglicky (`_en`). Ke každému je popis toho, co se v něm dělá, ve složce `docs/`.
 
-Google Colab notebooks for the [OpenSkyLab](https://openskylab.space) interactive teaching visuals on remote sensing and drones.
+Google Colab notebooks for the [OpenSkyLab](https://openskylab.space) interactive labs on remote sensing and drones.
 Every notebook works with real open data, has 4 to 6 tasks and parameters for the student to change.
 Each one exists in Czech (`_cs`) and English (`_en`). A description of what each one does is in the `docs/` folder.
 
-| Vizuál / visual | Notebook | min | Colab | Popis / description |
+| Laboratoř / lab | Notebook | min | Colab | Popis / description |
 |---|---|---|---|---|
 | [Záření černého tělesa](https://openskylab.space/edu_viz_blackbody_radiation.html) | Teplota Prahy z Landsatu 8: Planckův zákon v praxi | 45 | [![CS](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/blackbody_radiation_cs.ipynb) [CS](blackbody_radiation_cs.ipynb) [![EN](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/blackbody_radiation_en.ipynb) [EN](blackbody_radiation_en.ipynb) | [CS](docs/cs/blackbody_radiation.md) [EN](docs/en/blackbody_radiation.md) |
 | [Záření černého tělesa](https://openskylab.space/edu_viz_blackbody_radiation.html) | Teplota Brna z Landsatu 8: Planckův zákon v praxi | 45 | [![CS](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/blackbody_radiation_brno_cs.ipynb) [CS](blackbody_radiation_brno_cs.ipynb) [![EN](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/blackbody_radiation_brno_en.ipynb) [EN](blackbody_radiation_brno_en.ipynb) | [CS](docs/cs/blackbody_radiation_brno.md) [EN](docs/en/blackbody_radiation_brno.md) |

@@ -1,10 +1,10 @@
 # Why a drone flies: lift, momentum and real air density
 
-Description of the notebook for the visual [Why a drone flies](https://openskylab.space/edu_viz_why_drones_fly.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/why_drones_fly_en.ipynb) · version 1.0 · about 45 min · five tasks
+Description of the notebook for the lab [Why a drone flies](https://openskylab.space/edu_viz_why_drones_fly.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/why_drones_fly_en.ipynb) · version 1.0 · about 45 min · five tasks
 
 ## What the notebook is about
 
-The visual explains airfoil lift, the stall angle, rotor momentum theory and dangerous descent regimes. Here you apply momentum theory to real drones (DJI Mavic 3 Enterprise and Matrice 350 RTK) and to real air density computed from weather in the mountains and in the lowlands.
+The lab explains airfoil lift, the stall angle, rotor momentum theory and dangerous descent regimes. Here you apply momentum theory to real drones (DJI Mavic 3 Enterprise and Matrice 350 RTK) and to real air density computed from weather in the mountains and in the lowlands.
 
 ## Goal
 
@@ -28,7 +28,7 @@ Thin airfoil theory says the lift coefficient grows linearly with angle of attac
 
 Parameters the student changes:
 
-- `camber = 0.04`: airfoil camber (fraction of chord; 0 = symmetric, 0.04 = 4 %)
+- `camber = z_viz("camber", 0.04)`: airfoil camber (fraction of chord; 0 = symmetric, 0.04 = 4 %)
 - `alpha_stall = 14`: stall angle (°), roughly 12–16° from measurements of real airfoils
 
 **Task 1.** Why does a cambered airfoil lift even at 0° angle of attack and a symmetric one does not? Set `camber = 0`. At what angle would the wing carry 2.5 kg? Why does thin airfoil theory fail beyond the stall angle and what happens to the flow on the upper surface? (The curve beyond stall is only schematic.)

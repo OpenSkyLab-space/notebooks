@@ -1,6 +1,6 @@
 # Od DN k odrazivosti, pokročilá verze: topografická korekce v Krkonoších
 
-Popis notebooku k vizuálu [Od DN k odrazivosti](https://openskylab.space/edu_viz_dn_to_reflectance.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/dn_to_reflectance_pro_cs.ipynb) · verze 1.0 · asi 70 min · pět úkolů
+Popis notebooku k laboratoři [Od DN k odrazivosti](https://openskylab.space/edu_viz_dn_to_reflectance.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/dn_to_reflectance_pro_cs.ipynb) · verze 1.0 · asi 70 min · pět úkolů
 
 ## O čem notebook je
 
@@ -31,7 +31,7 @@ Parametry, které student mění:
 
 Na rovině dopadá přímé sluneční záření pod zenitovým úhlem θ_s, na svahu se sklonem s a orientací a pod úhlem i: cos i = cos θ_s · cos s + sin θ_s · sin s · cos(φ_s − a), kde φ_s je azimut Slunce. Přímé ozáření svahu je úměrné cos i; difuzní světlo oblohy dopadá ze všech směrů a na orientaci svahu závisí mnohem méně.
 
-**Úkol 1.** Porovnej mapy cos i v létě a na podzim. Proč se na podzim osvětlení jižních a severních svahů liší mnohem víc a kolik pixelů je ve vlastním stínu? Proč vzorec odrazivosti TOA z notebooku k vizuálu (dělení sinem výšky Slunce) na svahu nedává skutečnou odrazivost povrchu?
+**Úkol 1.** Porovnej mapy cos i v létě a na podzim. Proč se na podzim osvětlení jižních a severních svahů liší mnohem víc a kolik pixelů je ve vlastním stínu? Proč vzorec odrazivosti TOA z notebooku k laboratoři (dělení sinem výšky Slunce) na svahu nedává skutečnou odrazivost povrchu?
 
 ### 3. Jak silně terén mění odrazivost lesa
 

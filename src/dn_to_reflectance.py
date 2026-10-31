@@ -29,8 +29,8 @@ def meta(P):
         "title": {"cs": "Od DN k odrazivosti: Landsat 8 " + P["over_cs"], "en": "From DN to reflectance: Landsat 8 over " + P["over_en"]},
         "visual": {"cs": "Od DN k odrazivosti", "en": "From DN to reflectance"},
         "lead": {
-            "cs": "Vizuál prochází řetězec od digitálního čísla přes zář k odrazivosti nad atmosférou (TOA) a na povrchu (BOA) a ukazuje, co opraví metoda tmavého objektu (DOS) a empirická přímka. Tady celý řetězec spočítáš na dvou skutečných snímcích Landsatu 8 " + P["over_cs"] + " a výsledek porovnáš s odrazivostí Sentinelu-2 L2A z téhož týdne.",
-            "en": "The visual walks through the chain from digital number to radiance to top-of-atmosphere (TOA) and surface (BOA) reflectance and shows what dark object subtraction (DOS) and the empirical line correct. Here you compute the whole chain on two real Landsat 8 images of " + P["over_en"] + " and compare the result with Sentinel-2 L2A reflectance from the same week.",
+            "cs": "Laboratoř prochází řetězec od digitálního čísla přes zář k odrazivosti nad atmosférou (TOA) a na povrchu (BOA) a ukazuje, co opraví metoda tmavého objektu (DOS) a empirická přímka. Tady celý řetězec spočítáš na dvou skutečných snímcích Landsatu 8 " + P["over_cs"] + " a výsledek porovnáš s odrazivostí Sentinelu-2 L2A z téhož týdne.",
+            "en": "The lab walks through the chain from digital number to radiance to top-of-atmosphere (TOA) and surface (BOA) reflectance and shows what dark object subtraction (DOS) and the empirical line correct. Here you compute the whole chain on two real Landsat 8 images of " + P["over_en"] + " and compare the result with Sentinel-2 L2A reflectance from the same week.",
         },
         "goal": {
             "cs": "převést DN na zář a odrazivost TOA, ukázat, proč DN ze dvou dnů nejsou srovnatelná, změřit vliv atmosféry na vodě a porovnat korekci DOS a empirickou přímku s odrazivostí na povrchu.",

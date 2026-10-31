@@ -1,10 +1,10 @@
 # Kalibrace multispektrální kamery: od DN k odrazivosti na skutečných snímcích
 
-Popis notebooku k vizuálu [Kalibrace multispektrální kamery](https://openskylab.space/edu_viz_multispectral_calibration.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/multispectral_calibration_altum_pt_cs.ipynb) · verze 1.0 · asi 45 min · pět úkolů
+Popis notebooku k laboratoři [Kalibrace multispektrální kamery](https://openskylab.space/edu_viz_multispectral_calibration.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/multispectral_calibration_altum_pt_cs.ipynb) · verze 1.0 · asi 45 min · pět úkolů
 
 ## O čem notebook je
 
-Vizuál ukazuje, co s odrazivostí udělá mrak, náklon dronu, vinětace a malý panel. Tady projdeš celý řetězec na skutečných snímcích kamery MicaSense Altum-PT: snímek kalibračního panelu před letem a snímek z letu nad silnicí, ovocným sadem, suchou loukou a fóliovníkem. Všechny potřebné údaje (černá úroveň, vinětace, kalibrační koeficienty, odrazivost panelu, údaje senzoru osvětlení DLS 2) jsou uložené přímo v souborech TIFF.
+Laboratoř ukazuje, co s odrazivostí udělá mrak, náklon dronu, vinětace a malý panel. Tady projdeš celý řetězec na skutečných snímcích kamery MicaSense Altum-PT: snímek kalibračního panelu před letem a snímek z letu nad silnicí, ovocným sadem, suchou loukou a fóliovníkem. Všechny potřebné údaje (černá úroveň, vinětace, kalibrační koeficienty, odrazivost panelu, údaje senzoru osvětlení DLS 2) jsou uložené přímo v souborech TIFF.
 
 ## Cíl
 
@@ -56,7 +56,7 @@ DLS měří ozáření na svou horní plochu. Když se dron nakloní ke Slunci, 
 
 Parametry, které student mění:
 
-- `TILT = 10`: náklon senzoru DLS (°)
+- `TILT = z_viz("TILT", 10)`: náklon senzoru DLS (°)
 
 **Úkol 3.** O kolik procent se mezi snímkem panelu a snímkem z letu změnilo vodorovné ozáření (časy snímků vypsala první buňka)? Jak velkou chybu odrazivosti způsobí náklon 10° a 20° ke Slunci a od Slunce? Proč je chyba při nízkém Slunci větší a proč pomáhá, když je rozptýlené složky hodně (zataženo)?
 

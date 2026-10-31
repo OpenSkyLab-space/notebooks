@@ -1,10 +1,10 @@
 # Proč dron letí: vztlak, hybnost a skutečná hustota vzduchu
 
-Popis notebooku k vizuálu [Proč dron letí](https://openskylab.space/edu_viz_why_drones_fly.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/why_drones_fly_brno_cs.ipynb) · verze 1.0 · asi 45 min · pět úkolů
+Popis notebooku k laboratoři [Proč dron letí](https://openskylab.space/edu_viz_why_drones_fly.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/why_drones_fly_brno_cs.ipynb) · verze 1.0 · asi 45 min · pět úkolů
 
 ## O čem notebook je
 
-Vizuál vysvětluje vztlak profilu, pádový úhel, teorii hybnosti rotoru a nebezpečné režimy klesání. Tady teorii hybnosti použiješ na skutečné drony (DJI Mavic 3 Enterprise a Matrice 350 RTK) a na skutečnou hustotu vzduchu, kterou spočítáš z měřeného a modelovaného počasí na horách i v nížině.
+Laboratoř vysvětluje vztlak profilu, pádový úhel, teorii hybnosti rotoru a nebezpečné režimy klesání. Tady teorii hybnosti použiješ na skutečné drony (DJI Mavic 3 Enterprise a Matrice 350 RTK) a na skutečnou hustotu vzduchu, kterou spočítáš z měřeného a modelovaného počasí na horách i v nížině.
 
 ## Cíl
 
@@ -28,7 +28,7 @@ Podle teorie tenkého profilu roste součinitel vztlaku lineárně s úhlem náb
 
 Parametry, které student mění:
 
-- `camber = 0.04`: prohnutí profilu (podíl hloubky; 0 = souměrný, 0,04 = 4 %)
+- `camber = z_viz("camber", 0.04)`: prohnutí profilu (podíl hloubky; 0 = souměrný, 0,04 = 4 %)
 - `alpha_stall = 14`: pádový úhel (°), z měření skutečných profilů zhruba 12–16°
 
 **Úkol 1.** Proč prohnutý profil nese i při úhlu náběhu 0° a souměrný ne? Nastav `camber = 0`. Při jakém úhlu by křídlo uneslo 2,5 kg? Proč teorie tenkého profilu nad pádovým úhlem neplatí a co se v tu chvíli děje s prouděním na horní straně? (Průběh za pádem je v grafu jen schematický.)

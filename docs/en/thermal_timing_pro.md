@@ -1,6 +1,6 @@
 # When to fly a thermal camera, advanced: slopes, shadows and forest on real terrain
 
-Description of the notebook for the visual [When to fly a thermal camera](https://openskylab.space/edu_viz_thermal_timing.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/thermal_timing_pro_en.ipynb) · version 1.0 · about 55 min · four tasks
+Description of the notebook for the lab [When to fly a thermal camera](https://openskylab.space/edu_viz_thermal_timing.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/thermal_timing_pro_en.ipynb) · version 1.0 · about 55 min · four tasks
 
 ## What the notebook is about
 

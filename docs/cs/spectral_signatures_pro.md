@@ -1,10 +1,10 @@
 # Spektrální signatury, pokročilá verze: model PROSAIL, nasycení indexů a odhad LAI
 
-Popis notebooku k vizuálu [Spektrální signatury](https://openskylab.space/edu_viz_spectral_signatures.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/spectral_signatures_pro_cs.ipynb) · verze 1.0 · asi 75 min · pět úkolů
+Popis notebooku k laboratoři [Spektrální signatury](https://openskylab.space/edu_viz_spectral_signatures.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/spectral_signatures_pro_cs.ipynb) · verze 1.0 · asi 75 min · pět úkolů
 
 ## O čem notebook je
 
-Pokročilá verze notebooku ke spektrálním signaturám. Křivky z vizuálu tu počítá skutečný model přenosu záření PROSAIL, který spojuje optiku listu (PROSPECT) s porostem (SAIL). Ukážeš v něm, proč se NDVI nasycuje, sestavíš tabulku simulací a z ní odhadneš LAI pro každý pixel dvou snímků Sentinel-2 u Roztok, včetně nejistoty a míst, kde model selhává.
+Pokročilá verze notebooku ke spektrálním signaturám. Křivky z laboratoře tu počítá skutečný model přenosu záření PROSAIL, který spojuje optiku listu (PROSPECT) s porostem (SAIL). Ukážeš v něm, proč se NDVI nasycuje, sestavíš tabulku simulací a z ní odhadneš LAI pro každý pixel dvou snímků Sentinel-2 u Roztok, včetně nejistoty a míst, kde model selhává.
 
 ## Cíl
 

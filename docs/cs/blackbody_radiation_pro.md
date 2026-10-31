@@ -1,6 +1,6 @@
 # Záření černého tělesa, pokročilá verze: teplota povrchu, tepelný ostrov a sucho z Landsatu 8
 
-Popis notebooku k vizuálu [Záření černého tělesa](https://openskylab.space/edu_viz_blackbody_radiation.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/blackbody_radiation_pro_cs.ipynb) · verze 1.0 · asi 65 min · čtyři úkolů
+Popis notebooku k laboratoři [Záření černého tělesa](https://openskylab.space/edu_viz_blackbody_radiation.html). [Otevřít v Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/blackbody_radiation_pro_cs.ipynb) · verze 1.0 · asi 65 min · čtyři úkolů
 
 ## O čem notebook je
 

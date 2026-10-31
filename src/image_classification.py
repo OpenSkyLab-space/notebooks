@@ -17,8 +17,8 @@ def meta(P):
         "title": {"cs": "Od pixelu ke třídě: klasifikace Sentinelu-2 " + P["near_cs"], "en": "From pixel to class: classifying Sentinel-2 " + P["near_en"]},
         "visual": {"cs": "Od pixelu ke třídě", "en": "From pixel to class"},
         "lead": {
-            "cs": "Ve vizuálu jsi dělil pixely prahem indexu, porovnával klasické klasifikátory a sledoval, jak se neuronová síť přeučí. Tady totéž uděláš na skutečném snímku Sentinel-2 " + P["near_cs"] + " s referencí ESA WorldCover a přesnost vyhodnotíš chybovou maticí.",
-            "en": "In the visual you split pixels with an index threshold, compared classic classifiers and watched a neural network overfit. Here you do the same on a real Sentinel-2 image " + P["near_en"] + " with ESA WorldCover as reference and assess accuracy with a confusion matrix.",
+            "cs": "V laboratoři jsi dělil pixely prahem indexu, porovnával klasické klasifikátory a sledoval, jak se neuronová síť přeučí. Tady totéž uděláš na skutečném snímku Sentinel-2 " + P["near_cs"] + " s referencí ESA WorldCover a přesnost vyhodnotíš chybovou maticí.",
+            "en": "In the lab you split pixels with an index threshold, compared classic classifiers and watched a neural network overfit. Here you do the same on a real Sentinel-2 image " + P["near_en"] + " with ESA WorldCover as reference and assess accuracy with a confusion matrix.",
         },
         "goal": {
             "cs": "najít práh NDVI a SAVI pro vegetaci, porovnat minimální vzdálenost, maximální věrohodnost, k-NN, náhodný les a neuronovou síť na trénovacích a testovacích pixelech a spočítat přesnost zpracovatele, uživatele a kappa.",

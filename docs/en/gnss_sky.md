@@ -1,10 +1,10 @@
 # GNSS under the sky: real satellites, DOP, terrain and Bpv heights
 
-Description of the notebook for the visual [GNSS under the sky](https://openskylab.space/edu_viz_gnss_sky.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/gnss_sky_en.ipynb) · version 1.0 · about 50 min · five tasks
+Description of the notebook for the lab [GNSS under the sky](https://openskylab.space/edu_viz_gnss_sky.html). [Open in Google Colab](https://colab.research.google.com/github/OpenSkyLab-space/notebooks/blob/main/gnss_sky_en.ipynb) · version 1.0 · about 50 min · five tasks
 
 ## What the notebook is about
 
-The visual shows how the number and layout of satellites set the DOP, what obstacles and the elevation mask do and why GNSS height is less accurate than position. Here you compute the positions of real GPS, Galileo, GLONASS and BeiDou satellites from broadcast ephemerides, the real horizon in the Vltava valley from the ČÚZK terrain model, and the conversion from ellipsoidal height to Bpv height from survey control points.
+The lab shows how the number and layout of satellites set the DOP, what obstacles and the elevation mask do and why GNSS height is less accurate than position. Here you compute the positions of real GPS, Galileo, GLONASS and BeiDou satellites from broadcast ephemerides, the real horizon in the Vltava valley from the ČÚZK terrain model, and the conversion from ellipsoidal height to Bpv height from survey control points.
 
 ## Goal
 
@@ -36,7 +36,7 @@ Parameters the student changes:
 - `RANK = 1`: which further ephemeris to compare with (1 = neighbouring, 3 = three further)
 - `LAT, LON = 50.130, 14.373`: site (Suchdol campus)
 - `T_SKY = T0 + timedelta(hours=12)`: time of the sky plot (UTC)
-- `mask = 10`: elevation mask (°)
+- `mask = z_viz("mask", 10)`: elevation mask (°)
 
 **Task 1.** How far from Earth's centre do the satellites of each system orbit? Why does BeiDou also have satellites much higher (geostationary and on inclined geosynchronous orbits)? By how many metres does the position of the same satellite differ between two neighbouring ephemerides? Set `RANK = 3` and then 6 and watch the age of the compared ephemeris and the position difference. Why is the compared ephemeris much older for GPS than for Galileo at the same `RANK`? How does the difference grow with age, and why does it grow faster for GLONASS than for GPS (a broadcast state and integration, or orbital elements with corrections)? Why must ephemerides be broadcast again and again?
 
