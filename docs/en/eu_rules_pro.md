@@ -4,11 +4,11 @@ Description of the notebook for the visual [Where and how may I fly](https://ope
 
 ## What the notebook is about
 
-The advanced version of the notebook on UAS geographical zones. On current ŘLP data you check whether the geometry of zones matches their description, build a map of allowed flight height around Brno from the grids, compute from METAR reports how high flight levels really are, check the effective dates of zones against the AIRAC cycle and draw a vertical cross-section of the zones from Bystrc to Tuřany airport over the real terrain. This is a teaching aid, not legal advice: before a flight always check the zones in the DroneMap app and the conditions in the CAA measures of general nature (OOP).
+The advanced version of the notebook on UAS geographical zones. On current ŘLP data you find out which zones concern a drone at all according to their vertical limits, build a map of allowed flight height around Brno from the grids, compute from METAR reports how high flight levels really are, check the effective dates of zones against the AIRAC cycle and draw a vertical cross-section of the zones from Bystrc to Tuřany airport over the real terrain. This is a teaching aid, not legal advice: before a flight always check the zones in the DroneMap app and the conditions in the CAA measures of general nature (OOP).
 
 ## Goal
 
-Measure the radii of circular zones and compare them with the description, combine the GRID_CTR and GRID_ATZ grids into a map of allowed height, convert flight levels to true altitude from QNH and temperature, check effective dates against the AIRAC cycle and build a vertical cross-section of the zones over the DMR 5G terrain.
+Sort zones by their lower limit and determine where they concern a drone, combine the GRID_CTR and GRID_ATZ grids into a map of allowed height, convert flight levels to true altitude from QNH and temperature, check effective dates against the AIRAC cycle and build a vertical cross-section of the zones over the DMR 5G terrain.
 
 ## Data
 
@@ -26,15 +26,15 @@ Parameters the student changes:
 
 - `MAX_MB = 20`: largest file to download (MB); both grids are always downloaded
 
-### 2. Does the geometry of zones match the description?
+### 2. Which zones concern a drone at all?
 
-For zones that the description defines by a distance from a point (aerodrome reference point ARP, heliport HRP), we measure the radius in the data: the radius of a circle with the same area as the outer boundary of the feature. The computation runs in metres in UTM 33N coordinates.
+Every zone applies only between its lower and upper limit. The lower limit can be at the ground (GND), a height above ground (AGL), an altitude above sea level (AMSL) or a flight level (FL, here converted with the standard atmosphere). For limits in AMSL and FL the terrain matters: we decide whether the zone reaches a drone at the chosen height everywhere in Czechia, nowhere, or only above a certain terrain altitude.
 
 Parameters the student changes:
 
-- `CHECK = {"LKR315A": [5500], "LKR315B": [1550], "LKR314D": [5500], "LKR315C": [3000, 1000, 200], "LKR315D": [3000, 1000, 200]}`: layer → radii according to the description on the ŘLP page (m)
+- `DRONE_AGL = 120`: flight height above ground (m)
 
-**Task 1.** Which layers match the description and which do not? For LKR315A find features clearly smaller and larger than 5500 m and explain what may cause it (look at where they lie). For LKR315B, LKR315C and LKR315D compute by what percentage the radius in the data differs from the description on the ŘLP page. Find in the CAA measure of general nature for the LKR315 zones which distances apply, and decide what a pilot should follow: the description, or the zone boundary in DroneMap.
+**Task 1.** How many features start at the ground and how many only at height? Which layers start high, and why do they not concern a drone at 120 m in the lowlands? Find the zones that reach a drone only in the mountains and determine above what terrain altitude. Set DRONE_AGL to 50 m and 150 m: what changes? Why is it not enough to know only the horizontal boundary of a zone?
 
 ### 3. A map of allowed height around Brno
 

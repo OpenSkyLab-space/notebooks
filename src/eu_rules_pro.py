@@ -8,12 +8,12 @@ META = {
               "en": "Where may I fly, advanced: zone geometry, a map of allowed height, flight levels and the AIRAC cycle"},
     "visual": {"cs": "Kde a jak smím létat", "en": "Where and how may I fly"},
     "lead": {
-        "cs": "Pokročilá verze notebooku o zeměpisných zónách UAS. Na aktuálních datech ŘLP ověříš, zda geometrie zón odpovídá jejich popisu, sestavíš mapu povolené výšky letu kolem Brna z gridových sítí, spočítáš ze zpráv METAR, jak vysoko ve skutečnosti leží letové hladiny, zkontroluješ data platnosti zón proti cyklu AIRAC a nakreslíš svislý řez zónami z Bystrce na letiště Tuřany nad skutečným terénem. Je to výuková pomůcka, ne právní posouzení: před letem vždy ověř zóny v aplikaci DroneMap a podmínky v opatřeních obecné povahy ÚCL.",
-        "en": "The advanced version of the notebook on UAS geographical zones. On current ŘLP data you check whether the geometry of zones matches their description, build a map of allowed flight height around Brno from the grids, compute from METAR reports how high flight levels really are, check the effective dates of zones against the AIRAC cycle and draw a vertical cross-section of the zones from Bystrc to Tuřany airport over the real terrain. This is a teaching aid, not legal advice: before a flight always check the zones in the DroneMap app and the conditions in the CAA measures of general nature (OOP).",
+        "cs": "Pokročilá verze notebooku o zeměpisných zónách UAS. Na aktuálních datech ŘLP zjistíš, které zóny se dronu podle svislých hranic vůbec týkají, sestavíš mapu povolené výšky letu kolem Brna z gridových sítí, spočítáš ze zpráv METAR, jak vysoko ve skutečnosti leží letové hladiny, zkontroluješ data platnosti zón proti cyklu AIRAC a nakreslíš svislý řez zónami z Bystrce na letiště Tuřany nad skutečným terénem. Je to výuková pomůcka, ne právní posouzení: před letem vždy ověř zóny v aplikaci DroneMap a podmínky v opatřeních obecné povahy ÚCL.",
+        "en": "The advanced version of the notebook on UAS geographical zones. On current ŘLP data you find out which zones concern a drone at all according to their vertical limits, build a map of allowed flight height around Brno from the grids, compute from METAR reports how high flight levels really are, check the effective dates of zones against the AIRAC cycle and draw a vertical cross-section of the zones from Bystrc to Tuřany airport over the real terrain. This is a teaching aid, not legal advice: before a flight always check the zones in the DroneMap app and the conditions in the CAA measures of general nature (OOP).",
     },
     "goal": {
-        "cs": "změřit poloměry kruhových zón a porovnat je s popisem, spojit gridové sítě GRID_CTR a GRID_ATZ do mapy povolené výšky, převést letové hladiny na skutečnou nadmořskou výšku podle QNH a teploty, ověřit data platnosti proti cyklu AIRAC a sestavit svislý řez zónami nad terénem DMR 5G.",
-        "en": "measure the radii of circular zones and compare them with the description, combine the GRID_CTR and GRID_ATZ grids into a map of allowed height, convert flight levels to true altitude from QNH and temperature, check effective dates against the AIRAC cycle and build a vertical cross-section of the zones over the DMR 5G terrain.",
+        "cs": "roztřídit zóny podle dolní hranice a určit, kde se týkají dronu, spojit gridové sítě GRID_CTR a GRID_ATZ do mapy povolené výšky, převést letové hladiny na skutečnou nadmořskou výšku podle QNH a teploty, ověřit data platnosti proti cyklu AIRAC a sestavit svislý řez zónami nad terénem DMR 5G.",
+        "en": "sort zones by their lower limit and determine where they concern a drone, combine the GRID_CTR and GRID_ATZ grids into a map of allowed height, convert flight levels to true altitude from QNH and temperature, check effective dates against the AIRAC cycle and build a vertical cross-section of the zones over the DMR 5G terrain.",
     },
     "data": {
         "cs": "zeměpisné zóny UAS ve formátu GeoJSON (referenční hranice) ze stránky ŘLP https://aim.rlp.cz/?lang=cz&p=uas-gz, stažené v okamžiku spuštění, kromě vrstev větších než zvolený limit; zprávy METAR letiště Brno-Tuřany (LKTB) za posledních 7 dní z Aviation Weather Center (NOAA); nadmořská výška terénu z Digitálního modelu reliéfu ČR 5. generace (DMR 5G, ČÚZK). Převod letové hladiny na skutečnou výšku používá standardní atmosféru ICAO s teplotou upravenou podle letiště, je to přiblížení.",
@@ -122,46 +122,64 @@ for code, z in zones.iterrows():
 print(f"downloaded {len(layers)} layers, {sum(len(v) for v in layers.values())} features; large layers left out:", ", ".join(c for c in zones.index if c not in layers))
 ''')),
         ("md", t(
-            "## 2. Odpovídá geometrie zón popisu?\n\nU zón, které popis definuje vzdáleností od bodu (vztažný bod letiště ARP, heliportu HRP), změříme poloměr v datech: poloměr kruhu se stejnou plochou jako vnější hranice prvku. Výpočet běží v metrech v souřadnicích UTM 33N.",
-            "## 2. Does the geometry of zones match the description?\n\nFor zones that the description defines by a distance from a point (aerodrome reference point ARP, heliport HRP), we measure the radius in the data: the radius of a circle with the same area as the outer boundary of the feature. The computation runs in metres in UTM 33N coordinates.")),
+            "## 2. Které zóny se dronu vůbec týkají?\n\nKaždá zóna platí jen mezi dolní a horní hranicí. Dolní hranice může být u země (GND), ve výšce nad terénem (AGL), v nadmořské výšce (AMSL) nebo letová hladina (FL, zde přepočtená ve standardní atmosféře). U hranic v AMSL a FL záleží na terénu: rozhodneme, zda zóna zasahuje dron ve zvolené výšce všude v ČR, nikde, nebo jen nad určitou nadmořskou výškou terénu.",
+            "## 2. Which zones concern a drone at all?\n\nEvery zone applies only between its lower and upper limit. The lower limit can be at the ground (GND), a height above ground (AGL), an altitude above sea level (AMSL) or a flight level (FL, here converted with the standard atmosphere). For limits in AMSL and FL the terrain matters: we decide whether the zone reaches a drone at the chosen height everywhere in Czechia, nowhere, or only above a certain terrain altitude.")),
         ("code", t('''
-CHECK = {"LKR315A": [5500], "LKR315B": [1550], "LKR314D": [5500], "LKR315C": [3000, 1000, 200], "LKR315D": [3000, 1000, 200]}   # ◀ parametr: vrstva → poloměry podle popisu na stránce ŘLP (m)
-rows, R = {}, {}
-for code, r_desc in CHECK.items():
-    g = layers[code].geom.map(lambda x: to_utm(shapely.make_valid(x)))
-    ext = g.map(lambda x: shapely.Polygon(max(x.geoms, key=lambda q: q.area).exterior) if x.geom_type == "MultiPolygon" else shapely.Polygon(x.exterior))
-    R[code] = np.sqrt(ext.map(lambda x: x.area).to_numpy() / np.pi)                 # poloměr kruhu stejné plochy jako vnější hranice prvku
-    q = np.percentile(R[code], [0, 25, 50, 75, 100])
-    rows[code] = {"popis": zones.loc[code, "desc"][:55], "prvků": len(g), "podle popisu (m)": "/".join(map(str, r_desc)),
-                  "min": q[0], "25 %": q[1], "medián": q[2], "75 %": q[3], "max": q[4]}
-print("poloměr r_ekv v datech (m):"); print(pd.DataFrame(rows).T.to_string(float_format=lambda v: f"{v:.0f}"))
-fig, ax = plt.subplots(1, len(CHECK), figsize=(17, 3.4))
-for a, (code, r_desc) in zip(ax, CHECK.items()):
-    a.hist(R[code], bins=np.geomspace(50, 8000, 60), color="C0"); a.set_xscale("log")
-    for r in r_desc: a.axvline(r, color="r", ls="--")
-    a.set_title(code); a.set_xlabel("r_ekv (m); červeně popis")
-plt.show()
+H_MIN, H_MAX = 115, 1603      # nejnižší a nejvyšší bod ČR (m n. m.): Labe u Hřenska a Sněžka
+DRONE_AGL = 120               # ◀ parametr: výška letu nad terénem (m)
+def lower_amsl(txt):
+    """Dolní hranice zóny jako nadmořská výška (m); vrátí typ hranice a hodnotu."""
+    s = txt.split("-", 1)[0].strip().upper().replace(" ", "")
+    if s in ("GND", "SFC"): return "GND", 0.0
+    if s.startswith("FL"): return "FL", float(s[2:]) * 100 * 0.3048
+    m = re.match(r"([\\d.]+)(FT|M)(AGL|AMSL|MSL)", s)
+    v = float(m.group(1)) * (0.3048 if m.group(2) == "FT" else 1)
+    return ("AGL", v) if m.group(3) == "AGL" else ("AMSL", v)
+rows = []
+for code, df in layers.items():
+    if code.startswith("GRID"): continue
+    for vl, n in df.vertical_limit.value_counts().items():
+        kind, v = lower_amsl(vl)
+        if kind in ("GND", "AGL"):
+            where = "všude" if v <= DRONE_AGL else "nikde"
+        else:                                                    # AMSL nebo FL: záleží na terénu
+            where = "nikde" if v > H_MAX + DRONE_AGL else ("všude" if v <= H_MIN + DRONE_AGL else f"kde je terén nad {v - DRONE_AGL:.0f} m n. m.")
+        rows.append({"vrstva": code, "svislé hranice": vl, "prvků": n, "dolní hranice": kind,
+                     "dolní hranice (m n. m.)": None if kind in ("GND", "AGL") else round(v), f"týká se dronu ve {DRONE_AGL} m": where})
+lim = pd.DataFrame(rows)
+pd.set_option("display.max_rows", 100)
+print(lim.to_string(index=False))
+print(lim.groupby("dolní hranice")["prvků"].sum().to_string())
 ''', '''
-CHECK = {"LKR315A": [5500], "LKR315B": [1550], "LKR314D": [5500], "LKR315C": [3000, 1000, 200], "LKR315D": [3000, 1000, 200]}   # ◀ parameter: layer → radii according to the description on the ŘLP page (m)
-rows, R = {}, {}
-for code, r_desc in CHECK.items():
-    g = layers[code].geom.map(lambda x: to_utm(shapely.make_valid(x)))
-    ext = g.map(lambda x: shapely.Polygon(max(x.geoms, key=lambda q: q.area).exterior) if x.geom_type == "MultiPolygon" else shapely.Polygon(x.exterior))
-    R[code] = np.sqrt(ext.map(lambda x: x.area).to_numpy() / np.pi)                 # radius of a circle with the same area as the outer boundary of the feature
-    q = np.percentile(R[code], [0, 25, 50, 75, 100])
-    rows[code] = {"description": zones.loc[code, "desc"][:55], "features": len(g), "by description (m)": "/".join(map(str, r_desc)),
-                  "min": q[0], "25 %": q[1], "median": q[2], "75 %": q[3], "max": q[4]}
-print("radius r_eq in the data (m):"); print(pd.DataFrame(rows).T.to_string(float_format=lambda v: f"{v:.0f}"))
-fig, ax = plt.subplots(1, len(CHECK), figsize=(17, 3.4))
-for a, (code, r_desc) in zip(ax, CHECK.items()):
-    a.hist(R[code], bins=np.geomspace(50, 8000, 60), color="C0"); a.set_xscale("log")
-    for r in r_desc: a.axvline(r, color="r", ls="--")
-    a.set_title(code); a.set_xlabel("r_eq (m); red: description")
-plt.show()
+H_MIN, H_MAX = 115, 1603      # lowest and highest point of Czechia (m a.s.l.): the Elbe at Hřensko and Sněžka
+DRONE_AGL = 120               # ◀ parameter: flight height above ground (m)
+def lower_amsl(txt):
+    """Lower limit of a zone as altitude (m); returns the type of limit and the value."""
+    s = txt.split("-", 1)[0].strip().upper().replace(" ", "")
+    if s in ("GND", "SFC"): return "GND", 0.0
+    if s.startswith("FL"): return "FL", float(s[2:]) * 100 * 0.3048
+    m = re.match(r"([\\d.]+)(FT|M)(AGL|AMSL|MSL)", s)
+    v = float(m.group(1)) * (0.3048 if m.group(2) == "FT" else 1)
+    return ("AGL", v) if m.group(3) == "AGL" else ("AMSL", v)
+rows = []
+for code, df in layers.items():
+    if code.startswith("GRID"): continue
+    for vl, n in df.vertical_limit.value_counts().items():
+        kind, v = lower_amsl(vl)
+        if kind in ("GND", "AGL"):
+            where = "everywhere" if v <= DRONE_AGL else "nowhere"
+        else:                                                    # AMSL or FL: depends on the terrain
+            where = "nowhere" if v > H_MAX + DRONE_AGL else ("everywhere" if v <= H_MIN + DRONE_AGL else f"where the terrain is above {v - DRONE_AGL:.0f} m a.s.l.")
+        rows.append({"layer": code, "vertical limits": vl, "features": n, "lower limit": kind,
+                     "lower limit (m a.s.l.)": None if kind in ("GND", "AGL") else round(v), f"affects a drone at {DRONE_AGL} m": where})
+lim = pd.DataFrame(rows)
+pd.set_option("display.max_rows", 100)
+print(lim.to_string(index=False))
+print(lim.groupby("lower limit")["features"].sum().to_string())
 ''')),
         ("task", t(
-            "Které vrstvy odpovídají popisu a které ne? U LKR315A najdi prvky výrazně menší a větší než 5500 m a vysvětli, čím to může být (podívej se, kde leží). U LKR315B, LKR315C a LKR315D spočítej, o kolik procent se poloměr v datech liší od popisu na stránce ŘLP. Najdi v opatření obecné povahy ÚCL k zónám LKR315, jaké vzdálenosti platí, a rozhodni, čím se má pilot řídit: popisem, nebo hranicí zóny v DroneMap.",
-            "Which layers match the description and which do not? For LKR315A find features clearly smaller and larger than 5500 m and explain what may cause it (look at where they lie). For LKR315B, LKR315C and LKR315D compute by what percentage the radius in the data differs from the description on the ŘLP page. Find in the CAA measure of general nature for the LKR315 zones which distances apply, and decide what a pilot should follow: the description, or the zone boundary in DroneMap.")),
+            "Kolik prvků začíná u země a kolik až ve výšce? Které vrstvy začínají vysoko a proč se dronu ve 120 m v nížině netýkají? Najdi zóny, které dron zasáhnou jen na horách, a urči, nad jakou nadmořskou výškou terénu. Nastav DRONE_AGL na 50 m a 150 m: co se změní? Proč nestačí znát jen vodorovnou hranici zóny?",
+            "How many features start at the ground and how many only at height? Which layers start high, and why do they not concern a drone at 120 m in the lowlands? Find the zones that reach a drone only in the mountains and determine above what terrain altitude. Set DRONE_AGL to 50 m and 150 m: what changes? Why is it not enough to know only the horizontal boundary of a zone?")),
         ("md", t(
             "## 3. Mapa povolené výšky kolem Brna\n\nGridové sítě GRID_CTR (kolem řízených letišť, buňky 30″) a GRID_ATZ (prostory neřízeného letového provozu, buňky 15″) udávají v každé buňce, do jaké výšky nad terénem je let povolen bez dalšího souhlasu. Území vzorkujeme po 7,5″, takže každý bod leží uvnitř jedné buňky. Vedle toho spočítáme, kolik zón od země (GND) se v bodě překrývá.",
             "## 3. A map of allowed height around Brno\n\nThe GRID_CTR grid (around controlled airports, 30″ cells) and the GRID_ATZ grid (areas of uncontrolled air traffic, 15″ cells) state in every cell up to what height above ground flight is allowed without further approval. We sample the area every 7.5″, so each point lies inside one cell. Besides that we count how many zones from the ground (GND) overlap at a point.")),

@@ -4,11 +4,11 @@ Popis notebooku k vizuálu [Kde a jak smím létat](https://openskylab.space/edu
 
 ## O čem notebook je
 
-Pokročilá verze notebooku o zeměpisných zónách UAS. Na aktuálních datech ŘLP ověříš, zda geometrie zón odpovídá jejich popisu, sestavíš mapu povolené výšky letu kolem Brna z gridových sítí, spočítáš ze zpráv METAR, jak vysoko ve skutečnosti leží letové hladiny, zkontroluješ data platnosti zón proti cyklu AIRAC a nakreslíš svislý řez zónami z Bystrce na letiště Tuřany nad skutečným terénem. Je to výuková pomůcka, ne právní posouzení: před letem vždy ověř zóny v aplikaci DroneMap a podmínky v opatřeních obecné povahy ÚCL.
+Pokročilá verze notebooku o zeměpisných zónách UAS. Na aktuálních datech ŘLP zjistíš, které zóny se dronu podle svislých hranic vůbec týkají, sestavíš mapu povolené výšky letu kolem Brna z gridových sítí, spočítáš ze zpráv METAR, jak vysoko ve skutečnosti leží letové hladiny, zkontroluješ data platnosti zón proti cyklu AIRAC a nakreslíš svislý řez zónami z Bystrce na letiště Tuřany nad skutečným terénem. Je to výuková pomůcka, ne právní posouzení: před letem vždy ověř zóny v aplikaci DroneMap a podmínky v opatřeních obecné povahy ÚCL.
 
 ## Cíl
 
-Změřit poloměry kruhových zón a porovnat je s popisem, spojit gridové sítě GRID_CTR a GRID_ATZ do mapy povolené výšky, převést letové hladiny na skutečnou nadmořskou výšku podle QNH a teploty, ověřit data platnosti proti cyklu AIRAC a sestavit svislý řez zónami nad terénem DMR 5G.
+Roztřídit zóny podle dolní hranice a určit, kde se týkají dronu, spojit gridové sítě GRID_CTR a GRID_ATZ do mapy povolené výšky, převést letové hladiny na skutečnou nadmořskou výšku podle QNH a teploty, ověřit data platnosti proti cyklu AIRAC a sestavit svislý řez zónami nad terénem DMR 5G.
 
 ## Data
 
@@ -26,15 +26,15 @@ Parametry, které student mění:
 
 - `MAX_MB = 20`: největší stahovaný soubor (MB); obě gridové sítě se stáhnou vždy
 
-### 2. Odpovídá geometrie zón popisu?
+### 2. Které zóny se dronu vůbec týkají?
 
-U zón, které popis definuje vzdáleností od bodu (vztažný bod letiště ARP, heliportu HRP), změříme poloměr v datech: poloměr kruhu se stejnou plochou jako vnější hranice prvku. Výpočet běží v metrech v souřadnicích UTM 33N.
+Každá zóna platí jen mezi dolní a horní hranicí. Dolní hranice může být u země (GND), ve výšce nad terénem (AGL), v nadmořské výšce (AMSL) nebo letová hladina (FL, zde přepočtená ve standardní atmosféře). U hranic v AMSL a FL záleží na terénu: rozhodneme, zda zóna zasahuje dron ve zvolené výšce všude v ČR, nikde, nebo jen nad určitou nadmořskou výškou terénu.
 
 Parametry, které student mění:
 
-- `CHECK = {"LKR315A": [5500], "LKR315B": [1550], "LKR314D": [5500], "LKR315C": [3000, 1000, 200], "LKR315D": [3000, 1000, 200]}`: vrstva → poloměry podle popisu na stránce ŘLP (m)
+- `DRONE_AGL = 120`: výška letu nad terénem (m)
 
-**Úkol 1.** Které vrstvy odpovídají popisu a které ne? U LKR315A najdi prvky výrazně menší a větší než 5500 m a vysvětli, čím to může být (podívej se, kde leží). U LKR315B, LKR315C a LKR315D spočítej, o kolik procent se poloměr v datech liší od popisu na stránce ŘLP. Najdi v opatření obecné povahy ÚCL k zónám LKR315, jaké vzdálenosti platí, a rozhodni, čím se má pilot řídit: popisem, nebo hranicí zóny v DroneMap.
+**Úkol 1.** Kolik prvků začíná u země a kolik až ve výšce? Které vrstvy začínají vysoko a proč se dronu ve 120 m v nížině netýkají? Najdi zóny, které dron zasáhnou jen na horách, a urči, nad jakou nadmořskou výškou terénu. Nastav DRONE_AGL na 50 m a 150 m: co se změní? Proč nestačí znát jen vodorovnou hranici zóny?
 
 ### 3. Mapa povolené výšky kolem Brna
 
