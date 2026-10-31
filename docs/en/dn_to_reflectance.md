@@ -61,6 +61,8 @@ Parameters the student changes:
 
 **Task 5.** Why does the empirical line have a negative offset and a slope different from 1 in the blue bands? What do they express physically? Which method did best and why can DOS not correct the slope? Set `n_panel = 20`: what happens to the reliability of the line? Why are two panels enough in the field, but must be in the same image and under the same illumination?
 
+**Extension (optional).** Compare your results with a classmate who ran the notebook for another place: did you get a similar TOA − BOA difference over water and a similar empirical line slope? What could make them differ (another day, other haze, another sun elevation)?
+
 ## Requirements
 
 A Google account and a browser; the notebook runs in Google Colab and nothing is installed on the computer. Cells are run in order from top to bottom, answers go into the *Your answer* cells below the tasks.

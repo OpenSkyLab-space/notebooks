@@ -61,6 +61,8 @@ Parametry, které student mění:
 
 **Úkol 5.** Proč má empirická přímka v modrých pásmech záporný posun a sklon jiný než 1? Co fyzikálně vyjadřují? Která metoda dopadla nejlépe a proč DOS nemůže opravit sklon? Nastav `n_panel = 20`: co se stane se spolehlivostí přímky? Proč v terénu stačí dva panely, ale musí ležet ve stejném snímku a za stejného osvětlení?
 
+**Rozšíření (nepovinné).** Porovnej výsledky se spolužákem, který spustil notebook pro jiné místo: vyšel podobný rozdíl TOA − BOA nad vodou a podobný sklon empirické přímky? Čím se mohou lišit (jiný den, jiný opar, jiná výška Slunce)?
+
 ## Co je potřeba
 
 Google účet a prohlížeč; notebook běží v Google Colab a nic se neinstaluje do počítače. Buňky se spouštějí popořadě shora dolů, odpovědi se píšou do buněk *Tvoje odpověď* pod úkoly.
