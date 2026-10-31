@@ -47,7 +47,7 @@ Parametry, které student mění:
 
 - `FM, eta = 0.60, 0.80`: účinnost rotoru (figure of merit) a účinnost motoru s regulátorem
 
-**Úkol 3.** O kolik procent je vzduch na Lomnickém štítu řidší než v Praze a o kolik procent víc výkonu potřebuje dron k visení? Ověř, že poměr výkonů je √(ρ_Praha / ρ_štít). Jaké FM a η by musely platit, aby odhad doby visení odpovídal údaji výrobce? Proč výrobce udává výdrž za ideálních podmínek?
+**Úkol 3.** O kolik procent je vzduch na Lomnickém štítu řidší než v Praze a o kolik procent víc výkonu potřebuje dron k visení? Ověř, že poměr výkonů je √(ρ_Praha / ρ_vrchol). Jaké FM a η by musely platit, aby odhad doby visení odpovídal údaji výrobce? Proč výrobce udává výdrž za ideálních podmínek?
 
 **Úkol 4.** Proč velké pomalé vrtule potřebují k visení méně výkonu než malé rychlé? Vysvětli to z P = T · v_i: kterou ze dvou veličin větší disk mění? Proč přesto nemá malý dron obří vrtule?
 
@@ -60,6 +60,8 @@ Parametry, které student mění:
 - `site = "Sněžka"`: místo (hustota = medián za 92 dní)
 
 **Úkol 5.** Při jaké svislé rychlosti klesání hrozí vírový prstenec u Mavicu a u Matrice? Leží maximální rychlost klesání od výrobce v této oblasti? Proč je bezpečnější klesat šikmo nebo s dopřednou rychlostí a proč je nebezpečné rychlé svislé klesání těsně nad zemí, kdy už není prostor na vybrání?
+
+**Rozšíření (nepovinné).** Spolužáci mohou mít notebook pro jiná místa (Praha, Sněžka a Lomnický štít; Brno, Praděd a Gerlachovský štít; České Budějovice, Plechý a Großglockner). Porovnejte nejřidší vzduch a dobu visení Mavicu na nejvyšším místě. Proč se výška bodu modelu liší od skutečné výšky vrcholu a jak to ovlivní výsledek?
 
 ## Co je potřeba
 

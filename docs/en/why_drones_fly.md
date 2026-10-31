@@ -61,6 +61,8 @@ Parameters the student changes:
 
 **Task 5.** At what vertical descent speed does the vortex ring state threaten the Mavic and the Matrice? Does the manufacturer's maximum descent speed lie in this region? Why is it safer to descend at an angle or with forward speed, and why is a fast vertical descent close to the ground dangerous when there is no room to recover?
 
+**Extension (optional).** Classmates may have the notebook for other places (Prague, Sněžka and Lomnický štít; Brno, Praděd and Gerlachovský štít; České Budějovice, Plechý and Großglockner). Compare the thinnest air and the Mavic's hover time at the highest site. Why does the model point elevation differ from the real summit elevation, and how does that affect the result?
+
 ## Requirements
 
 A Google account and a browser; the notebook runs in Google Colab and nothing is installed on the computer. Cells are run in order from top to bottom, answers go into the *Your answer* cells below the tasks.
