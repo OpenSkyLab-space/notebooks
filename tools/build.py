@@ -146,9 +146,21 @@ def footer(meta, lang):
     ])
 
 
+VIZ_NOTE = ("> **💻 Co dělá kód:** Nepovinná buňka. Když do ní vložíš nastavení zkopírované z laboratoře a spustíš ji, převezmou buňky níže stejné hodnoty parametrů a u každé to vypíšou. Když ji necháš prázdnou, použijí se výchozí hodnoty. Nic nestahuje.",
+            "> **💻 What the code does:** Optional cell. If you paste the settings copied from the lab and run it, the cells below take the same parameter values and say so for each one. If you leave it empty, the default values are used. It downloads nothing.")
+
+
+def code_notes(stem, meta):
+    """Popisy buněk kódu pro notebook: podle zdroje src/<stem>.py (verze míst a variant sdílejí popisy svého zdroje)."""
+    sys.path.insert(0, str(ROOT / "src"))
+    from _code_notes import NOTES
+    src = meta["src"]
+    return NOTES[src]
+
+
 def build(stem):
     for out, meta, cells in units(stem):
-        build_one(out, dict(meta, stem=out), cells)
+        build_one(out, dict(meta, stem=out, src=stem), cells)
 
 
 def build_one(stem, meta, cells_fn):
@@ -164,14 +176,19 @@ def build_one(stem, meta, cells_fn):
         meta["tasks"] = {"cs": ["", "", "", "", "čtyři", "pět", "šest"][n_all], "en": ["", "", "", "", "four", "five", "six"][n_all]}
         cells = [nbf.v4.new_markdown_cell(header(meta, lang))]
         if meta["visual_stem"] in VIZ_STEMS and (not stem.endswith("_pro") or stem in VIZ_PRO):
+            cells.append(nbf.v4.new_markdown_cell(t(*VIZ_NOTE)))
             cells.append(nbf.v4.new_code_cell(viz_cell(meta["visual_stem"], lang)))
         n_task = 0
+        notes = code_notes(stem, meta)
+        n_code = 0
         for kind, text in cells_fn(t):
             text = text.strip("\n")
             if kind == "md":
                 cells.append(nbf.v4.new_markdown_cell(text))
             elif kind == "code":
+                cells.append(nbf.v4.new_markdown_cell(t("> **💻 Co dělá kód:** ", "> **💻 What the code does:** ") + t(*notes[n_code])))
                 cells.append(nbf.v4.new_code_cell(text))
+                n_code += 1
             elif kind == "task":
                 n_task += not text.startswith("+")
                 label = t("Úkol", "Task") + f" {n_task}" if not text.startswith("+") else t("Rozšíření (nepovinné)", "Extension (optional)")
@@ -181,6 +198,7 @@ def build_one(stem, meta, cells_fn):
                 raise ValueError(kind)
         cells.append(nbf.v4.new_markdown_cell(footer(meta, lang)))
         assert 4 <= n_task <= 6, (stem, n_task)
+        assert n_code == len(notes), (stem, n_code, len(notes))
         nb.cells = cells
         for i, c in enumerate(nb.cells):
             c["id"] = f"{stem[:20]}-{i:02d}"
