@@ -45,7 +45,7 @@ def units(stem):
     return [(stem, dict(mod.META, visual_stem=mod.META.get("visual_stem", stem)), mod.cells)]
 
 # notebooks that take settings from their lab (the cell "Settings from the lab"); advanced versions only where listed
-VIZ_STEMS = {"flight_planner", "thermal_timing", "blackbody_radiation", "why_drones_fly", "drone_weather", "eu_rules", "gnss_sky",
+VIZ_STEMS = {"flight_planner", "drone_hardware", "thermal_timing", "blackbody_radiation", "why_drones_fly", "drone_weather", "eu_rules", "gnss_sky",
              "multispectral_calibration"}
 VIZ_PRO = {"eu_rules_pro"}
 
