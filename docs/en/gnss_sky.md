@@ -14,7 +14,7 @@ Draw the real GNSS sky over Suchdol, compute HDOP, VDOP and PDOP over a day, ass
 
 Broadcast ephemerides of GPS, Galileo, GLONASS and BeiDou satellites for one day (RINEX navigation file merged by the IGS, BKG archive, about 1.3 MB); DMR 5G (ČÚZK) for the valley horizon; CZEPOS network stations and densification survey points with both Bpv height and ETRS89 ellipsoidal height from the ČÚZK BodovaPole service.
 
-All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
+All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The notebook is stored without outputs; numbers and plots appear when it runs and may differ between runs where the data are updated continuously.
 
 ## Step by step
 
@@ -42,7 +42,16 @@ Parameters the student changes:
 
 ### 3. DOP over a day
 
-We compute DOP from geometry: each satellite gives a row of the matrix G with the unit direction vector (east, north, up) and a one for the receiver clock (each system has its own clock offset). Q = (GᵀG)⁻¹, HDOP = √(Q_EE + Q_NN), VDOP = √Q_UU, PDOP = √(Q_EE + Q_NN + Q_UU).
+We compute DOP from geometry: each satellite gives a row of the matrix G with the unit direction vector (east, north, up) and a one for the receiver clock (each system has its own clock offset). From the matrix $G$ we compute
+
+$$
+Q = \left(G^\mathsf{T} G\right)^{-1}, \quad
+\mathrm{HDOP} = \sqrt{Q_{EE} + Q_{NN}}, \quad
+\mathrm{VDOP} = \sqrt{Q_{UU}}, \quad
+\mathrm{PDOP} = \sqrt{Q_{EE} + Q_{NN} + Q_{UU}},
+$$
+
+where $Q_{EE}$, $Q_{NN}$ and $Q_{UU}$ are the diagonal elements of $Q$ for east, north and up. DOP is a dimensionless multiplier of the range measurement error.
 
 **Task 2.** Why is VDOP larger than HDOP all day? Explain it by where the satellites are in the sky and where they cannot be. How many satellites does a four-system receiver see and how many with GPS only, and how does that affect PDOP? Set the mask to 20° and then 5°.
 

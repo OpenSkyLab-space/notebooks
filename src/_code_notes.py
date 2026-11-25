@@ -6,10 +6,13 @@ NOTES = {}
 PIP_RASTERIO = ("Doinstaluje knihovnu rasterio, která čte rastrová data (GeoTIFF) přímo z internetu. Ostatní knihovny už v Colabu jsou.",
                 "Installs the rasterio library, which reads raster data (GeoTIFF) directly from the internet. The other libraries are already in Colab.")
 
+SETUP_RASTERIO = ("Doinstaluje knihovnu rasterio, která čte rastrová data (GeoTIFF) přímo z internetu, a načte knihovny a fyzikální konstanty.",
+                  "Installs the rasterio library, which reads raster data (GeoTIFF) directly from the internet, and loads the libraries and physical constants.")
+
 NOTES["blackbody_radiation"] = [
-    PIP_RASTERIO,
-    ("Načte knihovny a definuje dvě funkce: `planck` počítá Planckovým zákonem spektrální zář černého tělesa pro danou vlnovou délku a teplotu, `planck_inv` dělá opak, ze záře vrátí jasovou teplotu. Nic nestahuje ani nekreslí.",
-     "Loads the libraries and defines two functions: `planck` computes the spectral radiance of a black body from Planck's law for a given wavelength and temperature, and `planck_inv` does the reverse, returning the brightness temperature from a radiance. It downloads and plots nothing."),
+    SETUP_RASTERIO,
+    None,  # planck: vysvětleno vzorcem v buňce Markdown nad kódem
+    None,  # planck_inv: dtto
     ("Pro každou teplotu ze seznamu `T_list` vykreslí Planckovu křivku od 0,1 do 100 µm a vypíše vlnovou délku maxima (Wienův zákon), celkový tok spočítaný integrací křivky spolu s kontrolou σT⁴ a zář na 10,9 µm. Šedě je vyznačené termální okno 8–14 µm.",
      "For each temperature in `T_list` it plots the Planck curve from 0.1 to 100 µm and prints the wavelength of the maximum (Wien's law), the total flux from integrating the curve together with the σT⁴ check, and the radiance at 10.9 µm. The thermal window 8–14 µm is shaded."),
     ("Stáhne metadata (soubor MTL) skutečné scény Landsatu 8 a z termálního pásma B10 načte jen výřez kolem zvoleného středu. Digitální čísla převede podle koeficientů z MTL na zář a pak na jasovou teplotu a vypíše jejich rozsah. Nakonec výsledek porovná s vlastní funkcí `planck_inv`.",
@@ -20,24 +23,24 @@ NOTES["blackbody_radiation"] = [
      "Reads the red and near-infrared bands of the same scene, computes reflectance and NDVI, and estimates the emissivity of each pixel from NDVI (Sobrino et al. thresholds). It then computes the land surface temperature LST and prints how much it differs from the brightness temperature. It plots maps of NDVI and of this correction."),
     ("Pro povrch o známé teplotě `T_true` spočítá, jakou jasovou teplotu by naměřil senzor při emisivitě 0,98 až 0,85, a vypíše chybu v kelvinech. Odraz okolí zde zanedbává.",
      "For a surface of known temperature `T_true` it computes the brightness temperature a sensor would measure at emissivities from 0.98 to 0.85 and prints the error in kelvin. Reflection from the surroundings is ignored here."),
-    ("Pro čtyři materiály s různou emisivitou spočítá jasovou teplotu, kterou uvidí termokamera, když povrch odráží oblohu o −40, −10, +10 a +27 °C. Teplotu povrchu nastavuje `T_surf` (může přijít z laboratoře).",
-     "For four materials with different emissivity it computes the brightness temperature a thermal camera sees when the surface reflects a sky at −40, −10, +10 and +27 °C. The surface temperature is set by `T_surf` (it can come from the lab)."),
+    ("Pro čtyři materiály s různou emisivitou spočítá jasovou teplotu, kterou uvidí termokamera, když povrch odráží oblohu o −40, −10, +10 a +27 °C. Teplotu povrchu nastavuje parametr `T_surf` v buňce níže (může ji převzít z nastavení laboratoře).",
+     "For four materials with different emissivity it computes the brightness temperature a thermal camera sees when the surface reflects a sky at −40, −10, +10 and +27 °C. The surface temperature is set by the parameter `T_surf` in the cell below (it can be taken from the lab settings)."),
     ("Modeluje pixel, ve kterém hoří jen malý podíl plochy: zář je vážený průměr požáru o teplotě `T_fire` a pozadí (medián skutečné jasové teploty výřezu). Vykreslí, o kolik se pixel ohřeje ve 3,9 a 10,9 µm, a vypíše, při jak malém podílu je pixel teplejší o 10 K.",
      "Models a pixel in which only a small fraction is burning: the radiance is a weighted mean of a fire at `T_fire` and the background (median of the real brightness temperature of the window). It plots how much the pixel warms at 3.9 and 10.9 µm and prints at how small a fraction the pixel becomes 10 K warmer."),
 ]
 
 NOTES["blackbody_radiation_pro"] = [
     PIP_RASTERIO,
-    ("Načte knihovny a definuje Planckův zákon (`planck`) a jeho inverzi (`planck_inv`) v jednotkách µm a W·m⁻²·sr⁻¹·µm⁻¹.",
-     "Loads the libraries and defines Planck's law (`planck`) and its inverse (`planck_inv`) in units of µm and W·m⁻²·sr⁻¹·µm⁻¹."),
+    ("Načte knihovny.", "Loads the libraries."),  # sloučeno do sbalené přípravy
+    None,  # planck a planck_inv: vysvětleno vzorci v buňce Markdown nad kódem
     ("Pro dvě scény Landsatu 8 stáhne metadata a výřez pásem 4, 5, 10 a masky kvality QA. Spočítá NDVI, zář a jasovou teplotu B10 a podle QA označí pixely bez mraků. Na stejnou mřížku převzorkuje mapu krajinného pokryvu ESA WorldCover a vypíše čas snímku, výšku Slunce a podíl jasných pixelů.",
      "For two Landsat 8 scenes it downloads the metadata and a window of bands 4, 5, 10 and the QA quality mask. It computes NDVI, radiance and B10 brightness temperature and marks cloud-free pixels from QA. It resamples the ESA WorldCover land cover map onto the same grid and prints the acquisition time, sun elevation and share of clear pixels."),
     ("Odhadne emisivitu z NDVI (vodu podle WorldCoveru) a řeší rovnici přenosu záření pro teplotu povrchu, jednou jen s emisivitou a jednou i s atmosférou (parametry `TAU`, `L_UP`, `L_DOWN`). Vypíše, jak medián teploty závisí na propustnosti τ, a ukáže tabulku mediánů pro třídy pokryvu.",
      "Estimates emissivity from NDVI (water from WorldCover) and solves the radiative transfer equation for surface temperature, once with emissivity only and once with the atmosphere as well (parameters `TAU`, `L_UP`, `L_DOWN`). It prints how the median temperature depends on the transmittance τ and shows a table of medians per land cover class."),
     ("Vykreslí mapy teploty povrchu pro obě scény a spočítá mediány pro les, louky, pole, zástavbu a vodu. Z nich spočítá povrchový tepelný ostrov jako rozdíl zástavby a polí a zástavby a lesa.",
      "Plots surface temperature maps for both scenes and computes medians for forest, meadow, cropland, built-up area and water. From them it computes the surface heat island as the difference between built-up area and cropland and between built-up area and forest."),
-    ("Pro louky a pole vykreslí teplotu povrchu proti NDVI. V každé z `NBINS` tříd NDVI najde nejteplejší pixely, proloží jimi suchou hranu a mokrou hranu vezme jako 1. percentil teploty. Z obou hran spočítá index sucha TVDI, vykreslí jeho mapy a ukáže mediány pro louky a pole.",
-     "For meadows and cropland it plots surface temperature against NDVI. In each of `NBINS` NDVI classes it finds the warmest pixels, fits the dry edge through them and takes the wet edge as the 1st percentile of temperature. From both edges it computes the TVDI dryness index, plots its maps and shows the medians for meadows and cropland."),
+    ("Pro louky a pole vykreslí teplotu povrchu proti NDVI. V každé z `NBINS` tříd NDVI najde nejteplejší pixely, proloží jimi suchou hranu a mokrou hranu vezme jako 1. percentil teploty. Z obou hran spočítá index sucha TVDI, vykreslí jeho mapy a ukáže mediány pro louky a pole. Do grafu teploty proti NDVI kreslí jen náhodný vzorek nejvýše 20 000 pixelů bez opakování (semínko 0); hrany i TVDI počítá ze všech pixelů.",
+     "For meadows and cropland it plots surface temperature against NDVI. In each of `NBINS` NDVI classes it finds the warmest pixels, fits the dry edge through them and takes the wet edge as the 1st percentile of temperature. From both edges it computes the TVDI dryness index, plots its maps and shows the medians for meadows and cropland. The temperature–NDVI plot shows only a random sample of at most 20,000 pixels drawn without replacement (seed 0); the edges and TVDI use all pixels."),
 ]
 
 NOTES["dn_to_reflectance"] = [
@@ -52,8 +55,9 @@ NOTES["dn_to_reflectance"] = [
      "Finds water from the Sentinel-2 NDWI index and the water class in SCL. For each band it shows the median TOA and BOA reflectance over water and their difference, i.e. the contribution of the atmosphere."),
     ("Metoda tmavého objektu: v každém pásmu vezme odrazivost TOA na percentilu `pct` jako tmavý objekt a od celé scény odečte její rozdíl proti předpokládané odrazivosti `rho_dark`. Ukáže chybu (RMSE) původních dat a opravených dat proti Sentinelu-2 a průměrnou odchylku (bias).",
      "Dark object subtraction: in each band it takes the TOA reflectance at percentile `pct` as the dark object and subtracts its difference from the assumed reflectance `rho_dark` from the whole scene. It shows the error (RMSE) of the original and corrected data against Sentinel-2 and the mean deviation (bias)."),
-    ("Empirická přímka: v každém pásmu vybere `n_panel` nejtmavších a nejsvětlejších pixelů podle Sentinelu-2 jako „panely“ a proloží přímku mezi odrazivostí TOA a BOA. Přímku použije na celou scénu, vypíše sklon, posun a RMSE všech tří postupů a vykreslí jejich srovnání se Sentinelem-2.",
-     "Empirical line: in each band it picks the `n_panel` darkest and brightest pixels according to Sentinel-2 as “panels” and fits a line between TOA and BOA reflectance. It applies the line to the whole scene, prints the slope, offset and RMSE of all three approaches and plots their comparison with Sentinel-2."),
+    None,  # 6.1: vysvětleno v buňce Markdown nad kódem
+    None,  # 6.2
+    None,  # 6.3
 ]
 
 NOTES["dn_to_reflectance_pro"] = [
@@ -64,8 +68,8 @@ NOTES["dn_to_reflectance_pro"] = [
      "For two Landsat 8 scenes with different sun elevation (summer and autumn) it reads a window of six optical bands in the mountains, converts them to TOA reflectance and selects clear pixels from the quality mask. It resamples the Copernicus DEM terrain model and the WorldCover land cover map onto the same grid and prints the sun elevation and azimuth, the elevation range and the share of forest."),
     ("Z modelu terénu spočítá sklon a orientaci každého pixelu a z polohy Slunce cos i, tedy jak přímo Slunce na svah svítí. Vykreslí model terénu a mapy cos i pro obě scény a vypíše jejich rozsah a podíl pixelů ve vlastním stínu.",
      "From the terrain model it computes the slope and aspect of each pixel and, from the sun position, cos i, i.e. how directly the sun shines on the slope. It plots the terrain model and the cos i maps for both scenes and prints their range and the share of pixels in self-shadow."),
-    ("Pro lesní pixely na svazích vykreslí odrazivost proti cos i a v každém pásmu a období proloží přímku ρ = m · cos i + b. Ukáže tabulku s korelací, sklonem, posunem a poměrem C = b/m, který potřebuje C-korekce.",
-     "For forest pixels on slopes it plots reflectance against cos i and fits a line ρ = m · cos i + b in each band and season. It shows a table with the correlation, slope, offset and the ratio C = b/m that the C-correction needs."),
+    ("Pro lesní pixely na svazích vykreslí odrazivost proti cos i a v každém pásmu a období proloží přímku ρ = m · cos i + b. Ukáže tabulku s korelací, sklonem, posunem a poměrem C = b/m, který potřebuje C-korekce. Do grafu kreslí jen 5000 lesních pixelů vylosovaných bez opakování (semínko 0); přímky prokládá všemi lesními pixely.",
+     "For forest pixels on slopes it plots reflectance against cos i and fits a line ρ = m · cos i + b in each band and season. It shows a table with the correlation, slope, offset and the ratio C = b/m that the C-correction needs. The plot shows only 5,000 forest pixels drawn without replacement (seed 0); the lines are fitted to all forest pixels."),
     ("Definuje pět topografických korekcí (žádná, kosinová, C, Minnaertova, SCS+C) a použije je na lesní pixely s cos i nad `COSI_MIN`. Pro každé pásmo, období a metodu ukáže zbylou korelaci s cos i, rozptyl odrazivosti a poměr jižních a severních strmých svahů.",
      "Defines five topographic corrections (none, cosine, C, Minnaert, SCS+C) and applies them to forest pixels with cos i above `COSI_MIN`. For each band, season and method it shows the remaining correlation with cos i, the spread of reflectance and the ratio of steep south- and north-facing slopes."),
     ("Vykreslí mapu zvoleného pásma a období bez korekce, s kosinovou korekcí a s SCS+C. Pak spočítá NDVI a vypíše, jak v lese koreluje s cos i NIR, červená a NDVI v obou obdobích.",
@@ -108,8 +112,8 @@ NOTES["drone_weather_pro"] = [
 NOTES["eu_rules"] = [
     ("Doinstaluje knihovny shapely (geometrie), pyproj (převody souřadnic) a rasterio (rastry).",
      "Installs the libraries shapely (geometry), pyproj (coordinate transformations) and rasterio (rasters)."),
-    ("Načte knihovny a definuje funkci `get`, která při chybě stahování zkusí soubor znovu. Stáhne stránku zeměpisných zón UAS z AIM ŘLP, vytáhne z ní seznam souborů GeoJSON s popisem, velikostí a vydáním a ukáže aktuálně platné zóny.",
-     "Loads the libraries and defines the function `get`, which retries a download after an error. It downloads the UAS geographical zones page from the ŘLP AIM, extracts the list of GeoJSON files with description, size and edition, and shows the zones currently in force."),
+    ("Stáhne stránku zeměpisných zón UAS z AIM ŘLP, vytáhne z ní seznam souborů GeoJSON s popisem, velikostí a vydáním a ukáže aktuálně platné zóny.",
+     "Downloads the UAS geographical zones page from the ŘLP AIM, extracts the list of GeoJSON files with description, size and edition, and shows the zones currently in force."),
     ("Stáhne všechny aktuální vrstvy zón do velikosti `MAX_MB` (kromě gridových sítí) a pro každé místo ze `SITES` zjistí, do kterých polygonů padá. Ukáže tabulku zón se svislými hranicemi a vypíše, které velké vrstvy se nestáhly.",
      "Downloads all current zone layers up to `MAX_MB` in size (except the grids) and for each place in `SITES` finds which polygons it falls into. It shows a table of zones with their vertical limits and prints which large layers were not downloaded."),
     ("Definuje `cuzk_raster`, který stáhne výřez modelu terénu ČÚZK DMR 5G, a z něj zjistí nadmořskou výšku terénu v každém místě letu. Svislé hranice zón (GND, ft/m AMSL, AGL, FL) převede na metry nad terénem a pro výšku letu `FLIGHT_AGL` (může přijít z laboratoře) vypíše, zda let do zóny zasahuje. Nakonec ukáže, jaké svislé hranice mají letecké prostory LKR320A.",
@@ -145,8 +149,8 @@ CUZK_OM_HELPERS_EN = "defines `cuzk_raster`, which downloads a window of a ČÚZ
 
 NOTES["flight_planner"] = [
     PIP_RASTERIO,
-    ("Načte knihovny, " + CUZK_OM_HELPERS_CS + ". Uloží parametry čtyř kamer: rozměry čipu, počet pixelů, ohniskovou vzdálenost a nejkratší interval mezi snímky.",
-     "Loads the libraries, " + CUZK_OM_HELPERS_EN + ". It stores the parameters of four cameras: sensor size, pixel count, focal length and the shortest interval between photos."),
+    ("Uloží parametry čtyř kamer: rozměry čipu, počet pixelů, ohniskovou vzdálenost a nejkratší interval mezi snímky.",
+     "Stores the parameters of four cameras: sensor size, pixel count, focal length and the shortest interval between photos."),
     ("Pro cílové GSD `gsd_target` spočítá u každé kamery velikost pixelu na čipu, potřebnou výšku letu a velikost záběru na zemi. Ukáže tabulku.",
      "For the target GSD `gsd_target` it computes, for each camera, the pixel size on the sensor, the required flight height and the image footprint on the ground. It shows a table."),
     ("Stáhne z ČÚZK model terénu DMR 5G v buňce 2 m pro území 1200 × 800 m, určí výšku místa vzletu na západním okraji a vykreslí terén s vrstevnicemi po 10 m.",
@@ -190,16 +194,16 @@ NOTES["gcp_accuracy"] = [
      "Defines least-squares estimation of a transformation (Helmert, affine, 2nd-degree polynomial) and five layouts of ground control points. For the layout `LAYOUT` it estimates the Helmert transformation from the control points, applies it to all points and prints the RMSE at the control points and at the check points. It plots the check-point residuals as arrows."),
     ("Pro všech pět rozmístění spočítá polohovou RMSE na vlícovacích a kontrolních bodech a výškovou RMSE, když se výšková anomálie ζ odhadne z vlícovacích bodů jako konstanta a jako rovina. Vypíše tabulku a rozsah ζ a vykreslí ζ na bodech.",
      "For all five layouts it computes the horizontal RMSE at the control and check points and the vertical RMSE when the height anomaly ζ is estimated from the control points as a constant and as a plane. It prints the table and the range of ζ and plots ζ at the points."),
-    ("Pro rozmístění `LAYOUT_N` mnohokrát náhodně vybere 5, 12 a 30 kontrolních bodů a z každého výběru spočítá RMSE. Vykreslí histogramy těchto odhadů a vypíše jejich 5. percentil, medián a 95. percentil.",
-     "For the layout `LAYOUT_N` it repeatedly draws 5, 12 and 30 random check points and computes the RMSE from each draw. It plots histograms of these estimates and prints their 5th percentile, median and 95th percentile."),
-    ("Pro tři typy transformace a různé počty náhodně vybraných vlícovacích bodů spočítá RMSE na zbylých kontrolních bodech, pro každý počet `REPEAT`krát. Vypíše medián a 90. percentil a medián vykreslí v logaritmickém měřítku.",
-     "For three transformation types and various numbers of randomly drawn control points it computes the RMSE at the remaining check points, `REPEAT` times for each number. It prints the median and 90th percentile and plots the median on a logarithmic scale."),
+    ("Pro rozmístění `LAYOUT_N` mnohokrát náhodně vybere 5, 12 a 30 kontrolních bodů a z každého výběru spočítá RMSE. Vykreslí histogramy těchto odhadů a vypíše jejich 5. percentil, medián a 95. percentil. Kontrolní body losuje bez opakování z bodů, které nejsou vlícovací, `DRAWS`krát pro každý počet (semínko 1).",
+     "For the layout `LAYOUT_N` it repeatedly draws 5, 12 and 30 random check points and computes the RMSE from each draw. It plots histograms of these estimates and prints their 5th percentile, median and 95th percentile. The check points are drawn without replacement from the points that are not control points, `DRAWS` times for each number (seed 1)."),
+    ("Pro tři typy transformace a různé počty náhodně vybraných vlícovacích bodů spočítá RMSE na zbylých kontrolních bodech, pro každý počet `REPEAT`krát. Vypíše medián a 90. percentil a medián vykreslí v logaritmickém měřítku. Vlícovací body losuje bez opakování a zbylé body použije jako kontrolní. Generátor pokračuje z předchozí buňky, takže po jejím novém spuštění spusť znovu i tuto.",
+     "For three transformation types and various numbers of randomly drawn control points it computes the RMSE at the remaining check points, `REPEAT` times for each number. It prints the median and 90th percentile and plots the median on a logarithmic scale. The control points are drawn without replacement and the remaining points serve as check points. The generator continues from the previous cell, so after rerunning that cell, rerun this one too."),
 ]
 
 NOTES["gnss_sky"] = [
     PIP_RASTERIO,
-    ("Načte knihovny a definuje `cuzk_raster` pro výřez modelu terénu ČÚZK. Stáhne z archivu IGS (BKG) denní soubor vysílaných efemerid RINEX za den `DAY` a ručně ho rozparsuje. Ponechá jen zprávy GPS, Galilea, GLONASS a BeiDou, podle kterých je družice zdravá, a vypíše počet družic a zpráv každého systému.",
-     "Loads the libraries and defines `cuzk_raster` for a window of the ČÚZK terrain model. It downloads the daily RINEX broadcast ephemeris file for day `DAY` from the IGS archive (BKG) and parses it by hand. It keeps only GPS, Galileo, GLONASS and BeiDou messages that mark the satellite as healthy and prints the number of satellites and messages per system."),
+    ("Stáhne z archivu IGS (BKG) denní soubor vysílaných efemerid RINEX za den `DAY` a ručně ho rozparsuje. Ponechá jen zprávy GPS, Galilea, GLONASS a BeiDou, podle kterých je družice zdravá, a vypíše počet družic a zpráv každého systému.",
+     "Downloads the daily RINEX broadcast ephemeris file for day `DAY` from the IGS archive (BKG) and parses it by hand. It keeps only GPS, Galileo, GLONASS and BeiDou messages that mark the satellite as healthy and prints the number of satellites and messages per system."),
     ("Definuje výpočet polohy družice z efemeridy: pro GPS, Galileo a BeiDou z keplerovských prvků s opravami (včetně geostacionárních družic BeiDou), pro GLONASS numerickou integrací pohybu metodou Runge–Kutta. Funkce `sat_pos` vybere nejbližší platnou efemeridu. Pro hodinu `HOUR` spočítá polohu každé družice ze dvou efemerid vzdálených o `RANK` a ukáže pro každý systém výšku drah a rozdíl poloh.",
      "Defines the computation of a satellite position from the ephemeris: for GPS, Galileo and BeiDou from Keplerian elements with corrections (including BeiDou geostationary satellites), for GLONASS by numerical integration of the motion with the Runge–Kutta method. The function `sat_pos` picks the nearest valid ephemeris. For hour `HOUR` it computes each satellite's position from two ephemerides `RANK` apart and shows, per system, the orbit radius and the difference between the positions."),
     ("Převede polohy družic do azimutu a elevace nad místem `LAT, LON` a v čase `T_SKY` vybere družice nad elevační maskou `mask` (může přijít z laboratoře). Vypíše jejich počet podle systému a vykreslí polární graf oblohy, kde střed je zenit.",
@@ -227,16 +231,15 @@ NOTES["image_classification"] = [
      "Downloads a 4 × 4 km window of a Sentinel-2 image and the ESA WorldCover 2021 map on the same grid, which serves as the reference for five classes. It takes six bands as features and keeps cloud-free pixels in these classes. It prints the number of pixels per class and plots the image and the reference."),
     ("Spočítá NDVI a SAVI s faktorem půdy `L`. Pro prahy od −0,2 do 0,9 spočítá, kolik vegetace podle WorldCoveru by práh přehlédl, kolik ostatních pixelů by označil za vegetaci a celkovou přesnost, a vykreslí to pro oba indexy s nejlepším prahem.",
      "Computes NDVI and SAVI with the soil factor `L`. For thresholds from −0.2 to 0.9 it computes how much WorldCover vegetation the threshold would miss, how many other pixels it would label as vegetation, and the overall accuracy, and plots this for both indices with the best threshold."),
-    ("Náhodně vybere `n_train` trénovacích pixelů na třídu ze severní poloviny výřezu a 2000 testovacích na třídu z jižní poloviny. Definuje funkci `report`, která pro model sestaví chybovou matici s přesností zpracovatele (PA) a uživatele (UA) a vypíše celkovou přesnost a kappa.",
-     "Randomly picks `n_train` training pixels per class from the northern half of the window and 2000 test pixels per class from the southern half. It defines the function `report`, which builds the confusion matrix of a model with producer's (PA) and user's (UA) accuracy and prints the overall accuracy and kappa."),
+    None,  # výběr pixelů: vysvětleno v buňce Markdown nad kódem
+    None,  # report: dtto
     ("Natrénuje klasifikátor minimální vzdálenosti a gaussovskou maximální věrohodnost (QDA) a pro oba ukáže chybovou matici na testovacích pixelech.",
      "Trains a minimum-distance classifier and Gaussian maximum likelihood (QDA) and shows the confusion matrix on the test pixels for both."),
     ("Natrénuje k-NN pro počty sousedů od 1 do 100 a náhodný les z 200 stromů pro hloubky od 1 po neomezenou a vykreslí přesnost na trénovacích a testovacích pixelech.",
      "Trains k-NN for 1 to 100 neighbours and a random forest of 200 trees for depths from 1 to unlimited and plots the accuracy on the training and test pixels."),
-    ("Na malém vzorku `n_small` pixelů na třídu učí neuronovou síť s jednou skrytou vrstvou o `hidden` neuronech 400 epoch a po každé epoše zaznamená přesnost na tréninku a testu. Vykreslí obě křivky a vypíše konečnou a nejlepší testovací přesnost.",
-     "On a small sample of `n_small` pixels per class it trains a neural network with one hidden layer of `hidden` neurons for 400 epochs and records the training and test accuracy after each epoch. It plots both curves and prints the final and best test accuracy."),
-    ("Natrénuje náhodný les s hloubkou 12, ukáže jeho chybovou matici, klasifikuje celý výřez (mraky vynechá) a vykreslí výsledek vedle WorldCoveru. Bílá čára odděluje trénovací sever od testovacího jihu.",
-     "Trains a random forest with depth 12, shows its confusion matrix, classifies the whole window (leaving out clouds) and plots the result next to WorldCover. The white line separates the training north from the test south."),
+    ("Na malém vzorku až `n_small` pixelů na třídu učí neuronovou síť s jednou skrytou vrstvou o `hidden` neuronech 400 epoch a po každé epoše zaznamená přesnost na tréninku a testu. Vykreslí obě křivky a vypíše konečnou a nejlepší testovací přesnost. `sample(north, n_small)` provede nový výběr ze severní poloviny; nemusí jít o podmnožinu `Xtr`. Opakované spuštění této buňky posune generátor a vybere jiné pixely; pro opakování stejného běhu začni znovu buňkou s výběrem trénovacích a testovacích pixelů.",
+     "On a small sample of up to `n_small` pixels per class it trains a neural network with one hidden layer of `hidden` neurons for 400 epochs and records the training and test accuracy after each epoch. It plots both curves and prints the final and best test accuracy. `sample(north, n_small)` draws a new selection from the northern half; it need not be a subset of `Xtr`. Running this cell again advances the generator and selects different pixels; to repeat the same run, start again from the cell that selects the training and test pixels."),
+    None,  # mapa: vysvětleno v buňce Markdown nad kódem
 ]
 
 NOTES["image_classification_pro"] = [
@@ -247,21 +250,21 @@ NOTES["image_classification_pro"] = [
      "Downloads three Sentinel-2 images from one year (spring, summer, autumn) for the same window and the WorldCover map as the reference for five classes. It keeps pixels that are cloud-free in all images. It prints the cloud-free share and plots the images in false colour and the reference."),
     ("Z každého snímku vezme odrazivost deseti pásem a indexy ze slovníku `INDICES` (NDVI, NDWI, NDMI) jako příznaky pixelu. Vykreslí časový průběh mediánu NDVI každé třídy a ukáže ho v tabulce.",
      "From each image it takes the reflectance of ten bands and the indices in the dictionary `INDICES` (NDVI, NDWI, NDMI) as pixel features. It plots the time course of the median NDVI per class and shows it in a table."),
-    ("Vybere `n_class` pixelů na třídu, sever použije pro trénink a jih pro test a příznaky standardizuje. Definuje vlastní klasifikátor minimální vzdálenosti v numpy (větev Mahalanobis je k doplnění v úkolu) a porovná ho s `NearestCentroid` ze scikit-learn a s QDA.",
-     "Picks `n_class` pixels per class, uses the north for training and the south for testing and standardises the features. It defines our own minimum-distance classifier in numpy (the Mahalanobis branch is to be completed in the task) and compares it with scikit-learn's `NearestCentroid` and with QDA."),
+    ("Vybere `n_class` pixelů na třídu, sever použije pro trénink a jih pro test a příznaky standardizuje. Definuje vlastní klasifikátor minimální vzdálenosti v numpy (větev Mahalanobis je k doplnění v úkolu) a porovná ho s `NearestCentroid` ze scikit-learn a s QDA. Pixely každé třídy losuje bez opakování (semínko 0).",
+     "Picks `n_class` pixels per class, uses the north for training and the south for testing and standardises the features. It defines our own minimum-distance classifier in numpy (the Mahalanobis branch is to be completed in the task) and compares it with scikit-learn's `NearestCentroid` and with QDA. The pixels of each class are drawn without replacement (seed 0)."),
     ("Náhodný les ověří třemi způsoby: náhodným rozdělením (KFold), prostorovým rozdělením po čtvercích `BLOCK_M` (GroupKFold) a rozdělením sever × jih. Ukáže průměrnou, nejmenší a největší přesnost.",
      "Validates the random forest in three ways: a random split (KFold), a spatial split into `BLOCK_M` squares (GroupKFold) and a north × south split. It shows the mean, minimum and maximum accuracy."),
     ("Pro každý snímek zvlášť, pro dvojice a pro všechny tři spočítá přesnost náhodného lesa s prostorovou validací po čtvercích. Pak ukáže míru F1 každé třídy jen pro letní snímek a pro všechny tři.",
      "For each image separately, for the pairs and for all three it computes the random forest accuracy with spatial validation by squares. It then shows the F1 score of each class for the summer image alone and for all three."),
-    ("Polovinu čtverců použije na trénink náhodného lesa a zbytek území klasifikuje. Ve zbytku vybere v každé třídě mapy `n_h` kontrolních pixelů (stratifikovaný výběr) a podle Olofssona a kol. z nich odhadne plochy tříd s 95% intervalem a přesnosti uživatele a zpracovatele. Vykreslí mapu a území pro odhad a ukáže tabulku.",
-     "Uses half of the squares to train the random forest and classifies the rest of the area. In the rest it picks `n_h` check pixels in each map class (stratified sampling) and, following Olofsson et al., estimates the class areas with a 95% interval and the user's and producer's accuracies. It plots the map and the estimation area and shows a table."),
+    ("Polovinu čtverců použije na trénink náhodného lesa a zbytek území klasifikuje. Ve zbytku vybere v každé třídě mapy `n_h` kontrolních pixelů (stratifikovaný výběr) a podle Olofssona a kol. z nich odhadne plochy tříd s 95% intervalem a přesnosti uživatele a zpracovatele. Vykreslí mapu a území pro odhad a ukáže tabulku. Trénovací čtverce, až 400 trénovacích pixelů na třídu i kontrolní pixely losuje bez opakování generátorem z buňky s výběrem `n_class`, který pokračuje dál; nové spuštění této buňky proto dá jiný výběr. Kontrolní pixely bere jen mimo trénovací čtverce.",
+     "Uses half of the squares to train the random forest and classifies the rest of the area. In the rest it picks `n_h` check pixels in each map class (stratified sampling) and, following Olofsson et al., estimates the class areas with a 95% interval and the user's and producer's accuracies. It plots the map and the estimation area and shows a table. The training squares, up to 400 training pixels per class and the check pixels are drawn without replacement by the generator from the `n_class` sampling cell, which keeps advancing, so rerunning this cell gives a different selection. Check pixels come only from outside the training squares."),
 ]
 
 NOTES["lidar_canopy"] = [
     ("Doinstaluje knihovnu laspy s dekomprimací LAZ pro čtení mračen bodů a rasterio pro rastry.",
      "Installs the laspy library with LAZ decompression for reading point clouds and rasterio for rasters."),
-    ("Definuje `cuzk_raster` pro rastry ČÚZK. Stáhne z otevřených dat ČÚZK mračna bodů DMR 5G (terén) a DMP 1G (povrch) pro mapový list `SHEET` a ponechá body ve výřezu. Vypíše, kdy se skenovalo, a počet a hustotu bodů podle tříd a vykreslí obě mračna.",
-     "Defines `cuzk_raster` for ČÚZK rasters. It downloads the DMR 5G (terrain) and DMP 1G (surface) point clouds for map sheet `SHEET` from the ČÚZK open data and keeps the points inside the window. It prints when the scan was made and the number and density of points by class and plots both point clouds."),
+    ("Stáhne z otevřených dat ČÚZK mračna bodů DMR 5G (terén) a DMP 1G (povrch) pro mapový list `SHEET` a ponechá body ve výřezu. Vypíše, kdy se skenovalo, a počet a hustotu bodů podle tříd a vykreslí obě mračna.",
+     "Downloads the DMR 5G (terrain) and DMP 1G (surface) point clouds for map sheet `SHEET` from the ČÚZK open data and keeps the points inside the window. It prints when the scan was made and the number and density of points by class and plots both point clouds."),
     ("Stáhne rastry DMR 5G a DMP 1G s pixelem `RES` a jejich rozdílem získá výšku porostu (CHM). Body terénu rozdělí na les (porost vyšší než `FOREST_H`) a volnou plochu a pro obě skupiny vypíše hustotu bodů a podíl podle čísla odrazu. Výsledek vykreslí jako sloupcový graf.",
      "Downloads the DMR 5G and DMP 1G rasters with pixel `RES` and takes their difference as the canopy height model (CHM). It splits the terrain points into forest (canopy higher than `FOREST_H`) and open ground and for both groups prints the point density and the share by return number. It plots the result as a bar chart."),
     ("Stáhne fotogrammetrický model povrchu z obrazové korelace (DMP OK) a spočítá druhý CHM. Vykreslí oba CHM a histogram výšky porostu v lese a vypíše průměr, medián, 95. percentil a maximum.",
@@ -275,8 +278,8 @@ NOTES["lidar_canopy"] = [
 ]
 
 NOTES["multispectral_calibration"] = [
-    ("Definuje stahování vzorových snímků MicaSense z GitHubu a čtení jejich metadat z EXIF a XMP (expozice, zisk, černá úroveň, kalibrační koeficienty, vinětace, oblast a odrazivost panelu, údaje senzoru osvětlení DLS). Stáhne pět pásem snímku kalibračního panelu a snímku z letu, a kde metadata panelu chybí, dopočítá je. Vypíše vlnové délky, expozice, odrazivost panelu a časy snímků.",
-     "Defines downloading of MicaSense sample images from GitHub and reading their EXIF and XMP metadata (exposure, gain, black level, calibration coefficients, vignetting, panel region and reflectance, readings of the DLS light sensor). It downloads five bands of the calibration panel image and of the flight image and fills in panel metadata where it is missing. It prints the wavelengths, exposures, panel reflectance and image times."),
+    ("Definuje `vig_factor`, který z polynomu v metadatech spočítá korekci vinětace (ztmavení k okrajům snímku) pro každý pixel, a `panel_shift`, který fázovou korelací najde celopixelový posun dvou snímků. Stáhne pět pásem snímku kalibračního panelu a snímku z letu, a kde metadata panelu chybí, dopočítá je. Vypíše vlnové délky, expozice, odrazivost panelu a časy snímků.",
+     "Defines `vig_factor`, which computes the vignetting correction (darkening towards the image edges) for each pixel from the polynomial in the metadata, and `panel_shift`, which finds the whole-pixel shift between two images by phase correlation. It downloads five bands of the calibration panel image and of the flight image and fills in panel metadata where it is missing. It prints the wavelengths, exposures, panel reflectance and image times."),
     ("Definuje funkci `radiance`, která převede DN na radianci modelem MicaSense (černá úroveň, vinětace, oprava po řádcích, zisk, expozice, kalibrační koeficient). Pro pásmo `BAND` vykreslí DN, násobek vinětace a radianci a vypíše černou úroveň, expozici, zisk, zesílení vinětace a podíl saturovaných pixelů.",
      "Defines the function `radiance`, which converts DN to radiance with the MicaSense model (black level, vignetting, row correction, gain, exposure, calibration coefficient). For band `BAND` it plots the DN, the vignetting factor and the radiance and prints the black level, exposure, gain, vignetting gain and share of saturated pixels."),
     ("V každém pásmu vybere pixely panelu podle oblasti z metadat (lze ji zmenšit `SHRINK` nebo zvětšit `GROW_PX`), spočítá průměrnou radianci panelu, její variabilitu a koeficient k = ρ_panel / L_p. Vypíše tabulku a vykreslí oblast panelu na snímku.",
@@ -344,18 +347,18 @@ NOTES["radiation_balance_pro"] = [
 ]
 
 NOTES["rope_and_photons"] = [
-    ("Načte knihovny a fyzikální konstanty a stáhne soubor metadat jedné skutečné scény Sentinelu-2 L1C (XML).",
-     "Loads the libraries and physical constants and downloads the metadata file (XML) of one real Sentinel-2 L1C scene."),
-    ("Z XML vytáhne pro každé pásmo název, střední vlnovou délku, spektrální citlivost po 1 nm a sluneční ozáření nad atmosférou E0. Ukáže tabulku.",
-     "Extracts from the XML, for each band, the name, central wavelength, spectral response in 1 nm steps and the top-of-atmosphere solar irradiance E0. It shows a table."),
+    ("Stáhne soubor metadat (XML) jedné skutečné scény Sentinelu-2 L1C.",
+     "Downloads the metadata file (XML) of one real Sentinel-2 L1C scene."),
+    ("Z XML vytáhne pro každé pásmo název, střední vlnovou délku, spektrální citlivost po 1 nm a spektrální sluneční ozářenost nad atmosférou E0. Ukáže tabulku.",
+     "Extracts from the XML, for each band, the name, central wavelength, spectral response in 1 nm steps and the top-of-atmosphere solar spectral irradiance E0. It shows a table."),
     ("Vykreslí spektrální citlivost všech pásem podle vlnové délky. Nic nepočítá.",
      "Plots the spectral response of all bands against wavelength. It computes nothing."),
     ("Ze střední vlnové délky každého pásma spočítá frekvenci f = c/λ a pro kontrolu součin λ · f. Ukáže tabulku.",
      "From the central wavelength of each band it computes the frequency f = c/λ and, as a check, the product λ · f. It shows a table."),
-    ("Spočítá energii jednoho fotonu E = h · c / λ v elektronvoltech, vykreslí ji jako sloupcový graf a vypíše poměr energie modrého a červeného fotonu.",
-     "Computes the energy of one photon E = h · c / λ in electronvolts, plots it as a bar chart and prints the ratio of the blue and red photon energies."),
-    ("Vydělí sluneční ozáření E0 energií fotonu, takže dostane počet fotonů za sekundu na m² a µm spektra. Vykreslí E0 a počet fotonů na dvou osách a ukáže tabulku.",
-     "Divides the solar irradiance E0 by the photon energy to get the number of photons per second per m² and µm of spectrum. It plots E0 and the photon count on two axes and shows a table."),
+    ("Spočítá energii fotonu ve středu každého pásma v eV, vykreslí ji jako sloupcový graf a vypíše poměr energie modrého a červeného fotonu.",
+     "Computes the photon energy at the centre of each band in eV, plots it as a bar chart and prints the ratio of the blue and red photon energies."),
+    ("Převede energii fotonu z eV zpět na jouly násobením `e` a vydělí jí spektrální sluneční ozářenost `E0`. Vykreslí `E0` spolu se spektrální hustotou toku fotonů (za sekundu na m² a µm spektra) a ukáže tabulku.",
+     "Converts the photon energy from eV back to joules by multiplying by `e` and divides the solar spectral irradiance `E0` by it. It plots `E0` together with the spectral photon flux density (per second, per m² and per µm of spectrum) and shows a table."),
     ("Ze šířky zakázaného pásu `Eg` spočítá mezní vlnovou délku detektoru a pro každé pásmo podíl jeho spektrální citlivosti pod touto mezí. Ukáže tabulku.",
      "From the band gap `Eg` it computes the cut-off wavelength of the detector and, for each band, the share of its spectral response below this limit. It shows a table."),
     ("Spočítá energii fotonu pro ionizaci, modré a SWIR pásmo, termální pásmo a radar C a porovná ji s tepelnou energií k · T při teplotě detektoru `T`. Ukáže tabulku.",
@@ -370,8 +373,8 @@ NOTES["rope_and_photons_pro"] = [
      "Downloads the Sentinel-2 L1C scene metadata (Earth–Sun distance correction, quantification, DN offsets, sun zenith angle, central wavelengths, bandwidths and E0). From bands B02, B04, B08 and B11 it reads a window around `LON, LAT`, converts DN to TOA reflectance and then to radiance and prints the median radiance of each band."),
     ("Definuje funkci `photons`, která z plochy pupily, prostorového úhlu pixelu, šířky pásma, doby přeletu pixelu a účinnosti `ETA` spočítá počet fotoelektronů v pixelu. Pro každé pásmo ukáže počet fotoelektronů v tmavých, středních a světlých pixelech a SNR.",
      "Defines the function `photons`, which computes the number of photoelectrons in a pixel from the pupil area, the pixel solid angle, the bandwidth, the pixel crossing time and the efficiency `ETA`. For each band it shows the number of photoelectrons in dark, median and bright pixels and the SNR."),
-    ("Pro výřez pásma B04 spočítá očekávaný počet fotoelektronů pro pupily z `DIAMETERS` a pro každý pixel vylosuje náhodný počet z Poissonova rozdělení. Vykreslí tři simulované snímky s mediánem elektronů a SNR.",
-     "For a window of band B04 it computes the expected number of photoelectrons for the pupils in `DIAMETERS` and draws a random count from the Poisson distribution for each pixel. It plots three simulated images with the median electrons and SNR."),
+    ("Pro výřez pásma B04 spočítá očekávaný počet fotoelektronů pro pupily z `DIAMETERS` a pro každý pixel vylosuje náhodný počet z Poissonova rozdělení. Vykreslí tři simulované snímky s mediánem elektronů a SNR. Semínko 1 zajistí, že nové spuštění buňky dá stejné snímky.",
+     "For a window of band B04 it computes the expected number of photoelectrons for the pupils in `DIAMETERS` and draws a random count from the Poisson distribution for each pixel. It plots three simulated images with the median electrons and SNR. The seed 1 makes a rerun of the cell give the same images."),
     ("Pro medián záře pásma B04 porovná Sentinel-2 a dron s parametry `DRONE`: plochu pupily, prostorový úhel pixelu, jejich součin, expozici, počet fotoelektronů a SNR.",
      "For the median radiance of band B04 it compares Sentinel-2 with a drone with the parameters in `DRONE`: pupil area, pixel solid angle, their product, exposure, number of photoelectrons and SNR."),
     ("Vypíše počet fotoelektronů a SNR po sloučení n × n pixelů. Pak spočítá, kolika elektronům odpovídá jeden krok DN v B04, a porovná šum kvantování s fotonovým šumem.",
@@ -407,8 +410,8 @@ NOTES["spectral_signatures_pro"] = [
      "For the variable `VAR` and the values `VALUES` it plots the PROSAIL spectrum and the corresponding Sentinel-2 band values. It then shows, for each variable, how much the reflectance in each band changes when the variable rises from a lower to a higher value."),
     ("Nechá v modelu růst LAI od 0 do 7 pro tři obsahy chlorofylu a pro indexy z `INDICES` vykreslí jejich průběh. Ukáže, při jakém LAI index dosáhne 90 % svého rozsahu a jak moc ho posune změna chlorofylu.",
      "Lets LAI grow from 0 to 7 in the model for three chlorophyll contents and plots the course of the indices in `INDICES`. It shows at what LAI each index reaches 90% of its range and how much a change in chlorophyll shifts it."),
-    ("Vytvoří tabulku `N_LUT` simulací PROSAILu s náhodnými hodnotami proměnných v rozsazích `RANGES`, pro každý snímek s jeho úhlem Slunce. Vypíše dobu výpočtu, která je v řádu minut.",
-     "Builds a table of `N_LUT` PROSAIL simulations with random variable values within `RANGES`, for each image with its sun angle. It prints the computation time, which is on the order of minutes."),
+    ("Vytvoří tabulku `N_LUT` simulací PROSAILu s náhodnými hodnotami proměnných v rozsazích `RANGES`, pro každý snímek s jeho úhlem Slunce. Vypíše dobu výpočtu, která je v řádu minut. Hodnoty proměnných losuje rovnoměrně v jejich rozsazích se semínkem 0, takže je tabulka při každém spuštění stejná.",
+     "Builds a table of `N_LUT` PROSAIL simulations with random variable values within `RANGES`, for each image with its sun angle. It prints the computation time, which is on the order of minutes. The variable values are drawn uniformly within their ranges with seed 0, so the table is the same on every run."),
     ("Pro pixel v bodě `PLON, PLAT` najde v tabulce `K` simulací s nejmenší RMSE proti naměřeným pásmům. Vykreslí pixel s deseti nejlepšími simulacemi a vztah LAI k úhlu listů a chlorofylu mezi řešeními a ukáže rozpětí a variační koeficient LAI, chlorofylu a jejich součinu.",
      "For the pixel at `PLON, PLAT` it finds the `K` simulations in the table with the smallest RMSE against the measured bands. It plots the pixel with the ten best simulations and the relation of LAI to leaf angle and chlorophyll among the solutions, and shows the range and coefficient of variation of LAI, chlorophyll and their product."),
     ("Stejnou inverzi provede pro všechny pixely výřezu v obou snímcích (hledáním nejbližších sousedů). Vykreslí mapy LAI a RMSE nejlepší simulace a ukáže mediány LAI, jeho nejistoty a RMSE pro každou třídu.",
@@ -418,8 +421,8 @@ NOTES["spectral_signatures_pro"] = [
 ]
 
 NOTES["thermal_timing"] = [
-    ("Načte knihovny a definuje `open_meteo` pro dotazy na počasí s opakováním při chybě. Stáhne z Open-Meteo hodinové počasí za posledních 92 dní pro místo `LAT, LON` včetně ozáření skloněné plochy fotovoltaiky (`TILT`, `AZ`). Najde nejslunečnější a nejzataženější den a vykreslí teplotu, záření, oblačnost a vítr.",
-     "Loads the libraries and defines `open_meteo` for weather queries with retries after an error. It downloads 92 days of hourly weather from Open-Meteo for the site `LAT, LON`, including the irradiance on the tilted PV surface (`TILT`, `AZ`). It finds the sunniest and the most overcast day and plots temperature, radiation, cloud cover and wind."),
+    ("Stáhne z Open-Meteo hodinové počasí za posledních 92 dní pro místo `LAT, LON` včetně ozáření skloněné plochy fotovoltaiky (`TILT`, `AZ`). Najde nejslunečnější a nejzataženější den a vykreslí teplotu, záření, oblačnost a vítr.",
+     "Downloads 92 days of hourly weather from Open-Meteo for the site `LAT, LON`, including the irradiance on the tilted PV surface (`TILT`, `AZ`). It finds the sunniest and the most overcast day and plots temperature, radiation, cloud cover and wind."),
     ("Definuje vlastnosti pěti povrchů a model, který po minutách řeší energetickou bilanci každého povrchu se skutečným počasím: záření Slunce a oblohy, vyzařování, citelné teplo, výpar a vedení tepla do hloubky ve 12 vrstvách. Spustí ho pro celé období. Pro den `DAY` vykreslí teploty povrchů s teplotou vzduchu a teplotou půdy z Open-Meteo, vypíše časy, kdy se povrchy `A` a `B` (mohou přijít z laboratoře) teplotně překříží, a ukáže teploty ve vybraných hodinách.",
      "Defines the properties of five surfaces and a model that solves the energy balance of each surface minute by minute with the real weather: solar and sky radiation, emission, sensible heat, evaporation and heat conduction into 12 ground layers. It runs it for the whole period. For day `DAY` it plots the surface temperatures with the air temperature and the Open-Meteo soil temperature, prints the times when surfaces `A` and `B` (they can come from the lab) cross over in temperature, and shows the temperatures at selected hours."),
     ("Pro dny z `DAYS` vypíše záření, oblačnost a vítr, denní amplitudu teploty každého povrchu a rozdíl voda − louka ve 3:00. Vykreslí průběh teplot v obou dnech vedle sebe.",
@@ -449,8 +452,8 @@ NOTES["thermal_timing_pro"] = [
 ]
 
 NOTES["why_drones_fly"] = [
-    (OM_HELPER[0].replace(" Nic zatím nestahuje.", "") + " Uloží parametry dvou dronů z technických listů DJI: hmotnost, počet rotorů, průměr vrtule, energii baterií a dobu visení. Nic zatím nestahuje.",
-     OM_HELPER[1].replace(" Nothing is downloaded yet.", "") + " It stores the parameters of two drones from DJI data sheets: mass, number of rotors, propeller diameter, battery energy and hover time. Nothing is downloaded yet."),
+    ("Uloží parametry dvou dronů z technických listů DJI: hmotnost, počet rotorů, průměr vrtule, energii baterií a dobu visení. Nic zatím nestahuje.",
+     "Stores the parameters of two drones from DJI data sheets: mass, number of rotors, propeller diameter, battery energy and hover time. Nothing is downloaded yet."),
     ("Spočítá součinitel vztlaku profilu s prohnutím `camber` (může přijít z laboratoře) podle teorie tenkého profilu a schematicky i s odtržením proudění za pádovým úhlem `alpha_stall`. Vykreslí obě křivky a vypíše vztlak a unesenou hmotnost malého křídla při 0°, 5° a 10°.",
      "Computes the lift coefficient of an airfoil with camber `camber` (it can come from the lab) from thin-airfoil theory and, schematically, with flow separation beyond the stall angle `alpha_stall`. It plots both curves and prints the lift and the mass a small wing carries at 0°, 5° and 10°."),
     ("Definuje funkci `hover`, která podle teorie hybnosti spočítá pro visení tah jednoho rotoru, plochu disku, indukovanou rychlost, hmotnostní tok, zatížení disku a ideální výkon. Ukáže tabulku pro oba drony.",
@@ -495,3 +498,61 @@ NOTES["drone_hardware"] = [
     ("Spočte rozdíl výšky z GNSS a z barometru, jeho průměr, rozptyl, rozsah a trend v čase a rozptyl rozdílu proti výšce ze SfM. Vykreslí všechny tři výšky v čase.",
      "Computes the difference between the GNSS and barometric heights, its mean, spread, range and trend over time, and the spread of the difference to the SfM height. It plots all three heights over time."),
 ]
+
+
+# Popisy sbalené povinné přípravné buňky, kterou tools/build.py skládá z úvodních %pip, importů a pomocných
+# funkcí (stahování, převzorkování, dotazy na počasí). Vědecký kód zůstává ve viditelných buňkách.
+_LIBS = ("Načte knihovny.", "Loads the libraries.")
+_PIP_RIO = ("Doinstaluje knihovnu rasterio, která čte rastrová data (GeoTIFF) přímo z internetu, a načte knihovny.",
+            "Installs the rasterio library, which reads raster data (GeoTIFF) directly from the internet, and loads the libraries.")
+_METEO = (" Definuje `open_meteo`, která se ptá služby Open-Meteo na počasí a při chybě nebo přetížení to zkusí znovu s rostoucí pauzou.",
+          " Defines `open_meteo`, which queries the Open-Meteo weather service and retries with a growing pause after an error or overload.")
+_CUZK = (" Definuje `cuzk_raster`, která stáhne výřez rastru ČÚZK (model terénu DMR 5G nebo povrchu DMP 1G) jako pole výšek.",
+         " Defines `cuzk_raster`, which downloads a window of a ČÚZK raster (DMR 5G terrain or DMP 1G surface model) as an array of elevations.")
+_S2 = (" Definuje `read_on_grid`, která přečte rastr z cloudu a převzorkuje ho na zvolenou mřížku, a `s2_window`, která z katalogu Earth Search stáhne odrazivost všech pásem a mapu tříd SCL Sentinelu-2 L2A ve čtverci kolem bodu (pixel 10 m).",
+       " Defines `read_on_grid`, which reads a raster from the cloud and resamples it onto a chosen grid, and `s2_window`, which downloads the reflectance of all bands and the SCL class map of Sentinel-2 L2A from the Earth Search catalogue in a square around a point (10 m pixel).")
+_NOTHING = (" Nic zatím nestahuje.", " Nothing is downloaded yet.")
+_GEO = ("Doinstaluje knihovny shapely (geometrie), pyproj (převody souřadnic) a rasterio (rastry) a načte knihovny.",
+        "Installs the libraries shapely (geometry), pyproj (coordinate transformations) and rasterio (rasters) and loads the libraries.")
+
+
+def _join(*parts):
+    return ("".join(p[0] for p in parts), "".join(p[1] for p in parts))
+
+
+SETUP = {
+    "blackbody_radiation_pro": _PIP_RIO,
+    "dn_to_reflectance": _PIP_RIO,
+    "dn_to_reflectance_pro": _PIP_RIO,
+    "drone_hardware": _LIBS,
+    "drone_weather": _join(_LIBS, _METEO, _NOTHING),
+    "drone_weather_pro": _join(_LIBS, _METEO, _NOTHING),
+    "eu_rules": _join(_GEO, (" Definuje `get`, která při chybě stahování zkusí soubor znovu.", " Defines `get`, which retries a download after an error."), _NOTHING),
+    "eu_rules_pro": _join(_GEO, _CUZK, _NOTHING),
+    "flight_planner": _join(_PIP_RIO, _CUZK, _METEO, _NOTHING),
+    "flight_planner_pro": _join(_PIP_RIO, _CUZK, _METEO, _NOTHING),
+    "gcp_accuracy": ("Doinstaluje knihovnu pyproj pro převody mezi souřadnicovými systémy a načte knihovny.",
+                     "Installs the pyproj library for transformations between coordinate systems and loads the libraries."),
+    "gnss_sky": _join(_PIP_RIO, _CUZK, _NOTHING),
+    "image_classification": _join(("Doinstaluje knihovnu rasterio, která čte rastrová data (GeoTIFF) přímo z internetu, a načte knihovny včetně klasifikátorů ze scikit-learn.",
+                                   "Installs the rasterio library, which reads raster data (GeoTIFF) directly from the internet, and loads the libraries, including the classifiers from scikit-learn."), _S2, _NOTHING),
+    "image_classification_pro": _join(("Doinstaluje knihovnu rasterio, která čte rastrová data (GeoTIFF) přímo z internetu, a načte knihovny včetně klasifikátorů a validace ze scikit-learn.",
+                                       "Installs the rasterio library, which reads raster data (GeoTIFF) directly from the internet, and loads the libraries, including classifiers and validation from scikit-learn."), _S2, _NOTHING),
+    "lidar_canopy": _join(("Doinstaluje knihovnu laspy s dekomprimací LAZ pro čtení mračen bodů a rasterio pro rastry a načte knihovny.",
+                           "Installs the laspy library with LAZ decompression for reading point clouds and rasterio for rasters, and loads the libraries."), _CUZK, _NOTHING),
+    "multispectral_calibration": _join(_LIBS, (" Definuje stahování vzorových snímků MicaSense z GitHubu (`fetch`) a čtení jejich metadat z EXIF a XMP (`xmp_reader`, `load`): expozice, zisk, černá úroveň, kalibrační koeficienty, vinětace, oblast a odrazivost kalibračního panelu a údaje senzoru osvětlení DLS.",
+                                                " Defines downloading of the MicaSense sample images from GitHub (`fetch`) and reading of their EXIF and XMP metadata (`xmp_reader`, `load`): exposure, gain, black level, calibration coefficients, vignetting, calibration panel region and reflectance, and readings of the DLS light sensor."), _NOTHING),
+    "multispectral_calibration_pro": _LIBS,
+    "radiation_balance": _join(_PIP_RIO, _S2, _METEO, _NOTHING),
+    "radiation_balance_pro": _join(_PIP_RIO, _S2, _METEO, _NOTHING),
+    "rope_and_photons": ("Načte knihovny a fyzikální konstanty.", "Loads the libraries and physical constants."),
+    "rope_and_photons_pro": ("Doinstaluje knihovnu rasterio, která čte rastrová data (GeoTIFF) přímo z internetu, a načte knihovny a fyzikální konstanty.",
+                             "Installs the rasterio library, which reads raster data (GeoTIFF) directly from the internet, and loads the libraries and physical constants."),
+    "spectral_signatures": _join(_PIP_RIO, _S2, _NOTHING),
+    "spectral_signatures_pro": _join(("Doinstaluje knihovnu rasterio pro čtení rastrů a prosail, model odrazivosti porostu PROSPECT + SAIL, a načte knihovny.",
+                                      "Installs the rasterio library for reading rasters and prosail, the PROSPECT + SAIL canopy reflectance model, and loads the libraries."), _S2, _NOTHING),
+    "thermal_timing": _join(_LIBS, _METEO, _NOTHING),
+    "thermal_timing_pro": _join(_PIP_RIO, _CUZK, _METEO, _NOTHING),
+    "why_drones_fly": _join(_LIBS, _METEO, _NOTHING),
+    "why_drones_fly_pro": _join(_LIBS, _METEO, _NOTHING),
+}

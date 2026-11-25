@@ -14,7 +14,7 @@ Compute the lift of a thin airfoil and its limit, induced velocity and hover pow
 
 Hourly temperature, pressure and humidity for the last 92 days from Open-Meteo for Brno, Praděd and Gerlachovský štít; mass, propeller diameter, battery and endurance of the drones from DJI data sheets.
 
-All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
+All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The notebook is stored without outputs; numbers and plots appear when it runs and may differ between runs where the data are updated continuously.
 
 ## Step by step
 

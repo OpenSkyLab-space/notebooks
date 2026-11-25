@@ -76,7 +76,7 @@ DRONES = {
 }
 ''')),
         ("md", t(
-            "## 2. Vztlak profilu a pád\n\nPodle teorie tenkého profilu roste součinitel vztlaku lineárně s úhlem náběhu: c_L = 2π (α − α₀), kde α₀ ≈ −2 · prohnutí / hloubka (záporné pro prohnutý profil). Skutečný profil se ale při úhlu kolem 12–16° odtrhne a vztlak spadne. Vztlak L = ½ ρ v² S c_L.",
+            "## 2. Vztlak profilu a pád\n\nPodle teorie tenkého profilu roste součinitel vztlaku lineárně s úhlem náběhu $\\alpha$ (v radiánech):\n\n$$\nc_L = 2\\pi\\,(\\alpha - \\alpha_0), \\qquad \\alpha_0 \\approx -2\\,\\frac{\\text{prohnutí}}{\\text{hloubka}},\n$$\n\nkde $\\alpha_0$ je úhel nulového vztlaku (záporný pro prohnutý profil). Skutečný profil se ale při úhlu kolem 12–16° odtrhne a vztlak spadne. Vztlak je $L = \\tfrac{1}{2}\\rho v^2 S\\, c_L$ (N) pro hustotu vzduchu $\\rho$ (kg·m⁻³), rychlost $v$ (m/s) a plochu křídla $S$ (m²).",
             "## 2. Airfoil lift and stall\n\nThin airfoil theory says the lift coefficient grows linearly with angle of attack: c_L = 2π (α − α₀), where α₀ ≈ −2 · camber / chord (negative for a cambered airfoil). A real airfoil separates at about 12–16° and lift drops. Lift L = ½ ρ v² S c_L.")),
         ("code", t('''
 camber = z_viz("camber", 0.04)   # ◀ parametr: prohnutí profilu (podíl hloubky; 0 = souměrný, 0,04 = 4 %)
@@ -111,7 +111,7 @@ for a in (0, 5, 10):
             "Proč prohnutý profil nese i při úhlu náběhu 0° a souměrný ne? Nastav `camber = 0`. Při jakém úhlu by křídlo uneslo 2,5 kg? Proč teorie tenkého profilu nad pádovým úhlem neplatí a co se v tu chvíli děje s prouděním na horní straně? (Průběh za pádem je v grafu jen schematický.)",
             "Why does a cambered airfoil lift even at 0° angle of attack and a symmetric one does not? Set `camber = 0`. At what angle would the wing carry 2.5 kg? Why does thin airfoil theory fail beyond the stall angle and what happens to the flow on the upper surface? (The curve beyond stall is only schematic.)")),
         ("md", t(
-            "## 3. Dva pohledy na jednu sílu\n\nRotor při visení vrhá vzduch dolů. Teorie hybnosti: tah T = ṁ · w, kde w = 2 v_i je rychlost vzduchu daleko pod rotorem a ṁ = ρ A v_i hmotnostní tok diskem. Odtud v_i = √(T / (2 ρ A)). Tentýž tah je i rozdíl tlaků nad a pod diskem: Δp = T / A.",
+            "## 3. Dva pohledy na jednu sílu\n\nRotor při visení vrhá vzduch dolů. Podle teorie hybnosti je tah\n\n$$\nT = \\dot m\\, w, \\qquad w = 2 v_i, \\qquad \\dot m = \\rho A v_i\n\\quad\\Rightarrow\\quad v_i = \\sqrt{\\frac{T}{2 \\rho A}},\n$$\n\nkde $v_i$ je indukovaná rychlost v disku rotoru, $w$ rychlost vzduchu daleko pod rotorem, $\\dot m$ hmotnostní tok diskem a $A$ plocha disku. Tentýž tah je i rozdíl tlaků nad a pod diskem: $\\Delta p = T / A$.",
             "## 3. Two views of one force\n\nA hovering rotor throws air downwards. Momentum theory: thrust T = ṁ · w, where w = 2 v_i is the air speed far below the rotor and ṁ = ρ A v_i the mass flow through the disc. Hence v_i = √(T / (2 ρ A)). The same thrust is also the pressure difference across the disc: Δp = T / A.")),
         ("code", t('''
 def hover(d, rho):
@@ -144,7 +144,7 @@ pd.DataFrame(rows).set_index("drone").round(2)
             "Ověř, že sloupec ṁ · 2 v_i dává stejné číslo jako tah rotoru. Proč jsou rozdíl tlaků a hybnost vrženého vzduchu dva popisy téže síly, ne dvě síly, které se sčítají? Proč má Matrice 350 větší zatížení disku a vyšší indukovanou rychlost, i když má mnohem větší vrtule?",
             "Check that the ṁ · 2 v_i column gives the same number as the rotor thrust. Why are the pressure difference and the momentum of the air thrown down two descriptions of one force, not two forces that add up? Why does the Matrice 350 have a higher disc loading and induced velocity even though its propellers are much larger?")),
         ("md", t(
-            "## 4. Skutečná hustota vzduchu: nížina, hory, teplo a chlad\n\nIdeální výkon při visení je P = T^(3/2) / √(2 ρ A), tedy roste s 1/√ρ. Hustotu spočítáme z tlaku, teploty a vlhkosti za posledních 92 dní. Vypsaná nadmořská výška je výška bodu modelu Open-Meteo; u štítů je nižší než skutečný vrchol (@PEAK@ má @PEAK_M@ m n. m.).",
+            "## 4. Skutečná hustota vzduchu: nížina, hory, teplo a chlad\n\nIdeální výkon při visení je $P = T^{3/2} / \\sqrt{2 \\rho A}$, tedy roste s $1/\\sqrt{\\rho}$. Hustotu spočítáme z tlaku, teploty a vlhkosti za posledních 92 dní. Vypsaná nadmořská výška je výška bodu modelu Open-Meteo; u štítů je nižší než skutečný vrchol (@PEAK@ má @PEAK_M@ m n. m.).",
             "## 4. Real air density: lowland, mountains, warm and cold\n\nIdeal hover power is P = T^(3/2) / √(2 ρ A), so it grows with 1/√ρ. We compute density from pressure, temperature and humidity over the last 92 days. The printed elevation is that of the Open-Meteo model point; for the peaks it is lower than the real summit (@PEAK@ is @PEAK_M@ m a.s.l.).")),
         ("code", t('''
 SITES = {"@LOW_CS@": (@LOW_LL@), "@MID@": (@MID_LL@), "@PEAK@": (@PEAK_LL@)}

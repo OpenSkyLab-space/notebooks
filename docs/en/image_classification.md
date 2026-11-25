@@ -14,7 +14,7 @@ Find an NDVI and SAVI threshold for vegetation, compare minimum distance, maximu
 
 Sentinel-2 L2A `S2B_33UVR_20240721_0_L2A` (21 July 2024) from the Earth Search catalogue on AWS, a 4 × 4 km window around Roztoky and Suchdol; reference ESA WorldCover 10 m 2021 v200. About 20 MB is downloaded.
 
-All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
+All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The notebook is stored without outputs; numbers and plots appear when it runs and may differ between runs where the data are updated continuously.
 
 ## Step by step
 
@@ -38,9 +38,40 @@ Parameters the student changes:
 
 Neighbouring pixels are similar, so a random split would overstate accuracy. We therefore train on the northern half of the window and test on the southern half.
 
+We take **up to `n_train` pixels of each class** in the north for training and up to
+2,000 pixels of each class in the south for testing. If fewer suitable pixels exist,
+we take all of them. The mask `ok` already restricts the pixels to a suitable SCL class
+and to one of the selected WorldCover reference classes.
+
+North and south are two copies of the mask `ok`: in the northern mask we switch off
+the bottom half of the rows, in the southern one the top half. The function `sample` then, for each class:
+
+1. Uses the mask to select its pixels in the given half of the image.
+2. Builds `class_features`: each row is one pixel, the columns are its
+   six spectral features.
+3. Picks rows at random with `rng.choice`. `replace=False` means the same
+   pixel is never picked twice. `min` limits the requested count to the available pixels.
+4. Appends the reference class converted to a number 0–4 in the order of `CLASSES`.
+
+The output `X` is the feature table of the selected pixels and `y` their reference classes.
+`np.vstack` stacks the groups of pixels on top of each other. Sampling per class limits
+the dominance of abundant classes; the test accuracy therefore does not reflect the natural
+areal share of the classes in the whole landscape.
+
+The seed `1` makes the whole selection repeatable. Each call of `sample` advances
+the state of the generator. **After changing `n_train`, run this cell and the following
+models again.**
+
+### How we will evaluate the classifiers
+
+The function `report` compares the model's prediction on the test pixels with the WorldCover
+reference classes. It returns the confusion matrix with producer's (PA) and
+user's (UA) accuracy and prints the overall accuracy on the test and training pixels and the kappa coefficient.
+We use the same function for all models below.
+
 Parameters the student changes:
 
-- `n_train = 300`: number of training pixels per class
+- `n_train = 300`: at most this many training pixels per class
 
 ### 4. Minimum distance and maximum likelihood
 
@@ -61,13 +92,29 @@ A small network with one hidden layer. We train it on few pixels and watch train
 Parameters the student changes:
 
 - `hidden = 64`: number of hidden neurons
-- `n_small = 30`: training pixels per class (a small sample overfits more easily)
+- `n_small = 30`: at most this many training pixels per class
 
 **Task 5.** Try `hidden` 4, 64 and 256 and `n_small` 30 and 300. When does the network overfit (training rises, test falls or stalls)? What would help: more data, a smaller network or stopping earlier? Why is the training–test gap larger for the network than for maximum likelihood?
 
 ### 7. Result map
 
-Loads the libraries and downloads the data.
+For the final map we use `forest`: a random forest with **200 trees and a maximum
+depth of 12**. Its settings are fixed here in advance; the code does not automatically pick
+the best model from the comparison above. After training we show its confusion
+matrix with the same `report` function.
+
+The classifier expects one pixel per row, so we turn the input image into a
+feature table and the prediction `pred` back into a map. Converting to `float`
+lets us mark hidden pixels with `NaN`.
+
+The mask `visible_pixels` keeps the SCL classes **4 = vegetation, 5 = not vegetated
+surfaces, 6 = water**. `~visible_pixels` selects all other pixels, for example
+clouds, shadows or snow; setting them to `NaN` hides them in the map. This is a display
+mask: unlike the training mask `ok`, it does not require a selected WorldCover
+class.
+
+The WorldCover 2021 reference stays on the left, the prediction from Sentinel-2 2024 on the right.
+The white line in the right map marks the split into the training north and the test south.
 
 **Task 6.** Find places where the map differs from WorldCover. Is the error always in the classification? Consider that WorldCover is from 2021 and has errors of its own, that a single image from one day cannot tell a meadow from a field of forage crops, nor green spring cereals from grass, and that a 10 m pixel at a forest edge is a mixture. How would you assess accuracy honestly?
 

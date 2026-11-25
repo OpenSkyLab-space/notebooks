@@ -14,7 +14,7 @@ Decode METAR, compute relative humidity and an estimate of the cloud base, conve
 
 METAR and TAF reports from Brno-Tuřany (LKTB), Náměšť nad Oslavou (LKNA), Kunovice (LKKU) and Ostrava (LKMT) airports from the NOAA Aviation Weather Center; an hourly forecast from Open-Meteo for Brno-Bystrc by the Brno reservoir. The data change every half hour, so your numbers will differ from the stored notebook.
 
-All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
+All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The notebook is stored without outputs; numbers and plots appear when it runs and may differ between runs where the data are updated continuously.
 
 ## Step by step
 
@@ -46,7 +46,11 @@ Parameters the student changes:
 
 ### 4. The way back against the wind
 
-The drone flies at airspeed V, the wind at flight height is U. Over a distance D downwind out and upwind back the flight takes t = D/(V + U) + D/(V − U).
+The drone flies at airspeed V, the wind at flight height is U. Over a distance $D$ downwind out and upwind back the flight takes
+
+$$
+t = \frac{D}{V + U} + \frac{D}{V - U}.
+$$
 
 Parameters the student changes:
 

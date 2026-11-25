@@ -14,7 +14,7 @@ Compute image coverage of the area and clearance above the surface for three hei
 
 DMR 5G (terrain) and DMP 1G (surface including vegetation and buildings) from ČÚZK, ImageServer services, 2 m cells, a 1.2 × 0.8 km area on the left slope of the Vltava valley at Roztoky; today's hourly wind forecast at 80 m from Open-Meteo; drone and camera parameters of the Mavic 3E from the manufacturer's data sheet. DMP 1G comes from airborne laser scanning in 2009–2013, so trees may have grown or been felled since. The coverage model assumes a camera pointing straight down and ignores occlusion (a crown hides the ground beneath it); the turn time is indicative.
 
-All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
+All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The notebook is stored without outputs; numbers and plots appear when it runs and may differ between runs where the data are updated continuously.
 
 ## Step by step
 

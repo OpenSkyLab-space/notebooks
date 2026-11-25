@@ -14,13 +14,20 @@ Spočítat teplotu povrchu z rovnice přenosu záření a odhadnout vliv emisivi
 
 Landsat 8 OLI/TIRS Collection 1 Level-1 z veřejného archivu Google Cloud: `LC08_L1TP_191025_20190626_20190705_01_T1` (26. 6. 2019, vlna veder) a `LC08_L1TP_191025_20170519_20170525_01_T1` (19. 5. 2017), pásma B4, B5, B10, BQA a MTL; třídy ESA WorldCover 2021 v200. Výřez 30 × 30 km kolem Prahy, asi 25 MB. Parametry atmosféry (propustnost, zář nahoru a dolů) se nestahují: jsou zadané jako orientační hodnoty a dají se změnit, skutečné hodnoty pro konkrétní den a místo dává například kalkulačka NASA (Barsi a kol. 2005).
 
-Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
+Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Notebook je uložený bez výstupů; čísla a grafy vzniknou až při spuštění a u průběžně aktualizovaných dat se mohou mezi běhy lišit.
 
 ## Postup krok za krokem
 
 ### 1. Příprava a dvě scény
 
-Nainstaluje knihovny, které Colab nemá předem (`rasterio`), a stáhne data.
+Planckův zákon a jeho inverzi zapíšeme rovnou v jednotkách notebooku, vlnovou délku $\lambda$ v µm a spektrální zář $L_\lambda$ ve $\mathrm{W\,m^{-2}\,sr^{-1}\,\mu m^{-1}}$:
+
+$$
+L_\lambda(\lambda, T) = \frac{C_1}{\lambda^5 \left[\exp\!\left(\frac{C_2}{\lambda T}\right) - 1\right]}, \qquad
+T_b(\lambda, L_\lambda) = \frac{C_2}{\lambda \ln\!\left(\frac{C_1}{\lambda^5 L_\lambda} + 1\right)}.
+$$
+
+$C_1 = 2hc^2 = 1{,}191\,042\times10^{8}\ \mathrm{W\,m^{-2}\,sr^{-1}\,\mu m^{4}}$ a $C_2 = hc/k = 1{,}438\,775\,2\times10^{4}\ \mathrm{\mu m\,K}$ v sobě mají převod z metrů na mikrometry, proto ve funkcích není žádné `1e-6`. $T$ i jasová teplota $T_b$ jsou v kelvinech.
 
 Parametry, které student mění:
 
@@ -29,7 +36,13 @@ Parametry, které student mění:
 
 ### 2. Teplota povrchu z rovnice přenosu záření
 
-Senzor nad atmosférou měří L = τ · [ε · B(Ts) + (1 − ε) · L↓] + L↑: záření povrchu zeslabené atmosférou, k tomu odraz záření oblohy a záření samotné atmosféry. Rovnici vyřešíme pro Ts. Emisivitu odhadneme z NDVI jako v základní verzi, parametry atmosféry τ, L↑ a L↓ jsou orientační hodnoty pro vlhké letní ovzduší.
+Senzor nad atmosférou měří
+
+$$
+L = \tau \left[\varepsilon\, B(T_s) + (1 - \varepsilon)\, L_\downarrow\right] + L_\uparrow :
+$$
+
+záření povrchu $\varepsilon B(T_s)$ zeslabené propustností atmosféry $\tau$, k tomu odraz záření oblohy $L_\downarrow$ a záření samotné atmosféry $L_\uparrow$ (vše ve W·m⁻²·sr⁻¹·µm⁻¹, $B$ je Planckova funkce). Rovnici vyřešíme pro Ts. Emisivitu odhadneme z NDVI jako v základní verzi, parametry atmosféry τ, L↑ a L↓ jsou orientační hodnoty pro vlhké letní ovzduší.
 
 Parametry, které student mění:
 
@@ -45,7 +58,13 @@ Porovnáme teplotu povrchu zástavby s okolní zemědělskou krajinou a lesem ve
 
 ### 4. Prostor teplota–NDVI a index sucha TVDI
 
-V grafu teploty povrchu proti NDVI tvoří pixely trojúhelník nebo lichoběžník. Horní, suchá hrana spojuje nejteplejší pixely pro každé NDVI (povrchy bez vody k výparu), dolní, mokrá hrana nejchladnější. TVDI = (Ts − Ts_mokrá) / (Ts_suchá(NDVI) − Ts_mokrá) leží mezi 0 (vlhko) a 1 (sucho) (Sandholt a kol. 2002). Počítáme ho pro louky a pole.
+V grafu teploty povrchu proti NDVI tvoří pixely trojúhelník nebo lichoběžník. Horní, suchá hrana spojuje nejteplejší pixely pro každé NDVI (povrchy bez vody k výparu), dolní, mokrá hrana nejchladnější. Index
+
+$$
+\mathrm{TVDI} = \frac{T_s - T_{s,\mathrm{mokrá}}}{T_{s,\mathrm{suchá}}(\mathrm{NDVI}) - T_{s,\mathrm{mokrá}}}
+$$
+
+leží mezi 0 (vlhko) a 1 (sucho) (Sandholt a kol. 2002). Počítáme ho pro louky a pole.
 
 Parametry, které student mění:
 

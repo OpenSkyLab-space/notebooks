@@ -14,7 +14,7 @@ Zjistit, která pásma nesou informaci o chlorofylu, vodě, sušině a LAI, poro
 
 Dva snímky Sentinel-2 L2A dlaždice 33UVR (14. 5. a 21. 7. 2024) z katalogu Earth Search na AWS, výřez 4 × 4 km kolem Roztok a Únětic; třídy ESA WorldCover 2021 v200. Simulace počítá balíček `prosail` (PROSPECT-5 a 4SAIL) přímo v notebooku. Stahuje se asi 40 MB, tabulka simulací trvá 1 až 3 minuty. Pozemní měření LAI k výřezu nejsou k dispozici, takže výsledky inverze jsou odhady modelu, ne ověřené hodnoty.
 
-Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
+Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Notebook je uložený bez výstupů; čísla a grafy vzniknou až při spuštění a u průběžně aktualizovaných dat se mohou mezi běhy lišit.
 
 ## Postup krok za krokem
 
@@ -39,7 +39,7 @@ Parametry, které student mění:
 
 ### 3. Nasycení indexů v modelu
 
-Necháme LAI růst od 0 do 7 pro tři obsahy chlorofylu a sledujeme NDVI, NDRE a CIre = NIR/RE1 − 1 (Gitelson a kol. 2005). Tabulka ukazuje, při jakém LAI index dosáhne 90 % rozdílu mezi holou půdou a LAI 7, a jak moc index posune změna chlorofylu, vztaženo k tomuto rozdílu.
+Necháme LAI růst od 0 do 7 pro tři obsahy chlorofylu a sledujeme NDVI, NDRE a $\mathrm{CI_{re}} = \mathrm{NIR}/\mathrm{RE1} - 1$ (Gitelson a kol. 2005). Tabulka ukazuje, při jakém LAI index dosáhne 90 % rozdílu mezi holou půdou a LAI 7, a jak moc index posune změna chlorofylu, vztaženo k tomuto rozdílu.
 
 Parametry, které student mění:
 

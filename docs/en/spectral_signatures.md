@@ -14,7 +14,7 @@ Compare real spectral curves of surfaces, locate the red edge, show NDVI saturat
 
 Sentinel-2 L2A from the Earth Search catalogue on AWS: scene `S2B_33UVR_20240721_0_L2A` (21 July 2024, near Roztoky), cloud-free scenes of tile 33UVR from March to October 2024 for the time series, and `S2A_33UWS_20240308_0_L2A` (snow in the Krkonoše mountains); ESA WorldCover 2021 classes. About 30 MB is downloaded; the time series takes 1 to 3 minutes.
 
-All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
+All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The notebook is stored without outputs; numbers and plots appear when it runs and may differ between runs where the data are updated continuously.
 
 ## Step by step
 
@@ -36,7 +36,13 @@ The red edge is the steep rise in reflectance between red and NIR. We estimate i
 
 ### 4. NDVI saturation during the season
 
-We take one field pixel near Únětice and all cloud-free images from 2024. We compare NDVI = (NIR − R)/(NIR + R), NDRE = (NIR − RE1)/(NIR + RE1) and NDMI = (NIR − SWIR1)/(NIR + SWIR1).
+We take one field pixel near Únětice and all cloud-free images from 2024. We compare three normalised reflectance differences:
+
+$$
+\mathrm{NDVI} = \frac{\mathrm{NIR} - R}{\mathrm{NIR} + R}, \quad
+\mathrm{NDRE} = \frac{\mathrm{NIR} - \mathrm{RE1}}{\mathrm{NIR} + \mathrm{RE1}}, \quad
+\mathrm{NDMI} = \frac{\mathrm{NIR} - \mathrm{SWIR1}}{\mathrm{NIR} + \mathrm{SWIR1}}.
+$$
 
 Parameters the student changes:
 

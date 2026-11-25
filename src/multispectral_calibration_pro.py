@@ -184,7 +184,8 @@ REF = 2                       # referenční pásmo (zelené), vůči němu jsou
 
 def shift_sub(a, c):
     """Posun (dy, dx), o který je třeba posunout c, aby sedělo na a: fázová korelace gradientů se subpixelovým zpřesněním."""
-    g = lambda z: np.hypot(*np.gradient(ndi.gaussian_filter(z, 1.5)))
+    def g(z):
+        return np.hypot(*np.gradient(ndi.gaussian_filter(z, 1.5)))
     w = np.outer(np.hanning(a.shape[0]), np.hanning(a.shape[1]))
     F = np.fft.fft2(g(a) * w) * np.conj(np.fft.fft2(g(c) * w)); cc = np.fft.ifft2(F / (np.abs(F) + 1e-12)).real
     i, j = np.unravel_index(cc.argmax(), cc.shape); H, W = cc.shape
@@ -219,7 +220,8 @@ REF = 2                       # reference band (green); the lens offsets in the 
 
 def shift_sub(a, c):
     """Shift (dy, dx) by which c must be moved to match a: phase correlation of gradients with subpixel refinement."""
-    g = lambda z: np.hypot(*np.gradient(ndi.gaussian_filter(z, 1.5)))
+    def g(z):
+        return np.hypot(*np.gradient(ndi.gaussian_filter(z, 1.5)))
     w = np.outer(np.hanning(a.shape[0]), np.hanning(a.shape[1]))
     F = np.fft.fft2(g(a) * w) * np.conj(np.fft.fft2(g(c) * w)); cc = np.fft.ifft2(F / (np.abs(F) + 1e-12)).real
     i, j = np.unravel_index(cc.argmax(), cc.shape); H, W = cc.shape
@@ -254,8 +256,8 @@ ax.legend(); ax.grid(alpha=0.3); plt.show()
             "Proč se posun pásem na snímku panelu liší od posunu na snímku z letu o desítky pixelů, když jde o stejnou kameru? Z jaké vzdálenosti byl panel vyfocen a jak tomu odpovídá výška letu nad terénem? Spočítej paralaxu modrého pásma vůči zelenému při letu ve 30 m a při letu ve 40 m nad lesem s korunami vysokými 20 m (pro koruny i pro zem). Proč pak k sesazení pásem nestačí jeden posun pro celý snímek?",
             "Why does the band shift in the panel image differ from the shift in the flight image by tens of pixels, although it is the same camera? From what distance was the panel photographed, and what flight height above ground does this give? Compute the parallax of the blue band against the green one for a flight at 30 m and for a flight at 40 m over a forest with 20 m tall crowns (for the crowns and for the ground). Why is one shift for the whole image then not enough to register the bands?")),
         ("md", t(
-            "## 3. Měřítko a otočení pásem\n\nPosun změříme zvlášť v každé dlaždici 256 × 256 pixelů a proložíme ho afinní transformací d = t + A · (x, y): t je posun ve středu, z matice A plyne rozdíl měřítka a otočení. Rozdíl měřítka by měl odpovídat poměru ohniskových vzdáleností, otočení třetímu úhlu RigRelatives (v metadatech ve stupních).",
-            "## 3. Scale and rotation of the bands\n\nWe measure the shift separately in each 256 × 256 pixel tile and fit it with an affine transform d = t + A · (x, y): t is the shift at the centre, the matrix A gives the difference in scale and the rotation. The scale difference should match the ratio of the focal lengths, the rotation the third RigRelatives angle (in degrees in the metadata).")),
+            "## 3. Měřítko a otočení pásem\n\nPosun změříme zvlášť v každé dlaždici 256 × 256 pixelů a proložíme ho afinní transformací $\\mathbf{d} = \\mathbf{t} + A\\,(x, y)^\\mathsf{T}$: $\\mathbf{t}$ je posun ve středu, z matice $A$ plyne rozdíl měřítka a otočení. Rozdíl měřítka by měl odpovídat poměru ohniskových vzdáleností, otočení třetímu úhlu RigRelatives (v metadatech ve stupních).",
+            "## 3. Scale and rotation of the bands\n\nWe measure the shift separately in each 256 × 256 pixel tile and fit it with an affine transform $\\mathbf{d} = \\mathbf{t} + A\\,(x, y)^\\mathsf{T}$: $\\mathbf{t}$ is the shift at the centre, the matrix $A$ gives the difference in scale and the rotation. The scale difference should match the ratio of the focal lengths, the rotation the third RigRelatives angle (in degrees in the metadata).")),
         ("code", t('''
 TILE = 256                    # ◀ parametr: velikost dlaždice (px)
 BAND = 3                      # ◀ parametr: pásmo pro mapu posunů (1 modré, 3 červené, 4 NIR, 5 red edge)
@@ -346,7 +348,8 @@ L_af = {b: warp(L_fl[b], *AFF[b]) for b in L_fl}
 k = {b: PANEL[b][1]["albedo"] / radiance(*PANEL[b])[Path(np.array(PANEL[b][1]["area"]).reshape(-1, 2)).contains_points(
          np.c_[np.indices(PANEL[b][0].shape)[1].ravel(), np.indices(PANEL[b][0].shape)[0].ravel()]).reshape(PANEL[b][0].shape)].mean() for b in L_fl}
 def refl(L): return {b: k[b] * L[b] * PANEL[b][1]["E_h"] / FLIGHT[b][1]["E_h"] for b in L}   # panel + DLS
-ndvi = lambda R: (R[4] - R[3]) / (R[4] + R[3] + 1e-9)
+def ndvi(R):
+    return (R[4] - R[3]) / (R[4] + R[3] + 1e-9)
 RHO_tr, RHO_af = refl(L_tr), refl(L_af)
 N_tr, N_af = ndvi(RHO_tr), ndvi(RHO_af)
 dN = N_tr - N_af
@@ -376,7 +379,8 @@ L_af = {b: warp(L_fl[b], *AFF[b]) for b in L_fl}
 k = {b: PANEL[b][1]["albedo"] / radiance(*PANEL[b])[Path(np.array(PANEL[b][1]["area"]).reshape(-1, 2)).contains_points(
          np.c_[np.indices(PANEL[b][0].shape)[1].ravel(), np.indices(PANEL[b][0].shape)[0].ravel()]).reshape(PANEL[b][0].shape)].mean() for b in L_fl}
 def refl(L): return {b: k[b] * L[b] * PANEL[b][1]["E_h"] / FLIGHT[b][1]["E_h"] for b in L}   # panel + DLS
-ndvi = lambda R: (R[4] - R[3]) / (R[4] + R[3] + 1e-9)
+def ndvi(R):
+    return (R[4] - R[3]) / (R[4] + R[3] + 1e-9)
 RHO_tr, RHO_af = refl(L_tr), refl(L_af)
 N_tr, N_af = ndvi(RHO_tr), ndvi(RHO_af)
 dN = N_tr - N_af
@@ -407,7 +411,8 @@ ERR_RED, ERR_NIR = 0.00, 0.05   # ◀ parametr: relativní chyba kalibrace červ
 R_ok = RHO_af
 R_err = dict(R_ok); R_err[3] = R_ok[3] * (1 + ERR_RED); R_err[4] = R_ok[4] * (1 + ERR_NIR)
 R_dls = {b: np.pi * L_af[b] / FLIGHT[b][1]["E_h"] for b in L_af}     # jen DLS
-ndre = lambda R: (R[4] - R[5]) / (R[4] + R[5] + 1e-9)
+def ndre(R):
+    return (R[4] - R[5]) / (R[4] + R[5] + 1e-9)
 rows = {}
 for reg, (r, c) in REGIONS.items():
     n0 = np.median(ndvi(R_ok)[r, c])
@@ -432,7 +437,8 @@ ERR_RED, ERR_NIR = 0.00, 0.05   # ◀ parameter: relative calibration error of t
 R_ok = RHO_af
 R_err = dict(R_ok); R_err[3] = R_ok[3] * (1 + ERR_RED); R_err[4] = R_ok[4] * (1 + ERR_NIR)
 R_dls = {b: np.pi * L_af[b] / FLIGHT[b][1]["E_h"] for b in L_af}     # DLS only
-ndre = lambda R: (R[4] - R[5]) / (R[4] + R[5] + 1e-9)
+def ndre(R):
+    return (R[4] - R[5]) / (R[4] + R[5] + 1e-9)
 rows = {}
 for reg, (r, c) in REGIONS.items():
     n0 = np.median(ndvi(R_ok)[r, c])
@@ -476,10 +482,10 @@ def ndvi_on_thermal(d):
 def score(d):
     n, _, _ = ndvi_on_thermal(d); ok = np.isfinite(n) & (n != 0)
     return np.corrcoef(n[ok], Tb[ok])[0, 1]
-best = min(((dy, dx) for dy in range(-80, 81, 4) for dx in range(-80, 81, 4)), key=score)        # hrubé hledání posunu
-best = min(((best[0] + dy, best[1] + dx) for dy in np.arange(-4, 4.5, 0.5) for dx in np.arange(-4, 4.5, 0.5)), key=score)
-N_t, ym, xm = ndvi_on_thermal(best)
-print(f"1 termální pixel = {s_t:.2f} pixelu MS; zpřesňující posun ({best[0]:.1f}, {best[1]:.1f}) px MS; korelace NDVI a teploty r = {score(best):.2f}")
+thermal_shift = min(((dy, dx) for dy in range(-80, 81, 4) for dx in range(-80, 81, 4)), key=score)        # hrubé hledání posunu
+thermal_shift = min(((thermal_shift[0] + dy, thermal_shift[1] + dx) for dy in np.arange(-4, 4.5, 0.5) for dx in np.arange(-4, 4.5, 0.5)), key=score)
+N_t, ym, xm = ndvi_on_thermal(thermal_shift)
+print(f"1 termální pixel = {s_t:.2f} pixelu MS; zpřesňující posun ({thermal_shift[0]:.1f}, {thermal_shift[1]:.1f}) px MS; korelace NDVI a teploty r = {score(thermal_shift):.2f}")
 
 def t_corr(tb, eps, t_sky):
     """Oprava na emisivitu v přiblížení šedého tělesa: σT_b⁴ = ε σT⁴ + (1 − ε) σT_obl⁴."""
@@ -522,10 +528,10 @@ def ndvi_on_thermal(d):
 def score(d):
     n, _, _ = ndvi_on_thermal(d); ok = np.isfinite(n) & (n != 0)
     return np.corrcoef(n[ok], Tb[ok])[0, 1]
-best = min(((dy, dx) for dy in range(-80, 81, 4) for dx in range(-80, 81, 4)), key=score)        # coarse search for the shift
-best = min(((best[0] + dy, best[1] + dx) for dy in np.arange(-4, 4.5, 0.5) for dx in np.arange(-4, 4.5, 0.5)), key=score)
-N_t, ym, xm = ndvi_on_thermal(best)
-print(f"1 thermal pixel = {s_t:.2f} MS pixels; refining shift ({best[0]:.1f}, {best[1]:.1f}) MS px; correlation of NDVI and temperature r = {score(best):.2f}")
+thermal_shift = min(((dy, dx) for dy in range(-80, 81, 4) for dx in range(-80, 81, 4)), key=score)        # coarse search for the shift
+thermal_shift = min(((thermal_shift[0] + dy, thermal_shift[1] + dx) for dy in np.arange(-4, 4.5, 0.5) for dx in np.arange(-4, 4.5, 0.5)), key=score)
+N_t, ym, xm = ndvi_on_thermal(thermal_shift)
+print(f"1 thermal pixel = {s_t:.2f} MS pixels; refining shift ({thermal_shift[0]:.1f}, {thermal_shift[1]:.1f}) MS px; correlation of NDVI and temperature r = {score(thermal_shift):.2f}")
 
 def t_corr(tb, eps, t_sky):
     """Emissivity correction in the grey-body approximation: σT_b⁴ = ε σT⁴ + (1 − ε) σT_sky⁴."""
@@ -597,9 +603,12 @@ sharp = {b: up[b] * pan_c / pan_low for b in up}                                
 N_up, N_sh = ndvi(up), ndvi(sharp)
 print(f"největší rozdíl NDVI zostřeného a převzorkovaného: {np.nanmax(np.abs(N_sh - N_up)):.1e}")
 print(f"průměrná odrazivost Red před a po zostření: {up[3].mean():.4f} a {sharp[3].mean():.4f}")
-hf = lambda a: np.std(a - ndi.gaussian_filter(a, 2)) / np.std(a)      # podíl jemných detailů (do ~2 pixelů pan)
+# podíl jemných detailů (do ~2 pixelů pan)
+def hf(a):
+    return np.std(a - ndi.gaussian_filter(a, 2)) / np.std(a)
 print(f"podíl jemných detailů: Red převzorkované {hf(up[3]):.3f}, Red zostřené {hf(sharp[3]):.3f}, pan {hf(pan_c):.3f}")
-rgb = lambda D: np.clip(np.dstack([D[3], D[2], D[1]]) / np.percentile(np.dstack([up[3], up[2], up[1]]), 99.5), 0, 1)
+def rgb(D):
+    return np.clip(np.dstack([D[3], D[2], D[1]]) / np.percentile(np.dstack([up[3], up[2], up[1]]), 99.5), 0, 1)
 fig, ax = plt.subplots(1, 4, figsize=(18, 4.6))
 ax[0].imshow(rgb(up)); ax[0].set_title(f"RGB, MS ({gsd[ms['band']]:.1f} cm)")
 ax[1].imshow(pan_c, cmap="gray"); ax[1].set_title(f"panchromatické ({gsd[mp['band']]:.1f} cm)")
@@ -648,9 +657,12 @@ sharp = {b: up[b] * pan_c / pan_low for b in up}                                
 N_up, N_sh = ndvi(up), ndvi(sharp)
 print(f"largest difference between sharpened and resampled NDVI: {np.nanmax(np.abs(N_sh - N_up)):.1e}")
 print(f"mean Red reflectance before and after sharpening: {up[3].mean():.4f} and {sharp[3].mean():.4f}")
-hf = lambda a: np.std(a - ndi.gaussian_filter(a, 2)) / np.std(a)      # share of fine detail (up to ~2 pan pixels)
+# share of fine detail (up to ~2 pan pixels)
+def hf(a):
+    return np.std(a - ndi.gaussian_filter(a, 2)) / np.std(a)
 print(f"share of fine detail: Red resampled {hf(up[3]):.3f}, Red sharpened {hf(sharp[3]):.3f}, pan {hf(pan_c):.3f}")
-rgb = lambda D: np.clip(np.dstack([D[3], D[2], D[1]]) / np.percentile(np.dstack([up[3], up[2], up[1]]), 99.5), 0, 1)
+def rgb(D):
+    return np.clip(np.dstack([D[3], D[2], D[1]]) / np.percentile(np.dstack([up[3], up[2], up[1]]), 99.5), 0, 1)
 fig, ax = plt.subplots(1, 4, figsize=(18, 4.6))
 ax[0].imshow(rgb(up)); ax[0].set_title(f"RGB, MS ({gsd[ms['band']]:.1f} cm)")
 ax[1].imshow(pan_c, cmap="gray"); ax[1].set_title(f"panchromatic ({gsd[mp['band']]:.1f} cm)")

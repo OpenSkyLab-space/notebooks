@@ -14,7 +14,7 @@ Load and inspect LAZ point clouds, find out which return the ground points come 
 
 ČÚZK: DMR 5G (ground points from airborne laser scanning, LAZ) and DMP 1G (surface points, LAZ) for the map sheet Kralupy nad Vltavou 7-7, DMR 5G, DMP 1G and DMP OK (image matching) rasters from the ČÚZK image service; all in S-JTSK (EPSG:5514), heights in Bpv. ČÚZK data are open (CC BY 4.0).
 
-All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
+All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The notebook is stored without outputs; numbers and plots appear when it runs and may differ between runs where the data are updated continuously.
 
 ## Step by step
 
@@ -42,7 +42,13 @@ Parameters the student changes:
 
 ### 3. CHM from lidar and from photogrammetry
 
-CHM = DSM − DTM. The DTM always comes from lidar (DMR 5G). The DSM comes once from lidar (DMP 1G) and once from image matching of aerial survey photographs (DMP OK), which ČÚZK took later (aerial survey photography usually takes place from spring to summer). Image matching is the same principle as drone photogrammetry.
+Canopy height is the difference between the surface model and the terrain model:
+
+$$
+\mathrm{CHM} = \mathrm{DSM} - \mathrm{DTM}.
+$$
+
+The DTM always comes from lidar (DMR 5G). The DSM comes once from lidar (DMP 1G) and once from image matching of aerial survey photographs (DMP OK), which ČÚZK took later (aerial survey photography usually takes place from spring to summer). Image matching is the same principle as drone photogrammetry.
 
 **Task 3.** Which CHM shows taller vegetation in the forest, and by how much (median, 95th percentile)? Find at least three reasons: the years between acquisitions, leaves in summer and at the time of scanning, how image matching "smooths over" gaps between crowns. Where in the map are the differences largest?
 

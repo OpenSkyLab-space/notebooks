@@ -14,7 +14,7 @@ Nakreslit skutečnou oblohu GNSS nad Suchdolem, spočítat HDOP, VDOP a PDOP bě
 
 Vysílané efemeridy družic GPS, Galileo, GLONASS a BeiDou za jeden den (soubor RINEX navigačních zpráv sloučený IGS, archiv BKG, asi 1,3 MB); DMR 5G (ČÚZK) pro horizont v údolí; stanice sítě CZEPOS a zhušťovací body bodového pole s výškou v Bpv i elipsoidickou výškou ETRS89 ze služby ČÚZK BodovaPole.
 
-Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
+Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Notebook je uložený bez výstupů; čísla a grafy vzniknou až při spuštění a u průběžně aktualizovaných dat se mohou mezi běhy lišit.
 
 ## Postup krok za krokem
 
@@ -42,7 +42,16 @@ Parametry, které student mění:
 
 ### 3. DOP během dne
 
-DOP spočítáme z geometrie: každá družice dá řádek matice G s jednotkovým vektorem směru (východ, sever, nahoru) a jedničkou pro hodiny přijímače (každý systém má vlastní posun hodin). Q = (GᵀG)⁻¹, HDOP = √(Q_EE + Q_NN), VDOP = √Q_UU, PDOP = √(Q_EE + Q_NN + Q_UU).
+DOP spočítáme z geometrie: každá družice dá řádek matice G s jednotkovým vektorem směru (východ, sever, nahoru) a jedničkou pro hodiny přijímače (každý systém má vlastní posun hodin). Z matice $G$ spočítáme
+
+$$
+Q = \left(G^\mathsf{T} G\right)^{-1}, \quad
+\mathrm{HDOP} = \sqrt{Q_{EE} + Q_{NN}}, \quad
+\mathrm{VDOP} = \sqrt{Q_{UU}}, \quad
+\mathrm{PDOP} = \sqrt{Q_{EE} + Q_{NN} + Q_{UU}},
+$$
+
+kde $Q_{EE}$, $Q_{NN}$ a $Q_{UU}$ jsou diagonální prvky $Q$ pro východ, sever a výšku. DOP je bezrozměrný násobek chyby měření vzdálenosti.
 
 **Úkol 2.** Proč je VDOP po celý den větší než HDOP? Vysvětli to tím, kde družice na obloze jsou a kde být nemohou. Kolik družic vidí přijímač se čtyřmi systémy a kolik jen s GPS, a jak se to projeví na PDOP? Nastav masku 20° a pak 5°.
 

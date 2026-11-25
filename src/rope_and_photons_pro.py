@@ -56,8 +56,8 @@ from scipy.constants import h, c
 warnings.filterwarnings("ignore")
 ''')),
         ("md", t(
-            "Z odrazivosti nad atmosférou ρ (TOA) dostaneme zář L = ρ · E0 · U · cos(θs) / π, kde E0 je sluneční ozáření v pásmu, U oprava na vzdálenost Země–Slunce a θs zenitový úhel Slunce. Všechny tři hodnoty jsou v metadatech scény.",
-            "From the top-of-atmosphere reflectance ρ we get radiance L = ρ · E0 · U · cos(θs) / π, where E0 is the solar irradiance in the band, U the Earth–Sun distance correction and θs the solar zenith angle. All three values are in the scene metadata.")),
+            "Z odrazivosti nad atmosférou $\\rho$ (TOA) dostaneme spektrální zář\n\n$$\nL = \\frac{\\rho\\, E_0\\, U \\cos\\theta_s}{\\pi},\n$$\n\nkde $E_0$ je spektrální sluneční ozářenost v pásmu (W·m⁻²·µm⁻¹), $U$ oprava na vzdálenost Země–Slunce a $\\theta_s$ zenitový úhel Slunce; $L$ vyjde ve W·m⁻²·sr⁻¹·µm⁻¹. Všechny tři hodnoty jsou v metadatech scény.",
+            "From the top-of-atmosphere reflectance $\\rho$ we get the spectral radiance\n\n$$\nL = \\frac{\\rho\\, E_0\\, U \\cos\\theta_s}{\\pi},\n$$\n\nwhere $E_0$ is the solar spectral irradiance in the band (W·m⁻²·µm⁻¹), $U$ the Earth–Sun distance correction and $\\theta_s$ the solar zenith angle; $L$ comes out in W·m⁻²·sr⁻¹·µm⁻¹. All three values are in the scene metadata.")),
         ("code", t('''
 BASE = ("https://storage.googleapis.com/gcp-public-data-sentinel-2/tiles/33/U/VR/"
         "S2B_MSIL1C_20240721T100559_N0510_R022_T33UVR_20240721T121133.SAFE/")
@@ -120,8 +120,8 @@ for name, (bid, gsd) in BANDS.items():
 print(f"solar zenith angle {SZA:.1f}°, U = {U:.4f}")
 ''')),
         ("md", t(
-            "## 2. Fotonový rozpočet pixelu\n\nDalekohled s plochou pupily A vidí jeden pixel pod prostorovým úhlem Ω = (pixel / výška)². Energie, která za dobu t přijde z pixelu, je L · A · Ω · Δλ · t; vydělená energií fotonu h·c/λ a vynásobená účinností ETA dává počet fotoelektronů N. Za t bereme dobu, za kterou stopa družice přejede jeden pixel. Příchod fotonů je náhodný (Poissonův), proto je šum √N a odstup signálu od šumu SNR = √N. Šum detektoru a elektroniky tu zanedbáváme.",
-            "## 2. The photon budget of a pixel\n\nA telescope with pupil area A sees one pixel under the solid angle Ω = (pixel / height)². The energy arriving from the pixel in time t is L · A · Ω · Δλ · t; divided by the photon energy h·c/λ and multiplied by the efficiency ETA it gives the number of photoelectrons N. For t we take the time the satellite ground track needs to cross one pixel. Photons arrive at random (Poisson), so the noise is √N and the signal-to-noise ratio SNR = √N. Detector and electronics noise are neglected here.")),
+            "## 2. Fotonový rozpočet pixelu\n\nDalekohled s plochou pupily $A$ vidí jeden pixel pod prostorovým úhlem $\\Omega = (\\text{pixel} / \\text{výška})^2$. Energie, která za dobu $t$ přijde z pixelu, vydělená energií fotonu $hc/\\lambda$ a vynásobená účinností $\\eta$ (v kódu `ETA`) dává počet fotoelektronů\n\n$$\nN = \\frac{L\\, A\\, \\Omega\\, \\Delta\\lambda\\, t}{hc/\\lambda}\\, \\eta .\n$$\n\nZa $t$ bereme dobu, za kterou stopa družice přejede jeden pixel. Příchod fotonů je náhodný (Poissonův), proto je šum $\\sqrt{N}$ a odstup signálu od šumu $\\mathrm{SNR} = N/\\sqrt{N} = \\sqrt{N}$. Šum detektoru a elektroniky tu zanedbáváme.",
+            "## 2. The photon budget of a pixel\n\nA telescope with pupil area $A$ sees one pixel under the solid angle $\\Omega = (\\text{pixel} / \\text{height})^2$. The energy arriving from the pixel in time $t$, divided by the photon energy $hc/\\lambda$ and multiplied by the efficiency $\\eta$ (`ETA` in the code), gives the number of photoelectrons\n\n$$\nN = \\frac{L\\, A\\, \\Omega\\, \\Delta\\lambda\\, t}{hc/\\lambda}\\, \\eta .\n$$\n\nFor $t$ we take the time the satellite ground track needs to cross one pixel. Photons arrive at random (Poisson), so the noise is $\\sqrt{N}$ and the signal-to-noise ratio $\\mathrm{SNR} = N/\\sqrt{N} = \\sqrt{N}$. Detector and electronics noise are neglected here.")),
         ("code", t('''
 D_PUPIL = 0.150        # ◀ parametr: průměr vstupní pupily dalekohledu (m); MSI má ekvivalent 150 mm
 H_ORBIT = 786e3        # ◀ parametr: výška dráhy (m)

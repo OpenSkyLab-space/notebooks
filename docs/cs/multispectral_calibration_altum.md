@@ -14,7 +14,7 @@ Převést DN na radianci krok za krokem, z panelu spočítat kalibrační koefic
 
 Dva snímky (5 multispektrálních pásem) kamery MicaSense Altum s DLS 2 z ukázkových dat MicaSense (repozitář micasense/imageprocessing, licence MIT): IMG_0000 (panel RP06, 6. 4. 2022 20:00 UTC) a IMG_0021 (let o 2 minuty později asi 100 m nad terénem), 47,70° s. š., 122,14° z. d. Altum má i termální pásmo 6, které tento notebook nepoužívá.
 
-Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
+Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Notebook je uložený bez výstupů; čísla a grafy vzniknou až při spuštění a u průběžně aktualizovaných dat se mohou mezi běhy lišit.
 
 ## Postup krok za krokem
 
@@ -26,12 +26,16 @@ Načte knihovny a stáhne data.
 
 Model MicaSense (stejný jako v knihovně `micasense/image.py`):
 
-L = V(r) · R(y) · (DN − černá úroveň) / (zisk · expozice) · a₁ / 2¹⁶
+$$
+L = V(r)\, R(y)\, \frac{DN - DN_\mathrm{černá}}{g\, t_e}\, \frac{a_1}{2^{16}}
+$$
 
-- černá úroveň: signál bez světla (tag BlackLevel),
-- V(r) = 1 / (1 + k₀r + … + k₅r⁶): korekce vinětace podle vzdálenosti r od středu vinětace (novější kamery ukládají místo toho 2D polynom v souřadnicích x, y),
-- R(y) = 1 / (1 + a₂ y / expozice − a₃ y): korekce podle řádku (snímač se čte po řádcích),
-- a₁: radiometrický kalibrační koeficient z výroby. Výsledek je spektrální radiance ve W/m²/sr/nm.
+- $g$ je zisk a $t_e$ expozice (s),
+
+- $DN_\mathrm{černá}$ je černá úroveň, signál bez světla (tag BlackLevel),
+- $V(r) = 1 / (1 + k_0 r + \dots + k_5 r^6)$ je korekce vinětace podle vzdálenosti r od středu vinětace (novější kamery ukládají místo toho 2D polynom v souřadnicích x, y),
+- $R(y) = 1 / (1 + a_2 y / t_e - a_3 y)$ je korekce podle řádku $y$ (snímač se čte po řádcích),
+- $a_1$ je radiometrický kalibrační koeficient z výroby. Výsledek je spektrální radiance ve W/m²/sr/nm.
 
 Parametry, které student mění:
 
@@ -41,7 +45,11 @@ Parametry, které student mění:
 
 ### 3. Kalibrační panel
 
-V metadatech snímku panelu je oblast uprostřed panelu, kterou na snímku našel software kamery (ReflectArea, čtyři rohy v pixelech), a jeho odrazivost v daném pásmu (Albedo) z kalibračního listu. Z průměrné radiance panelu L_p plyne koeficient k = ρ_panel / L_p a odrazivost každého pixelu ρ = k · L.
+V metadatech snímku panelu je oblast uprostřed panelu, kterou na snímku našel software kamery (ReflectArea, čtyři rohy v pixelech), a jeho odrazivost v daném pásmu (Albedo) z kalibračního listu. Z průměrné radiance panelu $L_p$ plyne koeficient a odrazivost každého pixelu:
+
+$$
+k = \frac{\rho_\mathrm{panel}}{L_p}, \qquad \rho = k\, L.
+$$
 
 Parametry, které student mění:
 
@@ -52,7 +60,11 @@ Parametry, které student mění:
 
 ### 4. Senzor osvětlení DLS a jeho náklon
 
-DLS měří ozáření na svou horní plochu. Když se dron nakloní ke Slunci, dopadá na senzor víc přímého záření, než kolik dopadá na vodorovný terén. DLS 2 proto rozkládá ozáření na přímou a rozptýlenou složku a přepočítává ho na vodorovnou plochu: E_vod = E_přímé · sin(výška Slunce) + E_rozptýlené.
+DLS měří ozáření na svou horní plochu. Když se dron nakloní ke Slunci, dopadá na senzor víc přímého záření, než kolik dopadá na vodorovný terén. DLS 2 proto rozkládá ozáření na přímou a rozptýlenou složku a přepočítává ho na vodorovnou plochu: $$
+E_\mathrm{vod} = E_\mathrm{přímé} \sin h_\odot + E_\mathrm{rozptýlené},
+$$
+
+kde $h_\odot$ je výška Slunce nad obzorem.
 
 Parametry, které student mění:
 
@@ -62,9 +74,9 @@ Parametry, které student mění:
 
 ### 5. Tři způsoby kalibrace
 
-- **jen panel:** ρ = k · L. Předpokládá, že se osvětlení od snímku panelu nezměnilo.
-- **jen DLS:** ρ = π · L / E_vod. Spoléhá na tovární kalibraci kamery i DLS.
-- **panel + DLS:** ρ = k · L · E_vod(panel) / E_vod(snímek). Panel určí absolutní úroveň, DLS sleduje změny osvětlení.
+- **jen panel:** $\rho = k\,L$. Předpokládá, že se osvětlení od snímku panelu nezměnilo.
+- **jen DLS:** $\rho = \pi L / E_\mathrm{vod}$. Spoléhá na tovární kalibraci kamery i DLS.
+- **panel + DLS:** $\rho = k\,L\,E_\mathrm{vod}(\text{panel}) / E_\mathrm{vod}(\text{snímek})$. Panel určí absolutní úroveň, DLS sleduje změny osvětlení.
 
 Kontrola: když metodu „jen DLS“ použijeme na samotný panel, měli bychom dostat jeho známou odrazivost.
 
@@ -76,7 +88,11 @@ Parametry, které student mění:
 
 ### 6. NDVI a co s ním dělá kalibrace
 
-NDVI = (ρ_NIR − ρ_R) / (ρ_NIR + ρ_R). Porovnáme NDVI z radiance (bez kalibrace), z kalibrace „panel + DLS“ a z kalibrace bez korekce vinětace.
+$$
+\mathrm{NDVI} = \frac{\rho_\mathrm{NIR} - \rho_R}{\rho_\mathrm{NIR} + \rho_R}.
+$$
+
+Porovnáme NDVI z radiance (bez kalibrace), z kalibrace „panel + DLS“ a z kalibrace bez korekce vinětace.
 
 Parametry, které student mění:
 

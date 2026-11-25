@@ -14,13 +14,19 @@ Compute radiance and the number of photoelectrons per pixel from L1C reflectance
 
 Copernicus Sentinel-2B L1C `S2B_MSIL1C_20240721T100559_N0510_R022_T33UVR_20240721T121133` (21 July 2024) from the Google Cloud public archive: the MTD_MSIL1C and MTD_TL metadata and 4 × 4 km windows of bands B02, B04, B08 and B11 around Roztoky, about 2 MB. The instrument parameters (150 mm pupil, 786 km orbit altitude) are taken from the MSI description. The efficiency ETA and the drone parameters are indicative estimates: the real instrument is more complex (detector types, several lines summed in some bands), so the numbers show the order of magnitude, not the exact SNR of Sentinel-2.
 
-All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
+All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The notebook is stored without outputs; numbers and plots appear when it runs and may differ between runs where the data are updated continuously.
 
 ## Step by step
 
 ### 1. Setup and the Sentinel-2 scene
 
-From the top-of-atmosphere reflectance ρ we get radiance L = ρ · E0 · U · cos(θs) / π, where E0 is the solar irradiance in the band, U the Earth–Sun distance correction and θs the solar zenith angle. All three values are in the scene metadata.
+From the top-of-atmosphere reflectance $\rho$ we get the spectral radiance
+
+$$
+L = \frac{\rho\, E_0\, U \cos\theta_s}{\pi},
+$$
+
+where $E_0$ is the solar spectral irradiance in the band (W·m⁻²·µm⁻¹), $U$ the Earth–Sun distance correction and $\theta_s$ the solar zenith angle; $L$ comes out in W·m⁻²·sr⁻¹·µm⁻¹. All three values are in the scene metadata.
 
 Parameters the student changes:
 
@@ -28,7 +34,13 @@ Parameters the student changes:
 
 ### 2. The photon budget of a pixel
 
-A telescope with pupil area A sees one pixel under the solid angle Ω = (pixel / height)². The energy arriving from the pixel in time t is L · A · Ω · Δλ · t; divided by the photon energy h·c/λ and multiplied by the efficiency ETA it gives the number of photoelectrons N. For t we take the time the satellite ground track needs to cross one pixel. Photons arrive at random (Poisson), so the noise is √N and the signal-to-noise ratio SNR = √N. Detector and electronics noise are neglected here.
+A telescope with pupil area $A$ sees one pixel under the solid angle $\Omega = (\text{pixel} / \text{height})^2$. The energy arriving from the pixel in time $t$, divided by the photon energy $hc/\lambda$ and multiplied by the efficiency $\eta$ (`ETA` in the code), gives the number of photoelectrons
+
+$$
+N = \frac{L\, A\, \Omega\, \Delta\lambda\, t}{hc/\lambda}\, \eta .
+$$
+
+For $t$ we take the time the satellite ground track needs to cross one pixel. Photons arrive at random (Poisson), so the noise is $\sqrt{N}$ and the signal-to-noise ratio $\mathrm{SNR} = N/\sqrt{N} = \sqrt{N}$. Detector and electronics noise are neglected here.
 
 Parameters the student changes:
 

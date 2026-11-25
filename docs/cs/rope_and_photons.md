@@ -4,7 +4,27 @@ Popis notebooku k laboratoři [Švihadlo a fotony](https://openskylab.space/edu_
 
 ## O čem notebook je
 
-V laboratoři jsi viděl, že u vlny na laně platí c = λ · f a že energii nese rozkmit i frekvence. U světla je to jinak: energii jednoho fotonu určuje jen frekvence, E = h · f, jas záření je počet fotonů. Tady to spočítáš pro skutečná pásma družice Sentinel-2B.
+V laboratoři jsi sledoval vlnu na laně. Její rychlost $v$, vlnovou délku
+$\lambda$ (vzdálenost mezi sousedními vrcholy) a frekvenci $f$ (počet kmitů
+za sekundu) spojuje vztah
+
+$$
+v = \lambda f.
+$$
+
+**Pro světlo ve vakuu platí stejný vztah**, s rychlostí světla $c$. Světlo
+přenáší energii ve fotonech. Z vlnové délky určíme frekvenci a energii
+jednoho fotonu:
+
+$$
+f = \frac{c}{\lambda}, \qquad E = hf.
+$$
+
+$h$ je Planckova konstanta; energii budeme vyjadřovat v elektronvoltech (eV),
+jednotce energie. **Kratší vlnová délka znamená vyšší frekvenci a větší energii
+fotonu.** Při stejné frekvenci znamená více fotonů dopadajících na stejnou
+plochu za sekundu více přenesené energie; energie jednotlivého fotonu se nemění.
+Tady to spočítáš pro skutečná pásma družice Sentinel-2B.
 
 ## Cíl
 
@@ -12,9 +32,9 @@ Z metadat skutečné scény Sentinel-2 spočítat frekvenci, energii fotonu a to
 
 ## Data
 
-Metadata produktu Sentinel-2B L1C, dlaždice 33UVR (okolí Prahy), 21. 7. 2024 (`MTD_MSIL1C.xml` z veřejného archivu Google Cloud): střední vlnové délky, spektrální citlivost pásem a sluneční ozáření nad atmosférou. Stahuje se asi 50 kB.
+Metadata produktu Sentinel-2B L1C, dlaždice 33UVR (okolí Prahy), 21. 7. 2024 (`MTD_MSIL1C.xml` z veřejného archivu Google Cloud): střední vlnové délky, spektrální citlivost pásem a spektrální sluneční ozářenost nad atmosférou. Stahuje se asi 50 kB.
 
-Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
+Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Notebook je uložený bez výstupů; čísla a grafy vzniknou až při spuštění a u průběžně aktualizovaných dat se mohou mezi běhy lišit.
 
 ## Postup krok za krokem
 
@@ -30,15 +50,36 @@ Načte knihovny a stáhne data.
 
 ### 3. Energie jednoho fotonu
 
-Načte knihovny a stáhne data.
+Energii jednoho fotonu určuje Planckův–Einsteinův vztah:
+
+$$
+E = hf = \frac{hc}{\lambda}.
+$$
+
+Používáme $h \approx 6{,}626\times10^{-34}\ \mathrm{J\,s}$,
+$c \approx 3{,}00\times10^8\ \mathrm{m\,s^{-1}}$ a vlnovou délku
+$\lambda$ v metrech, takže výsledek vyjde v joulech.
+Protože $1\ \mathrm{eV} = 1{,}602\,176\,634\times10^{-19}\ \mathrm{J}$,
+převedeme energii na eV vydělením touto hodnotou. V kódu ji poskytuje
+číselná hodnota `e`, elementárního náboje v coulombech, ze `scipy.constants`.
 
 **Úkol 2.** Ověř poměr energií modrého a červeného fotonu jen z vlnových délek, bez konstant. Proč stačí poměr λ? Jak se změní energie jednoho fotonu, když je modré světlo dvakrát jasnější?
 
-### 4. Jas je počet fotonů
+### 4. Od energie záření k toku fotonů
 
-Metadata uvádějí pro každé pásmo sluneční ozáření nad atmosférou E0 ve W·m⁻²·µm⁻¹. Když ho vydělíme energií jednoho fotonu, dostaneme, kolik fotonů za sekundu dopadne na metr čtvereční v jednom mikrometru spektra.
+Metadata uvádějí spektrální sluneční ozářenost $E_0$ nad atmosférou
+v $\mathrm{W\,m^{-2}\,\mu m^{-1}}$. Vydělením energií jednoho fotonu
+v joulech získáme počet fotonů dopadajících za sekundu na metr čtvereční
+na jednotku vlnové délky, zde na mikrometr:
 
-**Úkol 3.** Výkon E0 klesá od modré (B2) k SWIR 2 (B12) více než dvacetkrát. Klesá stejně i počet fotonů? Vysvětli rozdíl. V kterém pásmu dopadá na metr čtvereční nejvíc fotonů na mikrometr spektra a proč to není pásmo s nejvyšším E0?
+$$
+\Phi_\lambda = \frac{E_0}{E}.
+$$
+
+$\Phi_\lambda$ má jednotku $\mathrm{s^{-1}\,m^{-2}\,\mu m^{-1}}$.
+Jde o spektrální hustotu toku fotonů, nikoli o celkový počet fotonů v pásmu.
+
+**Úkol 3.** Spektrální ozářenost E0 klesá od modré (B2) k SWIR 2 (B12) více než dvacetkrát. Klesá stejně i spektrální hustota toku fotonů? Vysvětli rozdíl. V kterém pásmu dopadá na metr čtvereční nejvíc fotonů na mikrometr spektra a proč to není pásmo s nejvyšším E0?
 
 ### 5. Které pásmo uvidí křemíkový čip
 
@@ -71,7 +112,7 @@ Google účet a prohlížeč; notebook běží v Google Colab a nic se neinstalu
 ## Zdroje dat a literatura
 
 - Copernicus Sentinel-2 data 2024, ESA; metadata L1C z veřejného archivu Google Cloud (`gcp-public-data-sentinel-2`). Licence: [Legal notice on the use of Copernicus Sentinel Data](https://sentinels.copernicus.eu/documents/247904/690755/Sentinel_Data_Legal_Notice), volné užití s uvedením zdroje.
-- Konstanty h, c, e, k: v SI od roku 2019 přesně definované hodnoty, převzaté z `scipy.constants`.
+- Konstanty h, c, e, k: v SI od roku 2019 přesně definované hodnoty, převzaté z `scipy.constants`; přehled CODATA 2022: [NIST](https://physics.nist.gov/cuu/pdf/wall_2022.pdf).
 - Šířka zakázaného pásu křemíku 1,12 eV při 300 K: Sze, S. M., Ng, K. K. (2007). *Physics of Semiconductor Devices*, 3. vyd. Wiley.
 - Frekvence radaru Sentinel-1 (pásmo C) 5,405 GHz: ESA, Sentinel-1 User Handbook.
 

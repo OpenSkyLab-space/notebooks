@@ -14,7 +14,7 @@ Dekódovat týden zpráv METAR, ověřit proti nim model (odchylka, RMSE, korela
 
 Zprávy METAR za posledních 7 dní z letišť Praha (LKPR), Brno (LKTB), Ostrava (LKMT) a Karlovy Vary (LKKV) ze služby NOAA Aviation Weather Center; hodinová data Open-Meteo za stejných 7 dní pro souřadnice letišť a za 92 dní pro Roztoky (vítr v 10, 80 a 120 m, nárazy, teplota ve 2 a 120 m, rosný bod, srážky, dohlednost). Hodnoty Open-Meteo pro minulé dny jsou uložené krátkodobé předpovědi modelů, ne měření. Data se průběžně mění, tvoje čísla budou jiná než v uloženém notebooku.
 
-Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
+Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Notebook je uložený bez výstupů; čísla a grafy vzniknou až při spuštění a u průběžně aktualizovaných dat se mohou mezi běhy lišit.
 
 ## Postup krok za krokem
 

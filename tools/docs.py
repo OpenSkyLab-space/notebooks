@@ -26,7 +26,7 @@ def steps(cells):
             out.append({"title": head[3:].strip(), "body": [body.strip()] if body.strip() else [], "params": [], "tasks": [], "pip": []})
         elif kind == "md":
             out[-1]["body"].append(text)
-        elif kind == "code":
+        elif kind in ("code", "setup"):
             for line in text.splitlines():
                 if line.startswith("%pip"):
                     out[-1]["pip"] += [p.strip('"') for p in line.split()[3:]]
@@ -66,9 +66,9 @@ def page(stem, meta, cells_fn, lang):
         meta["data"][lang][0].upper() + meta["data"][lang][1:],
         "",
         t("Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. "
-          "Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.",
+          "Notebook je uložený bez výstupů; čísla a grafy vzniknou až při spuštění a u průběžně aktualizovaných dat se mohou mezi běhy lišit.",
           "All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. "
-          "The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously."),
+          "The notebook is stored without outputs; numbers and plots appear when it runs and may differ between runs where the data are updated continuously."),
         "",
         t("## Postup krok za krokem", "## Step by step"),
         "",

@@ -18,27 +18,67 @@ def meta(P):
         "title": {"cs": "Fotony v pásmech " + P["sat_gen_cs"], "en": "Photons in the " + P["sat"] + " bands"},
         "visual": {"cs": "Švihadlo a fotony", "en": "Rope and photons"},
         "lead": {
-            "cs": "V laboratoři jsi viděl, že u vlny na laně platí c = λ · f a že energii nese rozkmit i frekvence. U světla je to jinak: energii jednoho fotonu určuje jen frekvence, E = h · f, jas záření je počet fotonů. Tady to spočítáš pro skutečná pásma družice " + P["sat"] + ".",
-            "en": "In the lab you saw that a wave on a rope obeys c = λ · f and that both amplitude and frequency carry energy. Light is different: the energy of one photon depends only on frequency, E = h · f, and brightness is the number of photons. Here you compute it for the real bands of the Sentinel-2 satellite.",
+            "cs": """V laboratoři jsi sledoval vlnu na laně. Její rychlost $v$, vlnovou délku
+$\\lambda$ (vzdálenost mezi sousedními vrcholy) a frekvenci $f$ (počet kmitů
+za sekundu) spojuje vztah
+
+$$
+v = \\lambda f.
+$$
+
+**Pro světlo ve vakuu platí stejný vztah**, s rychlostí světla $c$. Světlo
+přenáší energii ve fotonech. Z vlnové délky určíme frekvenci a energii
+jednoho fotonu:
+
+$$
+f = \\frac{c}{\\lambda}, \\qquad E = hf.
+$$
+
+$h$ je Planckova konstanta; energii budeme vyjadřovat v elektronvoltech (eV),
+jednotce energie. **Kratší vlnová délka znamená vyšší frekvenci a větší energii
+fotonu.** Při stejné frekvenci znamená více fotonů dopadajících na stejnou
+plochu za sekundu více přenesené energie; energie jednotlivého fotonu se nemění.
+Tady to spočítáš pro skutečná pásma družice """ + P["sat"] + ".",
+            "en": """In the lab you watched a wave on a rope. Its speed $v$, wavelength
+$\\lambda$ (the distance between neighbouring crests) and frequency $f$ (the number of
+oscillations per second) are linked by
+
+$$
+v = \\lambda f.
+$$
+
+**Light in vacuum obeys the same relation**, with the speed of light $c$. Light
+carries energy in photons. From the wavelength we get the frequency and the energy
+of one photon:
+
+$$
+f = \\frac{c}{\\lambda}, \\qquad E = hf.
+$$
+
+$h$ is the Planck constant; we express energy in electronvolts (eV),
+a unit of energy. **A shorter wavelength means a higher frequency and a larger photon
+energy.** At the same frequency, more photons arriving on the same area per second
+deliver more energy; the energy of each photon does not change.
+Here you compute this for the real bands of the """ + P["sat"] + " satellite.",
         },
         "goal": {
             "cs": "z metadat skutečné scény Sentinel-2 spočítat frekvenci, energii fotonu a tok fotonů v každém pásmu a odvodit z nich, jaký detektor které pásmo potřebuje.",
             "en": "from the metadata of a real Sentinel-2 scene, compute the frequency, photon energy and photon flux in each band and work out which detector each band needs.",
         },
         "data": {
-            "cs": f"metadata produktu {P['sat']} L1C, dlaždice {P['tile']} ({P['place_cs']}), {P['date_cs']} (`MTD_MSIL1C.xml` z veřejného archivu Google Cloud): střední vlnové délky, spektrální citlivost pásem a sluneční ozáření nad atmosférou. Stahuje se asi 50 kB.",
-            "en": f"the product metadata of {P['sat']} L1C, tile {P['tile']} ({P['place_en']}), {P['date_en']} (`MTD_MSIL1C.xml` from the Google Cloud public archive): central wavelengths, spectral response of the bands and top-of-atmosphere solar irradiance. About 50 kB is downloaded.",
+            "cs": f"metadata produktu {P['sat']} L1C, dlaždice {P['tile']} ({P['place_cs']}), {P['date_cs']} (`MTD_MSIL1C.xml` z veřejného archivu Google Cloud): střední vlnové délky, spektrální citlivost pásem a spektrální sluneční ozářenost nad atmosférou. Stahuje se asi 50 kB.",
+            "en": f"the product metadata of {P['sat']} L1C, tile {P['tile']} ({P['place_en']}), {P['date_en']} (`MTD_MSIL1C.xml` from the Google Cloud public archive): central wavelengths, spectral response of the bands and top-of-atmosphere solar spectral irradiance. About 50 kB is downloaded.",
         },
         "sources": {
             "cs": [
                 "Copernicus Sentinel-2 data " + P["year"] + ", ESA; metadata L1C z veřejného archivu Google Cloud (`gcp-public-data-sentinel-2`). Licence: [Legal notice on the use of Copernicus Sentinel Data](https://sentinels.copernicus.eu/documents/247904/690755/Sentinel_Data_Legal_Notice), volné užití s uvedením zdroje.",
-                "Konstanty h, c, e, k: v SI od roku 2019 přesně definované hodnoty, převzaté z `scipy.constants`.",
+                "Konstanty h, c, e, k: v SI od roku 2019 přesně definované hodnoty, převzaté z `scipy.constants`; přehled CODATA 2022: [NIST](https://physics.nist.gov/cuu/pdf/wall_2022.pdf).",
                 "Šířka zakázaného pásu křemíku 1,12 eV při 300 K: Sze, S. M., Ng, K. K. (2007). *Physics of Semiconductor Devices*, 3. vyd. Wiley.",
                 "Frekvence radaru Sentinel-1 (pásmo C) 5,405 GHz: ESA, Sentinel-1 User Handbook.",
             ],
             "en": [
                 "Copernicus Sentinel-2 data " + P["year"] + ", ESA; L1C metadata from the Google Cloud public archive (`gcp-public-data-sentinel-2`). Licence: [Legal notice on the use of Copernicus Sentinel Data](https://sentinels.copernicus.eu/documents/247904/690755/Sentinel_Data_Legal_Notice), free use with attribution.",
-                "Constants h, c, e, k: exactly defined SI values since 2019, taken from `scipy.constants`.",
+                "Constants h, c, e, k: exactly defined SI values since 2019, taken from `scipy.constants`; CODATA 2022 overview: [NIST](https://physics.nist.gov/cuu/pdf/wall_2022.pdf).",
                 "Silicon band gap 1.12 eV at 300 K: Sze, S. M., Ng, K. K. (2007). *Physics of Semiconductor Devices*, 3rd ed. Wiley.",
                 "Sentinel-1 radar frequency (C band) 5.405 GHz: ESA, Sentinel-1 User Handbook.",
             ],
@@ -53,7 +93,9 @@ def cells(t, P):
 import re, requests
 import numpy as np, pandas as pd
 import matplotlib.pyplot as plt
-from scipy.constants import h, c, e, k   # Planckova konstanta, rychlost světla, elementární náboj, Boltzmannova konstanta
+# h: Planckova konstanta, c: rychlost světla,
+# e: elementární náboj, k: Boltzmannova konstanta (vše v SI)
+from scipy.constants import h, c, e, k
 
 # metadata jedné skutečné scény @SAT@ L1C (dlaždice @TILE@, @DATE_CS@)
 URL = ("https://storage.googleapis.com/gcp-public-data-sentinel-2/tiles/@TILEPATH@/"
@@ -64,7 +106,9 @@ print(f"staženo {len(xml) / 1000:.0f} kB")
 import re, requests
 import numpy as np, pandas as pd
 import matplotlib.pyplot as plt
-from scipy.constants import h, c, e, k   # Planck constant, speed of light, elementary charge, Boltzmann constant
+# h: Planck constant, c: speed of light,
+# e: elementary charge, k: Boltzmann constant (all SI)
+from scipy.constants import h, c, e, k
 
 # metadata of one real @SAT@ L1C scene (tile @TILE@, @DATE_EN@)
 URL = ("https://storage.googleapis.com/gcp-public-data-sentinel-2/tiles/@TILEPATH@/"
@@ -73,7 +117,7 @@ xml = requests.get(URL, timeout=60).text
 print(f"downloaded {len(xml) / 1000:.0f} kB")
 ''')),
         ("code", t('''
-# z XML vytáhneme pro každé pásmo: název, střední vlnovou délku, spektrální citlivost a sluneční ozáření E0
+# z XML vytáhneme pro každé pásmo: název, střední vlnovou délku, spektrální citlivost a spektrální sluneční ozářenost E0
 rows, srf = [], {}
 for m in re.finditer(r'<Spectral_Information bandId="(\\d+)" physicalBand="(\\w+)">(.*?)</Spectral_Information>', xml, re.S):
     bid, name, body = int(m.group(1)), m.group(2), m.group(3)
@@ -87,7 +131,7 @@ for m in re.finditer(r'<Spectral_Information bandId="(\\d+)" physicalBand="(\\w+
 bands = pd.DataFrame(rows).set_index("band")
 bands
 ''', '''
-# from the XML we take for each band: name, central wavelength, spectral response and solar irradiance E0
+# from the XML we take for each band: name, central wavelength, spectral response and solar spectral irradiance E0
 rows, srf = [], {}
 for m in re.finditer(r'<Spectral_Information bandId="(\\d+)" physicalBand="(\\w+)">(.*?)</Spectral_Information>', xml, re.S):
     bid, name, body = int(m.group(1)), m.group(2), m.group(3)
@@ -134,6 +178,29 @@ bands[["lambda_nm", "f_THz", "lambda_x_f"]].round(1)
             "Sloupec `lambda_x_f` je u všech pásem stejný. Co vyjadřuje a čemu odpovídá na laně v laboratoři? Kolikrát vyšší frekvenci má pásmo B2 (modrá) než B12 (SWIR 2)?",
             "The `lambda_x_f` column is the same for every band. What does it express and what does it correspond to on the rope in the lab? How many times higher is the frequency of band B2 (blue) than of B12 (SWIR 2)?")),
         ("md", t("## 3. Energie jednoho fotonu", "## 3. Energy of one photon")),
+        ("md", t("""Energii jednoho fotonu určuje Planckův–Einsteinův vztah:
+
+$$
+E = hf = \\frac{hc}{\\lambda}.
+$$
+
+Používáme $h \\approx 6{,}626\\times10^{-34}\\ \\mathrm{J\\,s}$,
+$c \\approx 3{,}00\\times10^8\\ \\mathrm{m\\,s^{-1}}$ a vlnovou délku
+$\\lambda$ v metrech, takže výsledek vyjde v joulech.
+Protože $1\\ \\mathrm{eV} = 1{,}602\\,176\\,634\\times10^{-19}\\ \\mathrm{J}$,
+převedeme energii na eV vydělením touto hodnotou. V kódu ji poskytuje
+číselná hodnota `e`, elementárního náboje v coulombech, ze `scipy.constants`.""", """The energy of one photon is given by the Planck–Einstein relation:
+
+$$
+E = hf = \\frac{hc}{\\lambda}.
+$$
+
+We use $h \\approx 6.626\\times10^{-34}\\ \\mathrm{J\\,s}$,
+$c \\approx 3.00\\times10^8\\ \\mathrm{m\\,s^{-1}}$ and the wavelength
+$\\lambda$ in metres, so the result comes out in joules.
+Since $1\\ \\mathrm{eV} = 1.602\\,176\\,634\\times10^{-19}\\ \\mathrm{J}$,
+we convert the energy to eV by dividing by this value. In the code it is the
+numerical value of `e`, the elementary charge in coulombs, from `scipy.constants`.""")),
         ("code", t('''
 bands["E_photon_eV"] = h * c / lam / e     # E = h·f = h·c/λ, převedeno na elektronvolty
 ax = bands.E_photon_eV.plot.bar(figsize=(9, 3), color="tab:purple")
@@ -151,15 +218,39 @@ print(f"blue (B2) / red (B4) photon: {bands.E_photon_eV['B2'] / bands.E_photon_e
             "Ověř poměr energií modrého a červeného fotonu jen z vlnových délek, bez konstant. Proč stačí poměr λ? Jak se změní energie jednoho fotonu, když je modré světlo dvakrát jasnější?",
             "Check the energy ratio of the blue and red photon from the wavelengths alone, without constants. Why is the ratio of λ enough? How does the energy of one photon change when the blue light is twice as bright?")),
         ("md", t(
-            "## 4. Jas je počet fotonů\n\nMetadata uvádějí pro každé pásmo sluneční ozáření nad atmosférou E0 ve W·m⁻²·µm⁻¹. Když ho vydělíme energií jednoho fotonu, dostaneme, kolik fotonů za sekundu dopadne na metr čtvereční v jednom mikrometru spektra.",
-            "## 4. Brightness is the number of photons\n\nThe metadata give the top-of-atmosphere solar irradiance E0 in W·m⁻²·µm⁻¹ for each band. Dividing it by the energy of one photon gives the number of photons per second falling on one square metre within one micrometre of spectrum.")),
+            """## 4. Od energie záření k toku fotonů
+
+Metadata uvádějí spektrální sluneční ozářenost $E_0$ nad atmosférou
+v $\\mathrm{W\\,m^{-2}\\,\\mu m^{-1}}$. Vydělením energií jednoho fotonu
+v joulech získáme počet fotonů dopadajících za sekundu na metr čtvereční
+na jednotku vlnové délky, zde na mikrometr:
+
+$$
+\\Phi_\\lambda = \\frac{E_0}{E}.
+$$
+
+$\\Phi_\\lambda$ má jednotku $\\mathrm{s^{-1}\\,m^{-2}\\,\\mu m^{-1}}$.
+Jde o spektrální hustotu toku fotonů, nikoli o celkový počet fotonů v pásmu.""",
+            """## 4. From radiant energy to photon flux
+
+The metadata give the top-of-atmosphere solar spectral irradiance $E_0$
+in $\\mathrm{W\\,m^{-2}\\,\\mu m^{-1}}$. Dividing it by the energy of one photon
+in joules gives the number of photons arriving per second on one square metre
+per unit wavelength, here per micrometre:
+
+$$
+\\Phi_\\lambda = \\frac{E_0}{E}.
+$$
+
+$\\Phi_\\lambda$ has the unit $\\mathrm{s^{-1}\\,m^{-2}\\,\\mu m^{-1}}$.
+It is the spectral photon flux density, not the total number of photons in the band.""")),
         ("code", t('''
 bands["photons_per_s_m2_um"] = bands.E0_W_m2_um / (bands.E_photon_eV * e)
 fig, ax1 = plt.subplots(figsize=(9, 3.2))
 ax1.plot(bands.lambda_nm, bands.E0_W_m2_um, "o-", c="tab:orange", label="E0 (W·m⁻²·µm⁻¹)")
 ax2 = ax1.twinx()
 ax2.plot(bands.lambda_nm, bands.photons_per_s_m2_um / 1e21, "s--", c="tab:blue", label="fotony (10²¹ s⁻¹·m⁻²·µm⁻¹)")
-ax1.set(xlabel="vlnová délka (nm)", ylabel="výkon"); ax2.set(ylabel="počet fotonů", ylim=(0, None)); ax1.set_ylim(0)
+ax1.set(xlabel="vlnová délka (nm)", ylabel="spektrální ozářenost E0"); ax2.set(ylabel="spektrální hustota toku fotonů", ylim=(0, None)); ax1.set_ylim(0)
 fig.legend(loc="lower left", bbox_to_anchor=(0.08, 0.15)); plt.show()
 bands[["E0_W_m2_um", "E_photon_eV", "photons_per_s_m2_um"]].style.format("{:.3g}")
 ''', '''
@@ -168,13 +259,13 @@ fig, ax1 = plt.subplots(figsize=(9, 3.2))
 ax1.plot(bands.lambda_nm, bands.E0_W_m2_um, "o-", c="tab:orange", label="E0 (W·m⁻²·µm⁻¹)")
 ax2 = ax1.twinx()
 ax2.plot(bands.lambda_nm, bands.photons_per_s_m2_um / 1e21, "s--", c="tab:blue", label="photons (10²¹ s⁻¹·m⁻²·µm⁻¹)")
-ax1.set(xlabel="wavelength (nm)", ylabel="power"); ax2.set(ylabel="number of photons", ylim=(0, None)); ax1.set_ylim(0)
+ax1.set(xlabel="wavelength (nm)", ylabel="spectral irradiance E0"); ax2.set(ylabel="spectral photon flux density", ylim=(0, None)); ax1.set_ylim(0)
 fig.legend(loc="lower left", bbox_to_anchor=(0.08, 0.15)); plt.show()
 bands[["E0_W_m2_um", "E_photon_eV", "photons_per_s_m2_um"]].style.format("{:.3g}")
 ''')),
         ("task", t(
-            "Výkon E0 klesá od modré (B2) k SWIR 2 (B12) více než dvacetkrát. Klesá stejně i počet fotonů? Vysvětli rozdíl. V kterém pásmu dopadá na metr čtvereční nejvíc fotonů na mikrometr spektra a proč to není pásmo s nejvyšším E0?",
-            "The power E0 falls more than twentyfold from blue (B2) to SWIR 2 (B12). Does the number of photons fall in the same way? Explain the difference. In which band does the most photons per micrometre fall on a square metre, and why is it not the band with the highest E0?")),
+            "Spektrální ozářenost E0 klesá od modré (B2) k SWIR 2 (B12) více než dvacetkrát. Klesá stejně i spektrální hustota toku fotonů? Vysvětli rozdíl. V kterém pásmu dopadá na metr čtvereční nejvíc fotonů na mikrometr spektra a proč to není pásmo s nejvyšším E0?",
+            "The spectral irradiance E0 falls more than twentyfold from blue (B2) to SWIR 2 (B12). Does the spectral photon flux density fall in the same way? Explain the difference. In which band does the most photons per micrometre fall on a square metre, and why is it not the band with the highest E0?")),
         ("md", t(
             "## 5. Které pásmo uvidí křemíkový čip\n\nFoton detektor uvolní elektron jen tehdy, když má aspoň energii zakázaného pásu materiálu. U křemíku je to asi 1,12 eV. Spočítáme mezní vlnovou délku a podíváme se, jak velká část citlivosti každého pásma leží pod ní.",
             "## 5. Which bands a silicon chip can see\n\nA photon frees an electron in a detector only if its energy is at least the band gap of the material. For silicon it is about 1.12 eV. We compute the cut-off wavelength and check how much of each band's response lies below it.")),

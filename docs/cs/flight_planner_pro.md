@@ -14,7 +14,7 @@ Spočítat pokrytí území snímky a odstup od povrchu pro tři režimy výšky
 
 DMR 5G (terén) a DMP 1G (povrch včetně vegetace a budov) z ČÚZK, služby ImageServer, buňka 2 m, území 1,2 × 0,8 km na levém svahu údolí Vltavy u Roztok; hodinová předpověď větru v 80 m z Open-Meteo na dnešní den; parametry dronu a kamery Mavic 3E z technického listu výrobce. DMP 1G vznikl z leteckého laserového skenování v letech 2009–2013, takže stromy od té doby mohly vyrůst nebo být pokáceny. Model pokrytí předpokládá kameru mířící kolmo dolů a nepočítá se zákryty (koruna zakryje terén pod sebou), čas otočky je orientační.
 
-Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
+Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Notebook je uložený bez výstupů; čísla a grafy vzniknou až při spuštění a u průběžně aktualizovaných dat se mohou mezi běhy lišit.
 
 ## Postup krok za krokem
 

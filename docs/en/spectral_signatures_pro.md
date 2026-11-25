@@ -14,7 +14,7 @@ Find out which bands carry information on chlorophyll, water, dry matter and LAI
 
 Two Sentinel-2 L2A images of tile 33UVR (14 May and 21 July 2024) from the Earth Search catalogue on AWS, a 4 × 4 km window around Roztoky and Únětice; ESA WorldCover 2021 v200 classes. The simulations are computed by the `prosail` package (PROSPECT-5 and 4SAIL) inside the notebook. About 40 MB is downloaded; the simulation table takes 1 to 3 minutes. No ground LAI measurements exist for the window, so the inversion results are model estimates, not validated values.
 
-All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
+All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The notebook is stored without outputs; numbers and plots appear when it runs and may differ between runs where the data are updated continuously.
 
 ## Step by step
 

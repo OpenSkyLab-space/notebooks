@@ -306,7 +306,8 @@ CENTER = @CENTER@       # ◀ parametr: střed mapy (šířka, délka)
 SPAN = @SPAN@                   # ◀ parametr: poloviční rozsah mapy (°)
 grid_url = zones[(zones.vydání == "aktuální") & (zones.soubor == "@GRID@.json")].url.iloc[0]
 grid = [(shape(f["geometry"]), f["properties"]["vertical_limit"]) for f in get(grid_url).json()["features"]]
-hmax = lambda txt: float(re.search(r"-\\s*([\\d.]+)\\s*m\\s*AGL", txt).group(1))
+def hmax(txt):
+    return float(re.search(r"-\\s*([\\d.]+)\\s*m\\s*AGL", txt).group(1))
 fig, ax = plt.subplots(figsize=(9, 7))
 view = box(CENTER[1] - SPAN * 1.6, CENTER[0] - SPAN, CENTER[1] + SPAN * 1.6, CENTER[0] + SPAN)
 cmap = plt.get_cmap("RdYlGn")
@@ -326,7 +327,8 @@ CENTER = @CENTER@       # ◀ parameter: centre of the map (latitude, longitude)
 SPAN = @SPAN@                   # ◀ parameter: half the extent of the map (°)
 grid_url = zones[(zones.release == "current") & (zones.file == "@GRID@.json")].url.iloc[0]
 grid = [(shape(f["geometry"]), f["properties"]["vertical_limit"]) for f in get(grid_url).json()["features"]]
-hmax = lambda txt: float(re.search(r"-\\s*([\\d.]+)\\s*m\\s*AGL", txt).group(1))
+def hmax(txt):
+    return float(re.search(r"-\\s*([\\d.]+)\\s*m\\s*AGL", txt).group(1))
 fig, ax = plt.subplots(figsize=(9, 7))
 view = box(CENTER[1] - SPAN * 1.6, CENTER[0] - SPAN, CENTER[1] + SPAN * 1.6, CENTER[0] + SPAN)
 cmap = plt.get_cmap("RdYlGn")
@@ -352,7 +354,8 @@ for site, (lat, lon) in SITES.items():
 SITE = "@SITE5_CS@"         # ◀ parametr: místo ze SITES
 HALF_M = 1500                 # ◀ parametr: polovina strany čtverce letu (m)
 T_UTM = Transformer.from_crs(4326, 32633, always_xy=True)
-to_utm = lambda g: shapely.transform(g, lambda xy: np.column_stack(T_UTM.transform(xy[:, 0], xy[:, 1])))
+def to_utm(g):
+    return shapely.transform(g, lambda xy: np.column_stack(T_UTM.transform(xy[:, 0], xy[:, 1])))
 lat, lon = SITES[SITE]; cx, cy = T_UTM.transform(lon, lat)
 area = box(cx - HALF_M, cy - HALF_M, cx + HALF_M, cy + HALF_M)
 share = []
@@ -372,7 +375,8 @@ share.groupby(["vrstva", "svislé hranice"])["podíl území (%)"].sum().round(1
 SITE = "@SITE5_EN@"       # ◀ parameter: a site from SITES
 HALF_M = 1500                 # ◀ parameter: half the side of the flight square (m)
 T_UTM = Transformer.from_crs(4326, 32633, always_xy=True)
-to_utm = lambda g: shapely.transform(g, lambda xy: np.column_stack(T_UTM.transform(xy[:, 0], xy[:, 1])))
+def to_utm(g):
+    return shapely.transform(g, lambda xy: np.column_stack(T_UTM.transform(xy[:, 0], xy[:, 1])))
 lat, lon = SITES[SITE]; cx, cy = T_UTM.transform(lon, lat)
 area = box(cx - HALF_M, cy - HALF_M, cx + HALF_M, cy + HALF_M)
 share = []

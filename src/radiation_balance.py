@@ -143,19 +143,21 @@ plt.show()
             "## 4. Albedo: kolik slunečního záření povrch odrazí celkem\n\nAlbedo je odrazivost vážená spektrem Slunce. Liang (2001) ho pro pásma Landsatu odvodil jako lineární kombinaci; použijeme odpovídající pásma Sentinelu-2 (B2, B4, B8, B11, B12), takže výsledek je přibližný.",
             "## 4. Albedo: how much sunlight a surface reflects in total\n\nAlbedo is reflectance weighted by the solar spectrum. Liang (2001) derived it for Landsat bands as a linear combination; we use the corresponding Sentinel-2 bands (B2, B4, B8, B11, B12), so the result is approximate.")),
         ("code", t('''
-pick = lambda name, b: R[name].iloc[BANDS.index(b)]
+def pick(name, b):
+    return R[name].iloc[BANDS.index(b)]
 albedo = pd.Series({name: 0.356 * pick(name, "blue") + 0.130 * pick(name, "red") + 0.373 * pick(name, "nir")
                          + 0.085 * pick(name, "swir16") + 0.072 * pick(name, "swir22") - 0.0018 for name in R.columns})
 print(albedo.round(3).to_string())
 ''', '''
-pick = lambda name, b: R[name].iloc[BANDS.index(b)]
+def pick(name, b):
+    return R[name].iloc[BANDS.index(b)]
 albedo = pd.Series({name: 0.356 * pick(name, "blue") + 0.130 * pick(name, "red") + 0.373 * pick(name, "nir")
                          + 0.085 * pick(name, "swir16") + 0.072 * pick(name, "swir22") - 0.0018 for name in R.columns})
 print(albedo.round(3).to_string())
 ''')),
         ("md", t(
-            "## 5. Skutečné počasí a energetická bilance\n\nZ Open-Meteo vezmeme nejslunečnější hodinu posledních 92 dní @WX_CS@: globální záření S, teplotu vzduchu, rosný bod a vítr. Povrch v rovnováze (bez vypařování a vedení do země) splní\n\n(1 − albedo) · S + ε · L↓ = ε · σ · T⁴ + h · (T − T_vzduch),\n\nkde L↓ je dlouhovlnné záření oblohy (Brutsaert 1975, jasná obloha) a h = 5,7 + 3,8 · u je přestup tepla prouděním.",
-            "## 5. Real weather and the energy balance\n\nFrom Open-Meteo we take the sunniest hour of the last 92 days @WX_EN@: global radiation S, air temperature, dew point and wind. A surface in equilibrium (no evaporation and no conduction into the ground) satisfies\n\n(1 − albedo) · S + ε · L↓ = ε · σ · T⁴ + h · (T − T_air),\n\nwhere L↓ is the longwave radiation of the sky (Brutsaert 1975, clear sky) and h = 5.7 + 3.8 · u is convective heat transfer.")),
+            "## 5. Skutečné počasí a energetická bilance\n\nZ Open-Meteo vezmeme nejslunečnější hodinu posledních 92 dní @WX_CS@: globální záření S, teplotu vzduchu, rosný bod a vítr. Povrch v rovnováze (bez vypařování a vedení do země) splní\n\n$$\n(1 - \\alpha)\\, S + \\varepsilon L_\\downarrow = \\varepsilon \\sigma T^4 + h\\,(T - T_\\mathrm{vzduch}),\n$$\n\nkde $\\alpha$ je albedo, $S$ globální záření (W·m⁻²), $\\varepsilon$ emisivita povrchu, $\\sigma$ Stefanova–Boltzmannova konstanta, $T$ teplota povrchu (K), $L_\\downarrow$ dlouhovlnné záření oblohy (Brutsaert 1975, jasná obloha) a $h = 5{,}7 + 3{,}8\\,u$ součinitel přestupu tepla prouděním (W·m⁻²·K⁻¹) pro rychlost větru $u$ (m/s).",
+            "## 5. Real weather and the energy balance\n\nFrom Open-Meteo we take the sunniest hour of the last 92 days @WX_EN@: global radiation S, air temperature, dew point and wind. A surface in equilibrium (no evaporation and no conduction into the ground) satisfies\n\n$$\n(1 - \\alpha)\\, S + \\varepsilon L_\\downarrow = \\varepsilon \\sigma T^4 + h\\,(T - T_\\mathrm{air}),\n$$\n\nwhere $\\alpha$ is the albedo, $S$ global radiation (W·m⁻²), $\\varepsilon$ the surface emissivity, $\\sigma$ the Stefan–Boltzmann constant, $T$ the surface temperature (K), $L_\\downarrow$ the longwave sky radiation (Brutsaert 1975, clear sky) and $h = 5.7 + 3.8\\,u$ the convective heat transfer coefficient (W·m⁻²·K⁻¹) for wind speed $u$ (m/s).")),
         ("code", t('''
 w = open_meteo({"latitude": @WLAT@, "longitude": @WLON@, "past_days": 92, "forecast_days": 1, "wind_speed_unit": "ms",
                 "hourly": "shortwave_radiation,temperature_2m,dew_point_2m,wind_speed_10m,cloud_cover", "timezone": "UTC"})
@@ -178,7 +180,8 @@ L_sky = 1.24 * (e_a / Ta) ** (1 / 7) * SIGMA * Ta**4               # Brutsaert, 
 h_c = 5.7 + 3.8 * u
 
 def t_equilibrium(albedo, eps, S=S, Ta=Ta, L_sky=L_sky, h_c=h_c):
-    f = lambda T: (1 - albedo) * S + eps * L_sky - eps * SIGMA * T**4 - h_c * (T - Ta)
+    def f(T):
+        return (1 - albedo) * S + eps * L_sky - eps * SIGMA * T**4 - h_c * (T - Ta)
     return brentq(f, 200, 400) - 273.15
 
 eps_surface = {"les": 0.99, "louka": 0.98, "pole": 0.97, "zástavba": 0.93, "voda": 0.99, "sníh": 0.99}
@@ -196,7 +199,8 @@ L_sky = 1.24 * (e_a / Ta) ** (1 / 7) * SIGMA * Ta**4               # Brutsaert, 
 h_c = 5.7 + 3.8 * u
 
 def t_equilibrium(albedo, eps, S=S, Ta=Ta, L_sky=L_sky, h_c=h_c):
-    f = lambda T: (1 - albedo) * S + eps * L_sky - eps * SIGMA * T**4 - h_c * (T - Ta)
+    def f(T):
+        return (1 - albedo) * S + eps * L_sky - eps * SIGMA * T**4 - h_c * (T - Ta)
     return brentq(f, 200, 400) - 273.15
 
 eps_surface = {"forest": 0.99, "meadow": 0.98, "field": 0.97, "built-up": 0.93, "water": 0.99, "snow": 0.99}

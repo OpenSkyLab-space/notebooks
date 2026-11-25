@@ -14,7 +14,7 @@ Změřit paralaxu mezi pásmy a z ní vzdálenost kamery od panelu, sesadit pás
 
 Dva snímky (všech 7 pásem) kamery MicaSense Altum-PT s DLS 2 z ukázkových dat MicaSense (repozitář micasense/imageprocessing, licence MIT): IMG_0000 (panel RP06, 15. 8. 2022 19:16 UTC) a IMG_0010 (let o 3 minuty později, asi 97 m nad terénem), 48,51° s. š., 122,42° z. d. Pět multispektrálních pásem má 2064 × 1544 pixelů, panchromatické 4112 × 3008 a termální 320 × 256. Termální pásmo je v setinách kelvinu a kamera počítá s emisivitou 1,0 (přesnost podle výrobce ±5 K).
 
-Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
+Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Notebook je uložený bez výstupů; čísla a grafy vzniknou až při spuštění a u průběžně aktualizovaných dat se mohou mezi běhy lišit.
 
 ## Postup krok za krokem
 
@@ -30,7 +30,7 @@ Dva objektivy vzdálené o T vidí stejný bod ve vzdálenosti H posunutý o Δ 
 
 ### 3. Měřítko a otočení pásem
 
-Posun změříme zvlášť v každé dlaždici 256 × 256 pixelů a proložíme ho afinní transformací d = t + A · (x, y): t je posun ve středu, z matice A plyne rozdíl měřítka a otočení. Rozdíl měřítka by měl odpovídat poměru ohniskových vzdáleností, otočení třetímu úhlu RigRelatives (v metadatech ve stupních).
+Posun změříme zvlášť v každé dlaždici 256 × 256 pixelů a proložíme ho afinní transformací $\mathbf{d} = \mathbf{t} + A\,(x, y)^\mathsf{T}$: $\mathbf{t}$ je posun ve středu, z matice $A$ plyne rozdíl měřítka a otočení. Rozdíl měřítka by měl odpovídat poměru ohniskových vzdáleností, otočení třetímu úhlu RigRelatives (v metadatech ve stupních).
 
 Parametry, které student mění:
 

@@ -50,7 +50,9 @@ q = requests.get("https://ags.cuzk.cz/arcgis/rest/services/BodovaPole/MapServer/
 p = pd.DataFrame([f["attributes"] for f in q["features"]])
 for k in ["Y", "X", "VYSKA", "B", "L", "HEL"]:
     p[k] = pd.to_numeric(p[k], errors="coerce")
-p = p.dropna(subset=["Y", "X", "VYSKA", "B", "L", "HEL"]).reset_index(drop=True)
+# služba vrací body v proměnlivém pořadí; seřazení zajistí,
+# že náhodné výběry níže vyjdou při každém běhu stejně
+p = p.dropna(subset=["Y", "X", "VYSKA", "B", "L", "HEL"]).sort_values(["CISLO_SMO5", "CISLO"]).reset_index(drop=True)
 # „mapa“: polohy z GNSS v ETRS89 převedené do UTM 33N; „skutečnost“: S-JTSK (osy EPSG:5514: x = −Y, y = −X)
 p["E"], p["N"] = Transformer.from_crs(4258, 32633, always_xy=True).transform(p.L.values, p.B.values)
 p["sx"], p["sy"] = -p.Y, -p.X
@@ -72,7 +74,9 @@ q = requests.get("https://ags.cuzk.cz/arcgis/rest/services/BodovaPole/MapServer/
 p = pd.DataFrame([f["attributes"] for f in q["features"]])
 for k in ["Y", "X", "VYSKA", "B", "L", "HEL"]:
     p[k] = pd.to_numeric(p[k], errors="coerce")
-p = p.dropna(subset=["Y", "X", "VYSKA", "B", "L", "HEL"]).reset_index(drop=True)
+# the service returns the points in varying order;
+# sorting makes the random draws below the same on every run
+p = p.dropna(subset=["Y", "X", "VYSKA", "B", "L", "HEL"]).sort_values(["CISLO_SMO5", "CISLO"]).reset_index(drop=True)
 # "map": GNSS positions in ETRS89 converted to UTM 33N; "truth": S-JTSK (EPSG:5514 axes: x = −Y, y = −X)
 p["E"], p["N"] = Transformer.from_crs(4258, 32633, always_xy=True).transform(p.L.values, p.B.values)
 p["sx"], p["sy"] = -p.Y, -p.X
@@ -83,12 +87,12 @@ p[["CISLO_SMO5", "CISLO", "NAZEV_KU", "Y", "X", "VYSKA", "B", "L", "HEL"]].head(
 ''')),
         ("md", t(
             "## 2. Helmertova transformace z vlícovacích bodů\n\n"
-            "Podobnostní transformace má 4 parametry (posun x, y, otočení, měřítko): x' = a·x − b·y + tₓ, y' = b·x + a·y + t_y. Odhadneme ji metodou nejmenších čtverců z vlícovacích bodů a pak ji použijeme na všechny body. "
-            "Odchylka na vlícovacím bodě říká jen, jak dobře se transformace k těmto bodům přizpůsobila. Přesnost ukážou až kontrolní body, které do výpočtu nevstoupily. RMSE_H = √(průměr(Δx² + Δy²)).\n\n"
+            "Podobnostní transformace má 4 parametry (posun $t_x$, $t_y$ a otočení s měřítkem v $a$, $b$):\n\n$$\nx' = a\\,x - b\\,y + t_x, \\qquad y' = b\\,x + a\\,y + t_y.\n$$\n\nOdhadneme ji metodou nejmenších čtverců z vlícovacích bodů a pak ji použijeme na všechny body. "
+            "Odchylka na vlícovacím bodě říká jen, jak dobře se transformace k těmto bodům přizpůsobila. Přesnost ukážou až kontrolní body, které do výpočtu nevstoupily. Polohovou chybu shrnuje\n\n$$\n\\mathrm{RMSE}_H = \\sqrt{\\frac{1}{N}\\sum_{i=1}^{N}\\left(\\Delta x_i^2 + \\Delta y_i^2\\right)},\n$$\n\nkde $\\Delta x_i$, $\\Delta y_i$ jsou odchylky na $N$ kontrolních bodech v metrech.\n\n"
             "Pozor: S-JTSK má vlastní deformace a měřítko Křovákova zobrazení se mění se zeměpisnou šířkou, takže ani nejlepší podobnostní transformace na takovém území není dokonalá. ČÚZK proto pro převod používá transformaci s opravnou sítí. Pro nás je to výhoda: je tu skutečná, předem neznámá chyba, kterou musí odhalit kontrolní body.",
             "## 2. Helmert transformation from ground control points\n\n"
-            "A similarity transformation has 4 parameters (shift x, y, rotation, scale): x' = a·x − b·y + tₓ, y' = b·x + a·y + t_y. We estimate it by least squares from the ground control points and then apply it to all points. "
-            "A residual on a control point only says how well the transformation adapted to those points. Accuracy is shown by check points that did not enter the computation. RMSE_H = √(mean(Δx² + Δy²)).\n\n"
+            "A similarity transformation has 4 parameters (the shift $t_x$, $t_y$ and the rotation and scale in $a$, $b$):\n\n$$\nx' = a\\,x - b\\,y + t_x, \\qquad y' = b\\,x + a\\,y + t_y.\n$$\n\nWe estimate it by least squares from the ground control points and then apply it to all points. "
+            "A residual on a control point only says how well the transformation adapted to those points. Accuracy is shown by check points that did not enter the computation. The position error is summarised by\n\n$$\n\\mathrm{RMSE}_H = \\sqrt{\\frac{1}{N}\\sum_{i=1}^{N}\\left(\\Delta x_i^2 + \\Delta y_i^2\\right)},\n$$\n\nwhere $\\Delta x_i$, $\\Delta y_i$ are the residuals at the $N$ check points in metres.\n\n"
             "Note: S-JTSK has its own distortions and the scale of the Křovák projection changes with latitude, so even the best similarity transformation over such an area is not perfect. ČÚZK therefore converts with a transformation plus a correction grid. For us this is an advantage: there is a real error, unknown in advance, that the check points have to reveal.")),
         ("code", t('''
 def fit(src, dst, kind="helmert"):
@@ -126,7 +130,8 @@ gcp = LAYOUTS[LAYOUT]; chk = np.setdiff1d(np.arange(len(p)), gcp)
 model = fit(SRC[gcp], DST[gcp], "helmert") if len(gcp) >= 2 else None
 pred = apply(model, SRC) if model else SRC - SRC[gcp].mean(axis=0) + DST[gcp].mean(axis=0)   # jeden bod: jen posun
 res = pred - DST
-rmse = lambda r: np.sqrt((r ** 2).sum(axis=1).mean())
+def rmse(r):
+    return np.sqrt((r ** 2).sum(axis=1).mean())
 print(f"{LAYOUT}: {len(gcp)} vlícovacích, {len(chk)} kontrolních bodů")
 print(f"RMSE_H na vlícovacích bodech {rmse(res[gcp]):.3f} m, na kontrolních {rmse(res[chk]):.3f} m, největší odchylka kontrolního bodu {np.hypot(*res[chk].T).max():.2f} m")
 fig, ax = plt.subplots(figsize=(7, 6.5))
@@ -169,7 +174,8 @@ gcp = LAYOUTS[LAYOUT]; chk = np.setdiff1d(np.arange(len(p)), gcp)
 model = fit(SRC[gcp], DST[gcp], "helmert") if len(gcp) >= 2 else None
 pred = apply(model, SRC) if model else SRC - SRC[gcp].mean(axis=0) + DST[gcp].mean(axis=0)   # one point: shift only
 res = pred - DST
-rmse = lambda r: np.sqrt((r ** 2).sum(axis=1).mean())
+def rmse(r):
+    return np.sqrt((r ** 2).sum(axis=1).mean())
 print(f"{LAYOUT}: {len(gcp)} control points, {len(chk)} check points")
 print(f"RMSE_H on control points {rmse(res[gcp]):.3f} m, on check points {rmse(res[chk]):.3f} m, largest check point residual {np.hypot(*res[chk].T).max():.2f} m")
 fig, ax = plt.subplots(figsize=(7, 6.5))
@@ -182,9 +188,9 @@ ax.set_aspect("equal"); ax.legend(loc="lower right"); ax.set_title("residuals on
             "For the “cluster in a corner” compare RMSE_H on the control points and on the check points. Why are the residuals on the control points so small, and why can they not be reported as accuracy? Where on the map do the check point residuals grow? Then choose “corners + centre”: why is the residual on the control points now larger than on the check points?")),
         ("md", t(
             "## 3. Porovnání rozmístění, polohy i výšky\n\n"
-            "GNSS dává elipsoidickou výšku h, mapy v ČR používají nadmořskou (normální) výšku v Bpv: H = h − ζ, kde ζ je výšková anomálie (v okolí Prahy kolem 44–46 m). Když z vlícovacích bodů odhadneme ζ jako konstantu, nebo jako rovinu, dostaneme výšky na kontrolních bodech. RMSE_V = √(průměr ΔH²).\n\nZ jediného vlícovacího bodu lze polohově odhadnout jen posun. UTM a S-JTSK jsou ale vůči sobě pootočené a mají jiné měřítko, proto tu chyba vyjde v kilometrech. U bloku snímků z RTK nebo PPK je natočení i měřítko dané už polohami snímků.",
+            "GNSS dává elipsoidickou výšku $h$, mapy v ČR používají nadmořskou (normální) výšku v Bpv:\n\n$$\nH = h - \\zeta,\n$$\n\nkde $\\zeta$ je výšková anomálie (v okolí Prahy kolem 44–46 m). Když z vlícovacích bodů odhadneme ζ jako konstantu, nebo jako rovinu, dostaneme výšky na kontrolních bodech. Výškovou chybu shrnuje $\\mathrm{RMSE}_V = \\sqrt{\\frac{1}{N}\\sum_{i} \\Delta H_i^2}$.\n\nZ jediného vlícovacího bodu lze polohově odhadnout jen posun. UTM a S-JTSK jsou ale vůči sobě pootočené a mají jiné měřítko, proto tu chyba vyjde v kilometrech. U bloku snímků z RTK nebo PPK je natočení i měřítko dané už polohami snímků.",
             "## 3. Comparing layouts, position and height\n\n"
-            "GNSS gives the ellipsoidal height h, maps in Czechia use the normal height in Bpv: H = h − ζ, where ζ is the height anomaly (about 44–46 m around Prague). If we estimate ζ from the control points as a constant or as a plane, we get heights at the check points. RMSE_V = √(mean ΔH²).\n\nA single control point can only give a shift in position. UTM and S-JTSK, however, are rotated relative to each other and have a different scale, so the error here comes out in kilometres. For an image block from RTK or PPK, rotation and scale are already set by the image positions.")),
+            "GNSS gives the ellipsoidal height $h$, maps in Czechia use the normal height in Bpv:\n\n$$\nH = h - \\zeta,\n$$\n\nwhere $\\zeta$ is the height anomaly (about 44–46 m around Prague). If we estimate ζ from the control points as a constant or as a plane, we get heights at the check points. The height error is summarised by $\\mathrm{RMSE}_V = \\sqrt{\\frac{1}{N}\\sum_{i} \\Delta H_i^2}$.\n\nA single control point can only give a shift in position. UTM and S-JTSK, however, are rotated relative to each other and have a different scale, so the error here comes out in kilometres. For an image block from RTK or PPK, rotation and scale are already set by the image positions.")),
         ("code", t('''
 zeta = (p.HEL - p.VYSKA).values
 x, y = (SRC - C0).T

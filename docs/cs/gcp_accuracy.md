@@ -14,7 +14,7 @@ Odhadnout podobnostní (Helmertovu) transformaci z vlícovacích bodů, porovnat
 
 Trigonometrické a zhušťovací body ČÚZK v okolí Prahy se souřadnicemi S-JTSK, výškou Bpv a souřadnicemi ETRS89 (B, L, elipsoidická výška) ze statického měření GNSS, služba BodovaPole (vrstva 2).
 
-Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
+Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Notebook je uložený bez výstupů; čísla a grafy vzniknou až při spuštění a u průběžně aktualizovaných dat se mohou mezi běhy lišit.
 
 ## Postup krok za krokem
 
@@ -29,7 +29,19 @@ Parametry, které student mění:
 
 ### 2. Helmertova transformace z vlícovacích bodů
 
-Podobnostní transformace má 4 parametry (posun x, y, otočení, měřítko): x' = a·x − b·y + tₓ, y' = b·x + a·y + t_y. Odhadneme ji metodou nejmenších čtverců z vlícovacích bodů a pak ji použijeme na všechny body. Odchylka na vlícovacím bodě říká jen, jak dobře se transformace k těmto bodům přizpůsobila. Přesnost ukážou až kontrolní body, které do výpočtu nevstoupily. RMSE_H = √(průměr(Δx² + Δy²)).
+Podobnostní transformace má 4 parametry (posun $t_x$, $t_y$ a otočení s měřítkem v $a$, $b$):
+
+$$
+x' = a\,x - b\,y + t_x, \qquad y' = b\,x + a\,y + t_y.
+$$
+
+Odhadneme ji metodou nejmenších čtverců z vlícovacích bodů a pak ji použijeme na všechny body. Odchylka na vlícovacím bodě říká jen, jak dobře se transformace k těmto bodům přizpůsobila. Přesnost ukážou až kontrolní body, které do výpočtu nevstoupily. Polohovou chybu shrnuje
+
+$$
+\mathrm{RMSE}_H = \sqrt{\frac{1}{N}\sum_{i=1}^{N}\left(\Delta x_i^2 + \Delta y_i^2\right)},
+$$
+
+kde $\Delta x_i$, $\Delta y_i$ jsou odchylky na $N$ kontrolních bodech v metrech.
 
 Pozor: S-JTSK má vlastní deformace a měřítko Křovákova zobrazení se mění se zeměpisnou šířkou, takže ani nejlepší podobnostní transformace na takovém území není dokonalá. ČÚZK proto pro převod používá transformaci s opravnou sítí. Pro nás je to výhoda: je tu skutečná, předem neznámá chyba, kterou musí odhalit kontrolní body.
 
@@ -41,7 +53,13 @@ Parametry, které student mění:
 
 ### 3. Porovnání rozmístění, polohy i výšky
 
-GNSS dává elipsoidickou výšku h, mapy v ČR používají nadmořskou (normální) výšku v Bpv: H = h − ζ, kde ζ je výšková anomálie (v okolí Prahy kolem 44–46 m). Když z vlícovacích bodů odhadneme ζ jako konstantu, nebo jako rovinu, dostaneme výšky na kontrolních bodech. RMSE_V = √(průměr ΔH²).
+GNSS dává elipsoidickou výšku $h$, mapy v ČR používají nadmořskou (normální) výšku v Bpv:
+
+$$
+H = h - \zeta,
+$$
+
+kde $\zeta$ je výšková anomálie (v okolí Prahy kolem 44–46 m). Když z vlícovacích bodů odhadneme ζ jako konstantu, nebo jako rovinu, dostaneme výšky na kontrolních bodech. Výškovou chybu shrnuje $\mathrm{RMSE}_V = \sqrt{\frac{1}{N}\sum_{i} \Delta H_i^2}$.
 
 Z jediného vlícovacího bodu lze polohově odhadnout jen posun. UTM a S-JTSK jsou ale vůči sobě pootočené a mají jiné měřítko, proto tu chyba vyjde v kilometrech. U bloku snímků z RTK nebo PPK je natočení i měřítko dané už polohami snímků.
 

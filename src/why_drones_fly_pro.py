@@ -192,9 +192,9 @@ WIND_LIMIT = 12.0                   # ◀ parametr: odolnost vůči větru podle
 print(f"{len(day)} denních hodin s daty za 92 dní, vítr ve 120 m: medián {day.wind_speed_120m.median():.1f} m/s, 90. percentil {day.wind_speed_120m.quantile(0.9):.1f} m/s")
 for thr in [6, 9, WIND_LIMIT]:
     print(f"  vítr ve 120 m nad {thr:4.1f} m/s: {np.mean(day.wind_speed_120m > thr):5.1%} hodin, v 10 m: {np.mean(day.wind_speed_10m > thr):5.1%}")
-best = {wv: min(power(V, RHO0, fA, eta).sum() / (V - wv) / 3.6 for V in Vs[Vs > wv + 0.5]) for wv in np.arange(0, 16, 0.5)}
-e_back = np.interp(day.wind_speed_120m, list(best), list(best.values()))
-print(f"energie na km návratu proti větru ve 120 m: medián {np.median(e_back):.2f} Wh/km, 90. percentil {np.percentile(e_back, 90):.2f} Wh/km (bez větru {best[0]:.2f})")
+energy_per_km = {wv: min(power(V, RHO0, fA, eta).sum() / (V - wv) / 3.6 for V in Vs[Vs > wv + 0.5]) for wv in np.arange(0, 16, 0.5)}
+e_back = np.interp(day.wind_speed_120m, list(energy_per_km), list(energy_per_km.values()))
+print(f"energie na km návratu proti větru ve 120 m: medián {np.median(e_back):.2f} Wh/km, 90. percentil {np.percentile(e_back, 90):.2f} Wh/km (bez větru {energy_per_km[0]:.2f})")
 plt.figure(figsize=(9, 3.2)); plt.hist([day.wind_speed_10m, day.wind_speed_120m], bins=np.arange(0, 20, 1), label=["10 m", "120 m"])
 plt.axvline(WIND_LIMIT, color="r", ls=":"); plt.xlabel("rychlost větru (m/s)"); plt.ylabel("hodin"); plt.legend(); plt.show()
 ''', '''
@@ -207,9 +207,9 @@ WIND_LIMIT = 12.0                   # ◀ parameter: wind resistance according t
 print(f"{len(day)} daytime hours with data in 92 days, wind at 120 m: median {day.wind_speed_120m.median():.1f} m/s, 90th percentile {day.wind_speed_120m.quantile(0.9):.1f} m/s")
 for thr in [6, 9, WIND_LIMIT]:
     print(f"  wind at 120 m above {thr:4.1f} m/s: {np.mean(day.wind_speed_120m > thr):5.1%} of hours, at 10 m: {np.mean(day.wind_speed_10m > thr):5.1%}")
-best = {wv: min(power(V, RHO0, fA, eta).sum() / (V - wv) / 3.6 for V in Vs[Vs > wv + 0.5]) for wv in np.arange(0, 16, 0.5)}
-e_back = np.interp(day.wind_speed_120m, list(best), list(best.values()))
-print(f"energy per km of a return against the wind at 120 m: median {np.median(e_back):.2f} Wh/km, 90th percentile {np.percentile(e_back, 90):.2f} Wh/km (no wind {best[0]:.2f})")
+energy_per_km = {wv: min(power(V, RHO0, fA, eta).sum() / (V - wv) / 3.6 for V in Vs[Vs > wv + 0.5]) for wv in np.arange(0, 16, 0.5)}
+e_back = np.interp(day.wind_speed_120m, list(energy_per_km), list(energy_per_km.values()))
+print(f"energy per km of a return against the wind at 120 m: median {np.median(e_back):.2f} Wh/km, 90th percentile {np.percentile(e_back, 90):.2f} Wh/km (no wind {energy_per_km[0]:.2f})")
 plt.figure(figsize=(9, 3.2)); plt.hist([day.wind_speed_10m, day.wind_speed_120m], bins=np.arange(0, 20, 1), label=["10 m", "120 m"])
 plt.axvline(WIND_LIMIT, color="r", ls=":"); plt.xlabel("wind speed (m/s)"); plt.ylabel("hours"); plt.legend(); plt.show()
 ''')),
@@ -252,7 +252,7 @@ pd.DataFrame(rows).T.round(2)
             "O kolik se v řidším vzduchu zkrátí doba visení a jak se posunou rychlosti nejdelší výdrže a největšího doletu? Proč se dolet v horách téměř nemění, i když výkon roste? (Porovnej, jak na hustotě závisí indukovaný a škodlivý výkon.) Co by se stalo, kdyby dron ve stejných horách nesl náklad, který zvýší hmotnost o 20 %? Zkus `m` v buňce modelu.",
             "By how much does hover time shorten in thinner air, and how do the speeds for maximum endurance and maximum range shift? Why does the range in the mountains hardly change although power increases? (Compare how induced and parasite power depend on density.) What would happen if the drone carried a payload in the same mountains that increased its mass by 20 %? Try `m` in the model cell.")),
         ("md", t(
-            "## 6. Visení těsně nad zemí\n\nBlízko země se proud pod rotorem nemůže volně rozšířit, indukovaná rychlost klesne a stejný tah stojí méně výkonu. Cheeseman a Bennett (1955) to popsali vztahem v_IGE / v_OGE = 1 − (R / 4z)², kde z je výška rotoru nad zemí. Vztah platí pro jeden rotor; u kvadrokoptéry se proudy čtyř vrtulí navíc ovlivňují.",
+            "## 6. Visení těsně nad zemí\n\nBlízko země se proud pod rotorem nemůže volně rozšířit, indukovaná rychlost klesne a stejný tah stojí méně výkonu. Cheeseman a Bennett (1955) to popsali vztahem $v_\\mathrm{IGE} / v_\\mathrm{OGE} = 1 - (R / 4z)^2$, kde $R$ je poloměr rotoru a $z$ jeho výška nad zemí. Vztah platí pro jeden rotor; u kvadrokoptéry se proudy čtyř vrtulí navíc ovlivňují.",
             "## 6. Hovering close to the ground\n\nClose to the ground the wake under the rotor cannot expand freely, the induced velocity drops and the same thrust needs less power. Cheeseman and Bennett (1955) described this as v_IGE / v_OGE = 1 − (R / 4z)², where z is the rotor height above the ground. The relation holds for a single rotor; with a quadcopter the wakes of the four propellers also interact.")),
         ("code", t('''
 def ground_factor(z):

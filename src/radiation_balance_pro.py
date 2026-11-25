@@ -91,17 +91,17 @@ for code, name in classes.items():
 print({k: round(v, 3) for k, v in albedo.items()})
 ''')),
         ("md", t(
-            "## 2. Skutečné počasí jako vstup\n\nZ Open-Meteo vezmeme hodinové globální záření, teplotu, rosný bod, vítr, oblačnost a tlak. Dlouhovlnné záření oblohy L↓ počítáme z emisivity jasné oblohy (Brutsaert 1975) a oblačnost c přičteme ve tvaru Crawforda a Duchona (1999): ε = ε_jasno · (1 − c) + c. Oblačnost tu bereme z modelu počasí, ne z měření.",
-            "## 2. Real weather as input\n\nFrom Open-Meteo we take hourly global radiation, temperature, dew point, wind, cloud cover and pressure. Longwave sky radiation L↓ is computed from the clear-sky emissivity (Brutsaert 1975) and the cloud cover c is added in the form of Crawford and Duchon (1999): ε = ε_clear · (1 − c) + c. The cloud cover comes from the weather model here, not from measurements.")),
+            "## 2. Skutečné počasí jako vstup\n\nZ Open-Meteo vezmeme hodinové globální záření, teplotu, rosný bod, vítr, oblačnost a tlak. Dlouhovlnné záření oblohy L↓ počítáme z emisivity jasné oblohy (Brutsaert 1975) a oblačnost c přičteme ve tvaru Crawforda a Duchona (1999): $\\varepsilon = \\varepsilon_\\mathrm{jasno}\\,(1 - c) + c$. Oblačnost tu bereme z modelu počasí, ne z měření.",
+            "## 2. Real weather as input\n\nFrom Open-Meteo we take hourly global radiation, temperature, dew point, wind, cloud cover and pressure. Longwave sky radiation L↓ is computed from the clear-sky emissivity (Brutsaert 1975) and the cloud cover c is added in the form of Crawford and Duchon (1999): $\\varepsilon = \\varepsilon_\\mathrm{clear}\\,(1 - c) + c$. The cloud cover comes from the weather model here, not from measurements.")),
         ("code", t('''
 LAT, LON = 50.08, 14.42                     # ◀ parametr: místo pro počasí (Praha)
 w = open_meteo({"latitude": LAT, "longitude": LON, "past_days": 92, "forecast_days": 1, "wind_speed_unit": "ms", "timezone": "UTC",
                 "hourly": "shortwave_radiation,temperature_2m,dew_point_2m,wind_speed_10m,cloud_cover,surface_pressure"})
 met = pd.DataFrame(w["hourly"]).assign(time=lambda d: pd.to_datetime(d.time)).set_index("time").dropna()
 daily = met.shortwave_radiation.resample("D").sum() * 3600 / 1e6            # MJ/m² za den
-best = daily.idxmax()
+sunniest_day = daily.idxmax()
 N_DAYS = 4                                   # ◀ parametr: kolik dní simulovat (nejslunečnější den je uprostřed)
-start = best - pd.Timedelta(days=N_DAYS // 2)
+start = sunniest_day - pd.Timedelta(days=N_DAYS // 2)
 F = met.loc[start: start + pd.Timedelta(days=N_DAYS) - pd.Timedelta(hours=1)].copy()
 SIGMA = 5.670374e-8
 F["Ta"] = F.temperature_2m + 273.15
@@ -109,7 +109,7 @@ F["e_a"] = 6.112 * np.exp(17.62 * F.dew_point_2m / (243.12 + F.dew_point_2m))   
 eps_clear = 1.24 * (F.e_a / F.Ta) ** (1 / 7)                                          # Brutsaert 1975
 F["L_sky"] = (eps_clear * (1 - F.cloud_cover / 100) + F.cloud_cover / 100) * SIGMA * F.Ta ** 4
 F["q_a"] = 0.622 * F.e_a / F.surface_pressure
-print(f"nejslunečnější den {best.date()} ({daily.max():.1f} MJ/m²), simulace {F.index[0]} až {F.index[-1]} UTC")
+print(f"nejslunečnější den {sunniest_day.date()} ({daily.max():.1f} MJ/m²), simulace {F.index[0]} až {F.index[-1]} UTC")
 fig, ax = plt.subplots(1, 2, figsize=(13, 3.6))
 F[["shortwave_radiation", "L_sky"]].plot(ax=ax[0]); ax[0].set(ylabel="W/m²", title="sluneční a dlouhovlnné záření oblohy")
 F[["temperature_2m", "dew_point_2m"]].plot(ax=ax[1]); (F.cloud_cover / 10).plot(ax=ax[1], ls=":", label="oblačnost / 10 (%)")
@@ -120,9 +120,9 @@ w = open_meteo({"latitude": LAT, "longitude": LON, "past_days": 92, "forecast_da
                 "hourly": "shortwave_radiation,temperature_2m,dew_point_2m,wind_speed_10m,cloud_cover,surface_pressure"})
 met = pd.DataFrame(w["hourly"]).assign(time=lambda d: pd.to_datetime(d.time)).set_index("time").dropna()
 daily = met.shortwave_radiation.resample("D").sum() * 3600 / 1e6            # MJ/m² per day
-best = daily.idxmax()
+sunniest_day = daily.idxmax()
 N_DAYS = 4                                   # ◀ parameter: how many days to simulate (the sunniest day is in the middle)
-start = best - pd.Timedelta(days=N_DAYS // 2)
+start = sunniest_day - pd.Timedelta(days=N_DAYS // 2)
 F = met.loc[start: start + pd.Timedelta(days=N_DAYS) - pd.Timedelta(hours=1)].copy()
 SIGMA = 5.670374e-8
 F["Ta"] = F.temperature_2m + 273.15
@@ -130,7 +130,7 @@ F["e_a"] = 6.112 * np.exp(17.62 * F.dew_point_2m / (243.12 + F.dew_point_2m))   
 eps_clear = 1.24 * (F.e_a / F.Ta) ** (1 / 7)                                          # Brutsaert 1975
 F["L_sky"] = (eps_clear * (1 - F.cloud_cover / 100) + F.cloud_cover / 100) * SIGMA * F.Ta ** 4
 F["q_a"] = 0.622 * F.e_a / F.surface_pressure
-print(f"sunniest day {best.date()} ({daily.max():.1f} MJ/m²), simulation {F.index[0]} to {F.index[-1]} UTC")
+print(f"sunniest day {sunniest_day.date()} ({daily.max():.1f} MJ/m²), simulation {F.index[0]} to {F.index[-1]} UTC")
 fig, ax = plt.subplots(1, 2, figsize=(13, 3.6))
 F[["shortwave_radiation", "L_sky"]].plot(ax=ax[0]); ax[0].set(ylabel="W/m²", title="solar and longwave sky radiation")
 F[["temperature_2m", "dew_point_2m"]].plot(ax=ax[1]); (F.cloud_cover / 10).plot(ax=ax[1], ls=":", label="cloud cover / 10 (%)")
@@ -140,8 +140,8 @@ ax[1].set(ylabel="°C", title="temperature, dew point, cloud cover"); ax[1].lege
             "Najdi v grafech noc s jasnou a noc se zataženou oblohou. O kolik se v nich liší L↓ a proč? Co to znamená pro ochlazování povrchu v noci?",
             "Find a night with clear and a night with overcast sky in the plots. How much does L↓ differ between them and why? What does that mean for the cooling of the surface at night?")),
         ("md", t(
-            "## 3. Model povrchu\n\nČistá radiace Rn = (1 − albedo) · S + ε · L↓ − ε · σ · Ts⁴ se dělí na citelné teplo H = h · (Ts − T_vzduch), výpar LE = β · (L_v/c_p) · h · (q_sat(Ts) − q_vzduch) a tok do země G = Rn − H − LE. Teplotu povrchu Ts posouvá G podle modelu force-restore (Noilhan a Planton 1989): dTs/dt = C_T · G − (2π/τ) · (Ts − T2), kde C_T = 2√(π/τ)/P a P je tepelná setrvačnost. β říká, kolik vody má povrch k dispozici (0 suchý beton, 1 mokrý povrch).",
-            "## 3. The surface model\n\nNet radiation Rn = (1 − albedo) · S + ε · L↓ − ε · σ · Ts⁴ splits into sensible heat H = h · (Ts − T_air), evaporation LE = β · (L_v/c_p) · h · (q_sat(Ts) − q_air) and ground heat flux G = Rn − H − LE. The surface temperature Ts is driven by G in the force-restore model (Noilhan and Planton 1989): dTs/dt = C_T · G − (2π/τ) · (Ts − T2), with C_T = 2√(π/τ)/P, where P is thermal inertia. β says how much water the surface has available (0 dry concrete, 1 wet surface).")),
+            "## 3. Model povrchu\n\nČistá radiace se dělí na citelné teplo, výpar a tok do země:\n\n$$\n\\begin{aligned}\nR_n &= (1 - \\alpha)\\, S + \\varepsilon L_\\downarrow - \\varepsilon \\sigma T_s^4,\\\\\nH &= h\\,(T_s - T_\\mathrm{vzduch}),\\\\\nLE &= \\beta\\, \\frac{L_v}{c_p}\\, h \\left(q_\\mathrm{sat}(T_s) - q_\\mathrm{vzduch}\\right),\\\\\nG &= R_n - H - LE.\n\\end{aligned}\n$$\n\nTeplotu povrchu $T_s$ posouvá $G$ podle modelu force-restore (Noilhan a Planton 1989):\n\n$$\n\\frac{dT_s}{dt} = C_T\\, G - \\frac{2\\pi}{\\tau}\\,(T_s - T_2), \\qquad C_T = \\frac{2\\sqrt{\\pi/\\tau}}{P},\n$$\n\nkde $\\tau$ je délka dne (s), $T_2$ teplota hlubší vrstvy a $P$ tepelná setrvačnost (J·m⁻²·K⁻¹·s⁻¹ᐟ²). β říká, kolik vody má povrch k dispozici (0 suchý beton, 1 mokrý povrch).",
+            "## 3. The surface model\n\nNet radiation splits into sensible heat, evaporation and ground heat flux:\n\n$$\n\\begin{aligned}\nR_n &= (1 - \\alpha)\\, S + \\varepsilon L_\\downarrow - \\varepsilon \\sigma T_s^4,\\\\\nH &= h\\,(T_s - T_\\mathrm{air}),\\\\\nLE &= \\beta\\, \\frac{L_v}{c_p}\\, h \\left(q_\\mathrm{sat}(T_s) - q_\\mathrm{air}\\right),\\\\\nG &= R_n - H - LE.\n\\end{aligned}\n$$\n\nThe surface temperature $T_s$ is driven by $G$ in the force-restore model (Noilhan and Planton 1989):\n\n$$\n\\frac{dT_s}{dt} = C_T\\, G - \\frac{2\\pi}{\\tau}\\,(T_s - T_2), \\qquad C_T = \\frac{2\\sqrt{\\pi/\\tau}}{P},\n$$\n\nwhere $\\tau$ is the length of the day (s), $T_2$ the temperature of the deeper layer and $P$ the thermal inertia (J·m⁻²·K⁻¹·s⁻¹ᐟ²). β says how much water the surface has available (0 dry concrete, 1 wet surface).")),
         ("code", t('''
 SURF = pd.DataFrame({                                             # ◀ parametr: vlastnosti povrchů (orientační)
     "albedo": albedo,
@@ -224,7 +224,7 @@ ax.set(ylabel="surface temperature (°C)", title="diurnal course of surface temp
             "Which surface is warmest at noon and which at night? Why is the built-up surface cooler than the field at noon although it hardly evaporates, and the warmest at night? At what time UTC does the surface reach its maximum, and why only after solar noon (in Prague around 11:00 UTC)?")),
         ("md", t("## 4. Kam se energie během dne rozdělí", "## 4. Where the energy goes during the day")),
         ("code", t('''
-day = F.index.normalize() == best
+day = F.index.normalize() == sunniest_day
 rows = {}
 for name, r in runs.items():
     d = r[day]
@@ -233,7 +233,7 @@ for name, r in runs.items():
                   "max Ts (°C)": d.Ts.max(), "hodina max (UTC)": d.Ts.idxmax().hour, "min Ts noc (°C)": d.Ts.min()}
 pd.DataFrame(rows).T.round(2)
 ''', '''
-day = F.index.normalize() == best
+day = F.index.normalize() == sunniest_day
 rows = {}
 for name, r in runs.items():
     d = r[day]
@@ -278,7 +278,8 @@ r = F.loc[noon]
 h = 5.7 + 3.8 * r.wind_speed_10m * WIND
 cmp = {}
 for name, s in SURF.iterrows():
-    f = lambda T: (1 - s.albedo) * r.shortwave_radiation + s["ε"] * r.L_sky - s["ε"] * SIGMA * T ** 4 - h * (T - r.Ta)
+    def f(T):
+        return (1 - s.albedo) * r.shortwave_radiation + s["ε"] * r.L_sky - s["ε"] * SIGMA * T ** 4 - h * (T - r.Ta)
     cmp[name] = {"rovnováha bez výparu a země (°C)": brentq(f, 200, 400) - 273.15, "model force-restore (°C)": runs[name].Ts[noon]}
 print(f"hodina {noon} UTC, S = {r.shortwave_radiation:.0f} W/m², vzduch {r.temperature_2m:.1f} °C")
 pd.DataFrame(cmp).T.round(1)
@@ -289,7 +290,8 @@ r = F.loc[noon]
 h = 5.7 + 3.8 * r.wind_speed_10m * WIND
 cmp = {}
 for name, s in SURF.iterrows():
-    f = lambda T: (1 - s.albedo) * r.shortwave_radiation + s["ε"] * r.L_sky - s["ε"] * SIGMA * T ** 4 - h * (T - r.Ta)
+    def f(T):
+        return (1 - s.albedo) * r.shortwave_radiation + s["ε"] * r.L_sky - s["ε"] * SIGMA * T ** 4 - h * (T - r.Ta)
     cmp[name] = {"equilibrium without evaporation and ground (°C)": brentq(f, 200, 400) - 273.15, "force-restore model (°C)": runs[name].Ts[noon]}
 print(f"hour {noon} UTC, S = {r.shortwave_radiation:.0f} W/m², air {r.temperature_2m:.1f} °C")
 pd.DataFrame(cmp).T.round(1)

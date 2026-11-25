@@ -222,8 +222,8 @@ print(f"our profile over a field: {wind_at(80, 1.0, 0.03, 0) / 1.0:.2f}, over a 
             "Proč nad lesem vychází ve 30 m slabší průměrný vítr než nad vodou, ale ve 100 m skoro stejný? Kolega říká: „Letiště hlásí 6 m/s, dron snese 12 m/s, máme dvojnásobnou rezervu.“ Nastav `u10 = 6` a odpověz mu čísly pro výšku 100 m. Jak se poměr 80 m / 10 m z modelu Open-Meteo liší od našeho profilu a proč (zvrstvení během dne a noci)?",
             "Why is the mean wind at 30 m weaker over forest than over water, but almost the same at 100 m? A colleague says: \"The airport reports 6 m/s, the drone handles 12 m/s, we have a twofold margin.\" Set `u10 = 6` and answer with numbers for 100 m. How does the 80 m / 10 m ratio from the Open-Meteo model differ from our profile and why (stability during day and night)?")),
         ("md", t(
-            "## 4. Cesta zpět proti větru\n\nDron letí vůči vzduchu rychlostí V, vítr ve výšce letu má rychlost U. Na trase D tam po větru a zpět proti větru trvá let t = D/(V + U) + D/(V − U).",
-            "## 4. The way back against the wind\n\nThe drone flies at airspeed V, the wind at flight height is U. Over a distance D downwind out and upwind back the flight takes t = D/(V + U) + D/(V − U).")),
+            "## 4. Cesta zpět proti větru\n\nDron letí vůči vzduchu rychlostí V, vítr ve výšce letu má rychlost U. Na trase $D$ tam po větru a zpět proti větru trvá let\n\n$$\nt = \\frac{D}{V + U} + \\frac{D}{V - U}.\n$$",
+            "## 4. The way back against the wind\n\nThe drone flies at airspeed V, the wind at flight height is U. Over a distance $D$ downwind out and upwind back the flight takes\n\n$$\nt = \\frac{D}{V + U} + \\frac{D}{V - U}.\n$$")),
         ("code", t('''
 V, D = 12.0, 800          # ◀ parametr: rychlost vůči vzduchu (m/s) a vzdálenost od pilota (m)
 U = np.linspace(0, 11.5, 200)

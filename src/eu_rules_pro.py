@@ -85,7 +85,8 @@ for tr in re.findall(r"<tr.*?</tr>", page, re.S):
 zones = pd.DataFrame(rows).set_index("code")
 MAX_MB = 20                   # ◀ parametr: největší stahovaný soubor (MB); obě gridové sítě se stáhnou vždy
 T_UTM = Transformer.from_crs(4326, 32633, always_xy=True)
-to_utm = lambda g: shapely.transform(g, lambda xy: np.column_stack(T_UTM.transform(xy[:, 0], xy[:, 1])))
+def to_utm(g):
+    return shapely.transform(g, lambda xy: np.column_stack(T_UTM.transform(xy[:, 0], xy[:, 1])))
 layers = {}
 for code, z in zones.iterrows():
     if z.MB <= MAX_MB or code in ("GRID_CTR", "GRID_ATZ"):
@@ -113,7 +114,8 @@ for tr in re.findall(r"<tr.*?</tr>", page, re.S):
 zones = pd.DataFrame(rows).set_index("code")
 MAX_MB = 20                   # ◀ parameter: largest file to download (MB); both grids are always downloaded
 T_UTM = Transformer.from_crs(4326, 32633, always_xy=True)
-to_utm = lambda g: shapely.transform(g, lambda xy: np.column_stack(T_UTM.transform(xy[:, 0], xy[:, 1])))
+def to_utm(g):
+    return shapely.transform(g, lambda xy: np.column_stack(T_UTM.transform(xy[:, 0], xy[:, 1])))
 layers = {}
 for code, z in zones.iterrows():
     if z.MB <= MAX_MB or code in ("GRID_CTR", "GRID_ATZ"):
@@ -188,7 +190,8 @@ BBOX = (16.45, 49.10, 16.80, 49.30)   # ◀ parametr: území (zem. délka a š�
 STEP = 1 / 480                        # krok 7,5″: polovina buňky GRID_ATZ, čtvrtina buňky GRID_CTR
 lon = np.arange(BBOX[0] + STEP / 2, BBOX[2], STEP); lat = np.arange(BBOX[1] + STEP / 2, BBOX[3], STEP)
 LON, LAT = np.meshgrid(lon, lat)
-hmax = lambda txt: float(re.search(r"-\\s*([\\d.]+)\\s*m\\s*AGL", txt).group(1))
+def hmax(txt):
+    return float(re.search(r"-\\s*([\\d.]+)\\s*m\\s*AGL", txt).group(1))
 allowed = np.full(LON.shape, np.nan)
 for code in ("GRID_CTR", "GRID_ATZ"):
     for g, v in zip(layers[code].geom, layers[code].vertical_limit):
@@ -218,7 +221,8 @@ BBOX = (16.45, 49.10, 16.80, 49.30)   # ◀ parameter: area (longitude and latit
 STEP = 1 / 480                        # 7.5″ step: half a GRID_ATZ cell, a quarter of a GRID_CTR cell
 lon = np.arange(BBOX[0] + STEP / 2, BBOX[2], STEP); lat = np.arange(BBOX[1] + STEP / 2, BBOX[3], STEP)
 LON, LAT = np.meshgrid(lon, lat)
-hmax = lambda txt: float(re.search(r"-\\s*([\\d.]+)\\s*m\\s*AGL", txt).group(1))
+def hmax(txt):
+    return float(re.search(r"-\\s*([\\d.]+)\\s*m\\s*AGL", txt).group(1))
 allowed = np.full(LON.shape, np.nan)
 for code in ("GRID_CTR", "GRID_ATZ"):
     for g, v in zip(layers[code].geom, layers[code].vertical_limit):
@@ -256,7 +260,9 @@ FLS = [65, 95]                # ◀ parametr: letové hladiny (např. dolní hra
 met = pd.DataFrame(get("https://aviationweather.gov/api/data/metar", params={"ids": STATION, "format": "json", "hours": 168}).json())
 met["time"] = pd.to_datetime(met.reportTime); met = met.dropna(subset=["altim", "temp"]).sort_values("time").set_index("time")
 h_s = float(met.elev.iloc[0])
-pa = lambda p: 44330.77 * (1 - (p / 1013.25) ** 0.190263)                 # tlaková výška (m) v ISA
+# tlaková výška (m) v ISA
+def pa(p):
+    return 44330.77 * (1 - (p / 1013.25) ** 0.190263)
 def true_alt(fl, qnh, t_s):
     """Skutečná nadmořská výška letové hladiny: nejdřív výška podle QNH, pak oprava na teplotu vrstvy mezi letištěm a hladinou."""
     z_q = fl * 100 * 0.3048 - pa(qnh)                                       # výška na výškoměru nastaveném na QNH
@@ -279,7 +285,9 @@ FLS = [65, 95]                # ◀ parameter: flight levels (e.g. lower limits 
 met = pd.DataFrame(get("https://aviationweather.gov/api/data/metar", params={"ids": STATION, "format": "json", "hours": 168}).json())
 met["time"] = pd.to_datetime(met.reportTime); met = met.dropna(subset=["altim", "temp"]).sort_values("time").set_index("time")
 h_s = float(met.elev.iloc[0])
-pa = lambda p: 44330.77 * (1 - (p / 1013.25) ** 0.190263)                 # pressure altitude (m) in ISA
+# pressure altitude (m) in ISA
+def pa(p):
+    return 44330.77 * (1 - (p / 1013.25) ** 0.190263)
 def true_alt(fl, qnh, t_s):
     """True altitude of a flight level: first the altitude on QNH, then a correction for the temperature of the layer between the airport and the level."""
     z_q = fl * 100 * 0.3048 - pa(qnh)                                       # altitude on an altimeter set to QNH

@@ -14,7 +14,7 @@ Spočítat denní chod teploty povrchů ze skutečného záření, teploty, vlhk
 
 Hodinová teplota a vlhkost vzduchu, globální záření na vodorovnou i skloněnou plochu, oblačnost, vítr v 10 m a teplota povrchu půdy z Open-Meteo pro střed Brna, co služba vrátí za posledních 92 dní, obvykle dva až tři měsíce (model počasí, ne měření na místě); tepelné vlastnosti materiálů z literatury.
 
-Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
+Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Notebook je uložený bez výstupů; čísla a grafy vzniknou až při spuštění a u průběžně aktualizovaných dat se mohou mezi běhy lišit.
 
 ## Postup krok za krokem
 
@@ -29,12 +29,12 @@ Parametry, které student mění:
 
 ### 2. Model povrchu a jeden jasný den
 
-Pro každý povrch se každou minutu řeší energetická bilance **Rn = H + LE + G**:
+Pro každý povrch se každou minutu řeší energetická bilance $R_n = H + LE + G$:
 
-- Rn: pohlcené sluneční záření (1 − albedo) · S plus dlouhovlnná bilance ε (L↓ − σ T⁴). L↓ z oblohy je z teploty a vlhkosti vzduchu (Brutsaert 1975) a z oblačnosti (Crawford a Duchon 1999).
-- H: citelné teplo do vzduchu h · (T − Tₐ), h = 5,7 + 3,8 U, kde U je vítr ve 2 m (z větru v 10 m logaritmickým profilem, ×0,75).
-- LE: výpar ρ L (q*(T) − qₐ) / (rₐ + r_s); odpor průduchů r_s je u louky 70 s/m, u lesa 100 s/m, voda se vypařuje volně, asfalt a panel vůbec.
-- G: teplo do hloubky. Asfalt a půda mají 12 vrstev do 1 m, rybník je promíchaná vrstva vody 1 m, koruny lesa a FV panel jsou tenká vrstva bez vedení do země.
+- $R_n$: pohlcené sluneční záření $(1 - \alpha)\,S$ plus dlouhovlnná bilance $\varepsilon\,(L_\downarrow - \sigma T^4)$. L↓ z oblohy je z teploty a vlhkosti vzduchu (Brutsaert 1975) a z oblačnosti (Crawford a Duchon 1999).
+- $H$: citelné teplo do vzduchu $h\,(T - T_a)$, $h = 5{,}7 + 3{,}8\,U$ (W·m⁻²·K⁻¹), kde $U$ je vítr ve 2 m (m/s) (z větru v 10 m logaritmickým profilem, ×0,75).
+- $LE$: výpar $\rho L\,(q^*(T) - q_a) / (r_a + r_s)$; odpor průduchů $r_s$ je u louky 70 s/m, u lesa 100 s/m, voda se vypařuje volně, asfalt a panel vůbec.
+- $G$: teplo do hloubky. Asfalt a půda mají 12 vrstev do 1 m, rybník je promíchaná vrstva vody 1 m, koruny lesa a FV panel jsou tenká vrstva bez vedení do země.
 
 Sluneční záření, teplota, vlhkost, oblačnost a vítr jsou skutečné hodinové hodnoty z Open-Meteo. Model běží od začátku období, prvních 14 dní slouží k rozběhu.
 
@@ -79,7 +79,13 @@ Parametry, které student mění:
 
 ### 6. Emisivita v kameře a fotovoltaika
 
-Kamera měří vyzařování W = ε σ T⁴ + (1 − ε) σ T_odr⁴, kde druhý člen je odražené okolí. Teplotu z něj počítá s emisivitou ε_k a odraženou teplotou T_odr, které nastavíš v kameře. Zjednodušení: počítáme v celém spektru, ne jen v pásmu 8–14 µm, a odražené okolí bereme jako oblohu.
+Kamera měří vyzařování
+
+$$
+W = \varepsilon \sigma T^4 + (1 - \varepsilon)\, \sigma T_\mathrm{odr}^4,
+$$
+
+kde druhý člen je odražené okolí. Teplotu z něj počítá s emisivitou $\varepsilon_k$ a odraženou teplotou $T_\mathrm{odr}$, které nastavíš v kameře. Zjednodušení: počítáme v celém spektru, ne jen v pásmu 8–14 µm, a odražené okolí bereme jako oblohu.
 
 Pro kontrolu FV elektráren se doporučuje ozáření panelu aspoň 600 W/m² (IEA PVPS). Ozáření skloněné plochy máme z Open-Meteo.
 

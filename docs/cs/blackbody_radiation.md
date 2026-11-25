@@ -14,7 +14,7 @@ Převést termální pásmo Landsatu 8 z DN na zář a jasovou teplotu, opravit 
 
 Landsat 8 OLI/TIRS, Collection 1 Level-1, scéna `LC08_L1TP_191025_20190626_20190705_01_T1` (26. 6. 2019, 9:51 UTC, oblačnost 0,1 %), pásma B4, B5 a B10 a soubor MTL s kalibračními konstantami z veřejného archivu Google Cloud. Čte se jen výřez 16 × 16 km kolem centra Prahy (asi 3 MB).
 
-Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
+Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Notebook je uložený bez výstupů; čísla a grafy vzniknou až při spuštění a u průběžně aktualizovaných dat se mohou mezi běhy lišit.
 
 ## Postup krok za krokem
 
@@ -24,7 +24,58 @@ Nainstaluje knihovny, které Colab nemá předem (`rasterio`), a stáhne data.
 
 ### 2. Planckův zákon, Wien a čtvrtá mocnina
 
-Načte knihovny a stáhne data.
+### Z teploty na spektrální zář: Planckův zákon
+
+Planckův zákon popisuje, jak záření černého tělesa závisí na vlnové délce a teplotě:
+
+$$
+L_\lambda(\lambda, T) =
+\frac{2 h c^2}{\lambda^5}
+\frac{1}{\exp\!\left(\frac{h c}{\lambda k T}\right)-1}.
+$$
+
+| Symbol | Význam | Jednotka ve vzorci |
+| --- | --- | --- |
+| $\lambda$ | vlnová délka | $\mathrm{m}$ |
+| $T$ | teplota černého tělesa | $\mathrm{K}$ |
+| $h$ | Planckova konstanta | $\mathrm{J\,s}$ |
+| $c$ | rychlost světla ve vakuu | $\mathrm{m\,s^{-1}}$ |
+| $k$ | Boltzmannova konstanta | $\mathrm{J\,K^{-1}}$ |
+
+Spektrální zář $L_\lambda$ v tomto vzorci má jednotku
+$\mathrm{W\,m^{-2}\,sr^{-1}\,m^{-1}}$: je vyjádřena na metr vlnové délky.
+
+**Jak vzorec souvisí s kódem:** `planck(lam_um, T)` přijímá vlnovou délku v µm
+a teplotu v K. První `1e-6` převádí vlnovou délku z µm na m. Poslední `1e-6`
+převádí vypočtenou zář na $\mathrm{W\,m^{-2}\,sr^{-1}\,\mu m^{-1}}$, tedy na µm
+vlnové délky, které používáme v notebooku.
+
+`np.expm1(x)` počítá $e^x-1$; pro malé hodnoty $x$ je numericky přesnější
+než přímý zápis `np.exp(x) - 1`.
+
+### Ze spektrální záře na jasovou teplotu
+
+**Jasová teplota** $T_b$ je teplota černého tělesa, které by na dané vlnové délce
+mělo naměřenou spektrální zář. Vyjádřením teploty z Planckova zákona dostaneme:
+
+$$
+T_b(\lambda, L_\lambda) =
+\frac{h c}{\lambda k}
+\frac{1}{\ln\!\left(1+\frac{2 h c^2}{\lambda^5 L_\lambda}\right)}.
+$$
+
+Symboly a jednotky jsou stejné jako výše: $\lambda$ je v metrech a $L_\lambda$
+je zář na metr vlnové délky. Výsledná teplota $T_b$ je v kelvinech.
+U skutečného povrchu se jasová teplota může lišit od jeho teploty; vliv
+emisivity prozkoumáme v dalších částech notebooku.
+
+**Jak vzorec souvisí s kódem:** `planck_inv(lam_um, L)` přijímá vlnovou délku
+v µm a zář v $\mathrm{W\,m^{-2}\,sr^{-1}\,\mu m^{-1}}$. Vlnovou délku proto
+násobí `1e-6` a zář násobí `1e6`, aby ve vzorci byly jednotky na metr.
+Funkce vrací jasovou teplotu v K.
+
+`np.log1p(x)` počítá přirozený logaritmus $\ln(1+x)$; pro malé hodnoty $x$
+je numericky přesnější než přímý zápis `np.log(1 + x)`.
 
 Parametry, které student mění:
 
@@ -34,7 +85,13 @@ Parametry, které student mění:
 
 ### 3. Skutečná scéna: z DN na jasovou teplotu
 
-Pásmo B10 (10,6–11,2 µm) ukládá digitální čísla (DN). Soubor MTL obsahuje lineární převod na zář, L = M · DN + A, a konstanty K1, K2, kterými se zář převede na jasovou teplotu, T = K2 / ln(K1 / L + 1). Je to Planckův zákon zjednodušený na jedno pásmo.
+Pásmo B10 (10,6–11,2 µm) ukládá digitální čísla (DN). Soubor MTL obsahuje koeficienty lineárního převodu na spektrální zář a konstanty $K_1$, $K_2$ pro převod záře na jasovou teplotu:
+
+$$
+L_\lambda = M_L \cdot DN + A_L, \qquad T_b = \frac{K_2}{\ln\!\left(\frac{K_1}{L_\lambda} + 1\right)}.
+$$
+
+$M_L$ a $A_L$ jsou `RADIANCE_MULT_BAND_10` a `RADIANCE_ADD_BAND_10`, $L_\lambda$ vychází ve W·m⁻²·sr⁻¹·µm⁻¹ a $T_b$ v kelvinech. Druhý vzorec je Planckův zákon zjednodušený na jedno pásmo: $K_1$ a $K_2$ v sobě mají konstanty $h$, $c$, $k$ a efektivní vlnovou délku pásma.
 
 Parametry, které student mění:
 
@@ -44,7 +101,7 @@ Parametry, které student mění:
 
 ### 4. Emisivita
 
-Reálné povrchy vyzařují méně než černé těleso: L = ε · B(T). Emisivitu odhadneme z NDVI zjednodušenou metodou prahů podle Sobrina a kol. (2004): holý povrch 0,97, plná vegetace 0,99, mezi tím podle podílu vegetace s opravou na vícenásobné odrazy mezi rostlinami a půdou. Vodě (NDVI < 0) dáme typickou hodnotu 0,991. Odraz oblohy a atmosféru zatím zanedbáme.
+Reálné povrchy vyzařují méně než černé těleso: $L_\lambda = \varepsilon \, B_\lambda(T)$, kde $B_\lambda$ je Planckova funkce a $\varepsilon$ emisivita (0 až 1). Emisivitu odhadneme z NDVI zjednodušenou metodou prahů podle Sobrina a kol. (2004): holý povrch 0,97, plná vegetace 0,99, mezi tím podle podílu vegetace s opravou na vícenásobné odrazy mezi rostlinami a půdou. Vodě (NDVI < 0) dáme typickou hodnotu 0,991. Odraz oblohy a atmosféru zatím zanedbáme.
 
 Parametry, které student mění:
 
@@ -55,7 +112,11 @@ Parametry, které student mění:
 
 ### 5. Odraz oblohy
 
-Povrch s emisivitou ε odráží 1 − ε dlouhovlnného záření, které na něj svítí z oblohy. Jasná obloha je v 10 µm velmi studená, zatažená má zhruba teplotu základny oblačnosti. Senzor dostane L = ε · B(T) + (1 − ε) · B(T_obloha).
+Povrch s emisivitou ε odráží 1 − ε dlouhovlnného záření, které na něj svítí z oblohy. Jasná obloha je v 10 µm velmi studená, zatažená má zhruba teplotu základny oblačnosti. Senzor dostane
+
+$$
+L_\lambda = \varepsilon \, B_\lambda(T) + (1 - \varepsilon) \, B_\lambda(T_\mathrm{obloha}).
+$$
 
 Parametry, které student mění:
 
@@ -65,7 +126,7 @@ Parametry, které student mění:
 
 ### 6. Požár menší než pixel
 
-Pixel je směs: podíl p hoří při teplotě požáru, zbytek má teplotu pozadí. Jako pozadí vezmeme medián skutečné jasové teploty z výřezu (Praha) a porovnáme pásmo 3,9 µm (požárová pásma MODIS a VIIRS leží mezi 3,7 a 4,1 µm) s pásmem 10,9 µm.
+Pixel je směs: podíl $p$ hoří při teplotě požáru, zbytek má teplotu pozadí, takže $L_\lambda = p \, B_\lambda(T_\mathrm{požár}) + (1 - p) \, B_\lambda(T_\mathrm{pozadí})$. Jako pozadí vezmeme medián skutečné jasové teploty z výřezu (Praha) a porovnáme pásmo 3,9 µm (požárová pásma MODIS a VIIRS leží mezi 3,7 a 4,1 µm) s pásmem 10,9 µm.
 
 Parametry, které student mění:
 

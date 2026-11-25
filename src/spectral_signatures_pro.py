@@ -166,7 +166,7 @@ sens.round(3)
             "Spusť buňku pro `cab`, `cw`, `cm`, `lai` a `ala`. Podle grafů a tabulky citlivosti řekni, která pásma Sentinelu-2 nesou informaci o chlorofylu, o vodě v listech a o LAI. Které dvě proměnné mění red edge a NIR skoro stejně, jen s opačným znaménkem, a co to znamená pro odhad LAI z jednoho snímku?",
             "Run the cell for `cab`, `cw`, `cm`, `lai` and `ala`. From the plots and the sensitivity table, say which Sentinel-2 bands carry information on chlorophyll, leaf water and LAI. Which two variables change the red edge and NIR almost equally but with opposite sign, and what does this mean for estimating LAI from one image?")),
         ("md", t(
-            "## 3. Nasycení indexů v modelu\n\nNecháme LAI růst od 0 do 7 pro tři obsahy chlorofylu a sledujeme NDVI, NDRE a CIre = NIR/RE1 − 1 (Gitelson a kol. 2005). Tabulka ukazuje, při jakém LAI index dosáhne 90 % rozdílu mezi holou půdou a LAI 7, a jak moc index posune změna chlorofylu, vztaženo k tomuto rozdílu.",
+            "## 3. Nasycení indexů v modelu\n\nNecháme LAI růst od 0 do 7 pro tři obsahy chlorofylu a sledujeme NDVI, NDRE a $\\mathrm{CI_{re}} = \\mathrm{NIR}/\\mathrm{RE1} - 1$ (Gitelson a kol. 2005). Tabulka ukazuje, při jakém LAI index dosáhne 90 % rozdílu mezi holou půdou a LAI 7, a jak moc index posune změna chlorofylu, vztaženo k tomuto rozdílu.",
             "## 3. Index saturation in the model\n\nWe let LAI grow from 0 to 7 for three chlorophyll contents and follow NDVI, NDRE and CIre = NIR/RE1 − 1 (Gitelson et al. 2005). The table shows at what LAI the index reaches 90 % of the difference between bare soil and LAI 7, and how much a change in chlorophyll shifts the index, relative to that difference.")),
         ("code", t('''
 INDICES = {                                                            # ◀ parametr: indexy; přidej vlastní, např. MTCI
@@ -176,7 +176,7 @@ INDICES = {                                                            # ◀ par
 }
 LAIS = np.arange(0, 7.01, 0.25)
 CABS = [20, 40, 60]
-sim = {cab: [dict(zip(INV, prosail_s2(cab=cab, lai=l))) for l in LAIS] for cab in CABS}
+sim = {cab: [dict(zip(INV, prosail_s2(cab=cab, lai=lai))) for lai in LAIS] for cab in CABS}
 fig, ax = plt.subplots(1, len(INDICES), figsize=(4.2 * len(INDICES), 3.6))
 rows = {}
 for a, (name, f) in zip(ax, INDICES.items()):
@@ -198,7 +198,7 @@ INDICES = {                                                            # ◀ par
 }
 LAIS = np.arange(0, 7.01, 0.25)
 CABS = [20, 40, 60]
-sim = {cab: [dict(zip(INV, prosail_s2(cab=cab, lai=l))) for l in LAIS] for cab in CABS}
+sim = {cab: [dict(zip(INV, prosail_s2(cab=cab, lai=lai))) for lai in LAIS] for cab in CABS}
 fig, ax = plt.subplots(1, len(INDICES), figsize=(4.2 * len(INDICES), 3.6))
 rows = {}
 for a, (name, f) in zip(ax, INDICES.items()):
@@ -246,11 +246,11 @@ x, y = Transformer.from_crs(4326, grid[1], always_xy=True).transform(PLON, PLAT)
 col, row = [int(v) for v in ~grid[0] * (x, y)]
 obs = np.array([scenes[day]["refl"][b][row, col] for b in INV])
 rmse = np.sqrt(((LUT[day] - obs) ** 2).mean(1))
-best = np.argsort(rmse)[:K]
-sol = lut.iloc[best].assign(ccc=lambda d: d.lai * d.cab, rmse=rmse[best])
-print(f"{day}, bod {PLON}, {PLAT}: NDVI {(obs[6] - obs[2]) / (obs[6] + obs[2]):.2f}, nejlepší shoda RMSE {rmse[best[0]]:.4f}")
+best_fits = np.argsort(rmse)[:K]
+sol = lut.iloc[best_fits].assign(ccc=lambda d: d.lai * d.cab, rmse=rmse[best_fits])
+print(f"{day}, bod {PLON}, {PLAT}: NDVI {(obs[6] - obs[2]) / (obs[6] + obs[2]):.2f}, nejlepší shoda RMSE {rmse[best_fits[0]]:.4f}")
 fig, ax = plt.subplots(1, 3, figsize=(15, 4))
-for i in best[:10]:
+for i in best_fits[:10]:
     ax[0].plot(cwl / 1000, LUT[day][i], color="0.7", lw=1)
 ax[0].plot(cwl / 1000, obs, "ko-", label="Sentinel-2"); ax[0].set(xlabel="vlnová délka (µm)", ylabel="odrazivost", title="pixel a 10 nejlepších simulací"); ax[0].legend()
 for a, v in zip(ax[1:], ["ala", "cab"]):
@@ -267,11 +267,11 @@ x, y = Transformer.from_crs(4326, grid[1], always_xy=True).transform(PLON, PLAT)
 col, row = [int(v) for v in ~grid[0] * (x, y)]
 obs = np.array([scenes[day]["refl"][b][row, col] for b in INV])
 rmse = np.sqrt(((LUT[day] - obs) ** 2).mean(1))
-best = np.argsort(rmse)[:K]
-sol = lut.iloc[best].assign(ccc=lambda d: d.lai * d.cab, rmse=rmse[best])
-print(f"{day}, point {PLON}, {PLAT}: NDVI {(obs[6] - obs[2]) / (obs[6] + obs[2]):.2f}, best match RMSE {rmse[best[0]]:.4f}")
+best_fits = np.argsort(rmse)[:K]
+sol = lut.iloc[best_fits].assign(ccc=lambda d: d.lai * d.cab, rmse=rmse[best_fits])
+print(f"{day}, point {PLON}, {PLAT}: NDVI {(obs[6] - obs[2]) / (obs[6] + obs[2]):.2f}, best match RMSE {rmse[best_fits[0]]:.4f}")
 fig, ax = plt.subplots(1, 3, figsize=(15, 4))
-for i in best[:10]:
+for i in best_fits[:10]:
     ax[0].plot(cwl / 1000, LUT[day][i], color="0.7", lw=1)
 ax[0].plot(cwl / 1000, obs, "ko-", label="Sentinel-2"); ax[0].set(xlabel="wavelength (µm)", ylabel="reflectance", title="pixel and the 10 best simulations"); ax[0].legend()
 for a, v in zip(ax[1:], ["ala", "cab"]):

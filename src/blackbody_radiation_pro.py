@@ -51,9 +51,6 @@ from rasterio.warp import reproject, Resampling
 from rasterio.windows import from_bounds
 from pyproj import Transformer
 warnings.filterwarnings("ignore")
-C1, C2 = 1.191042e8, 1.4387752e4         # Planckovy konstanty pro λ v µm a zář ve W·m⁻²·sr⁻¹·µm⁻¹
-planck = lambda lam, T: C1 / lam**5 / (np.exp(C2 / (lam * T)) - 1)
-planck_inv = lambda lam, L: C2 / (lam * np.log(C1 / (lam**5 * L) + 1))
 ''', '''
 import requests, warnings
 import numpy as np, pandas as pd
@@ -63,9 +60,48 @@ from rasterio.warp import reproject, Resampling
 from rasterio.windows import from_bounds
 from pyproj import Transformer
 warnings.filterwarnings("ignore")
-C1, C2 = 1.191042e8, 1.4387752e4         # Planck constants for λ in µm and radiance in W·m⁻²·sr⁻¹·µm⁻¹
-planck = lambda lam, T: C1 / lam**5 / (np.exp(C2 / (lam * T)) - 1)
-planck_inv = lambda lam, L: C2 / (lam * np.log(C1 / (lam**5 * L) + 1))
+''')),
+        ("md", t(r"""Planckův zákon a jeho inverzi zapíšeme rovnou v jednotkách notebooku, vlnovou délku $\lambda$ v µm a spektrální zář $L_\lambda$ ve $\mathrm{W\,m^{-2}\,sr^{-1}\,\mu m^{-1}}$:
+
+$$
+L_\lambda(\lambda, T) = \frac{C_1}{\lambda^5 \left[\exp\!\left(\frac{C_2}{\lambda T}\right) - 1\right]}, \qquad
+T_b(\lambda, L_\lambda) = \frac{C_2}{\lambda \ln\!\left(\frac{C_1}{\lambda^5 L_\lambda} + 1\right)}.
+$$
+
+$C_1 = 2hc^2 = 1{,}191\,042\times10^{8}\ \mathrm{W\,m^{-2}\,sr^{-1}\,\mu m^{4}}$ a $C_2 = hc/k = 1{,}438\,775\,2\times10^{4}\ \mathrm{\mu m\,K}$ v sobě mají převod z metrů na mikrometry, proto ve funkcích není žádné `1e-6`. $T$ i jasová teplota $T_b$ jsou v kelvinech.""", r"""We write Planck's law and its inverse directly in the units of this notebook, wavelength $\lambda$ in µm and spectral radiance $L_\lambda$ in $\mathrm{W\,m^{-2}\,sr^{-1}\,\mu m^{-1}}$:
+
+$$
+L_\lambda(\lambda, T) = \frac{C_1}{\lambda^5 \left[\exp\!\left(\frac{C_2}{\lambda T}\right) - 1\right]}, \qquad
+T_b(\lambda, L_\lambda) = \frac{C_2}{\lambda \ln\!\left(\frac{C_1}{\lambda^5 L_\lambda} + 1\right)}.
+$$
+
+$C_1 = 2hc^2 = 1.191\,042\times10^{8}\ \mathrm{W\,m^{-2}\,sr^{-1}\,\mu m^{4}}$ and $C_2 = hc/k = 1.438\,775\,2\times10^{4}\ \mathrm{\mu m\,K}$ already contain the conversion from metres to micrometres, so the functions need no `1e-6`. $T$ and the brightness temperature $T_b$ are in kelvin.""")),
+        ("code", t('''
+# Planckovy konstanty pro λ v µm a zář ve W·m⁻²·sr⁻¹·µm⁻¹
+C1, C2 = 1.191042e8, 1.4387752e4
+
+
+def planck(lam, T):
+    """Spektrální zář černého tělesa (W·m⁻²·sr⁻¹·µm⁻¹) pro vlnovou délku v µm a teplotu v K."""
+    return C1 / lam**5 / (np.exp(C2 / (lam * T)) - 1)
+
+
+def planck_inv(lam, L):
+    """Jasová teplota (K) pro vlnovou délku v µm a zář ve W·m⁻²·sr⁻¹·µm⁻¹."""
+    return C2 / (lam * np.log(C1 / (lam**5 * L) + 1))
+''', '''
+# Planck constants for λ in µm and radiance in W·m⁻²·sr⁻¹·µm⁻¹
+C1, C2 = 1.191042e8, 1.4387752e4
+
+
+def planck(lam, T):
+    """Blackbody spectral radiance (W·m⁻²·sr⁻¹·µm⁻¹) for wavelength in µm and temperature in K."""
+    return C1 / lam**5 / (np.exp(C2 / (lam * T)) - 1)
+
+
+def planck_inv(lam, L):
+    """Brightness temperature (K) for wavelength in µm and radiance in W·m⁻²·sr⁻¹·µm⁻¹."""
+    return C2 / (lam * np.log(C1 / (lam**5 * L) + 1))
 ''')),
         ("code", t('''
 SCENES = {"2019-06-26": "LC08_L1TP_191025_20190626_20190705_01_T1", "2017-05-19": "LC08_L1TP_191025_20170519_20170525_01_T1"}   # ◀ parametr: dvě scény (vlna veder, jaro)
@@ -77,7 +113,7 @@ x0, y0 = round(x0 / 30) * 30, round(y0 / 30) * 30
 
 def scene_data(scene):
     base = f"https://storage.googleapis.com/gcp-public-data-landsat/LC08/01/191/025/{scene}/{scene}"
-    mtl = {k.strip(): v.strip().strip('"') for k, v in (l.split(" = ") for l in requests.get(base + "_MTL.txt", timeout=60).text.splitlines() if " = " in l)}
+    mtl = {k.strip(): v.strip().strip('"') for k, v in (line.split(" = ") for line in requests.get(base + "_MTL.txt", timeout=60).text.splitlines() if " = " in line)}
     out = {"mtl": mtl}
     for b in ["4", "5", "10", "QA"]:
         with rasterio.Env(**ENV), rasterio.open(f"/vsicurl/{base}_B{b}.TIF") as r:
@@ -111,7 +147,7 @@ x0, y0 = round(x0 / 30) * 30, round(y0 / 30) * 30
 
 def scene_data(scene):
     base = f"https://storage.googleapis.com/gcp-public-data-landsat/LC08/01/191/025/{scene}/{scene}"
-    mtl = {k.strip(): v.strip().strip('"') for k, v in (l.split(" = ") for l in requests.get(base + "_MTL.txt", timeout=60).text.splitlines() if " = " in l)}
+    mtl = {k.strip(): v.strip().strip('"') for k, v in (line.split(" = ") for line in requests.get(base + "_MTL.txt", timeout=60).text.splitlines() if " = " in line)}
     out = {"mtl": mtl}
     for b in ["4", "5", "10", "QA"]:
         with rasterio.Env(**ENV), rasterio.open(f"/vsicurl/{base}_B{b}.TIF") as r:
@@ -137,8 +173,8 @@ for day, s in S.items():
           f"B10 brightness temperature median {np.median(s['BT'][s['ok']]) - 273.15:.1f} °C")
 ''')),
         ("md", t(
-            "## 2. Teplota povrchu z rovnice přenosu záření\n\nSenzor nad atmosférou měří L = τ · [ε · B(Ts) + (1 − ε) · L↓] + L↑: záření povrchu zeslabené atmosférou, k tomu odraz záření oblohy a záření samotné atmosféry. Rovnici vyřešíme pro Ts. Emisivitu odhadneme z NDVI jako v základní verzi, parametry atmosféry τ, L↑ a L↓ jsou orientační hodnoty pro vlhké letní ovzduší.",
-            "## 2. Surface temperature from the radiative transfer equation\n\nThe sensor above the atmosphere measures L = τ · [ε · B(Ts) + (1 − ε) · L↓] + L↑: the surface emission attenuated by the atmosphere, plus reflected sky radiation and the emission of the atmosphere itself. We solve the equation for Ts. Emissivity is estimated from NDVI as in the basic version; the atmospheric parameters τ, L↑ and L↓ are indicative values for a humid summer atmosphere.")),
+            "## 2. Teplota povrchu z rovnice přenosu záření\n\nSenzor nad atmosférou měří\n\n$$\nL = \\tau \\left[\\varepsilon\\, B(T_s) + (1 - \\varepsilon)\\, L_\\downarrow\\right] + L_\\uparrow :\n$$\n\nzáření povrchu $\\varepsilon B(T_s)$ zeslabené propustností atmosféry $\\tau$, k tomu odraz záření oblohy $L_\\downarrow$ a záření samotné atmosféry $L_\\uparrow$ (vše ve W·m⁻²·sr⁻¹·µm⁻¹, $B$ je Planckova funkce). Rovnici vyřešíme pro Ts. Emisivitu odhadneme z NDVI jako v základní verzi, parametry atmosféry τ, L↑ a L↓ jsou orientační hodnoty pro vlhké letní ovzduší.",
+            "## 2. Surface temperature from the radiative transfer equation\n\nThe sensor above the atmosphere measures\n\n$$\nL = \\tau \\left[\\varepsilon\\, B(T_s) + (1 - \\varepsilon)\\, L_\\downarrow\\right] + L_\\uparrow :\n$$\n\nthe surface emission $\\varepsilon B(T_s)$ attenuated by the atmospheric transmittance $\\tau$, plus reflected sky radiation $L_\\downarrow$ and the emission of the atmosphere itself $L_\\uparrow$ (all in W·m⁻²·sr⁻¹·µm⁻¹, $B$ is the Planck function). We solve the equation for Ts. Emissivity is estimated from NDVI as in the basic version; the atmospheric parameters τ, L↑ and L↓ are indicative values for a humid summer atmosphere.")),
         ("code", t('''
 LAM10 = 10.9
 TAU, L_UP, L_DOWN = 0.80, 1.6, 2.7        # ◀ parametr: propustnost a zář atmosféry nahoru a dolů (W·m⁻²·sr⁻¹·µm⁻¹), orientační léto
@@ -227,8 +263,8 @@ pd.DataFrame(rows).round(1)
             "Ve kterém dni je rozdíl mezi zástavbou a poli větší a proč, když vlna veder byla v červnu 2019? Proč se rozdíl zástavby a lesa mezi dny mění méně? Jak by se tepelný ostrov změnil v noci (vzpomeň na tepelnou setrvačnost)?",
             "On which day is the difference between built-up land and cropland larger, and why, given that the heat wave was in June 2019? Why does the built-up minus forest difference change less between the days? How would the heat island change at night (remember thermal inertia)?")),
         ("md", t(
-            "## 4. Prostor teplota–NDVI a index sucha TVDI\n\nV grafu teploty povrchu proti NDVI tvoří pixely trojúhelník nebo lichoběžník. Horní, suchá hrana spojuje nejteplejší pixely pro každé NDVI (povrchy bez vody k výparu), dolní, mokrá hrana nejchladnější. TVDI = (Ts − Ts_mokrá) / (Ts_suchá(NDVI) − Ts_mokrá) leží mezi 0 (vlhko) a 1 (sucho) (Sandholt a kol. 2002). Počítáme ho pro louky a pole.",
-            "## 4. Temperature–NDVI space and the TVDI drought index\n\nIn a plot of surface temperature against NDVI the pixels form a triangle or trapezoid. The upper, dry edge joins the warmest pixels at each NDVI (surfaces with no water to evaporate), the lower, wet edge the coolest. TVDI = (Ts − Ts_wet) / (Ts_dry(NDVI) − Ts_wet) lies between 0 (wet) and 1 (dry) (Sandholt et al. 2002). We compute it for grassland and cropland.")),
+            "## 4. Prostor teplota–NDVI a index sucha TVDI\n\nV grafu teploty povrchu proti NDVI tvoří pixely trojúhelník nebo lichoběžník. Horní, suchá hrana spojuje nejteplejší pixely pro každé NDVI (povrchy bez vody k výparu), dolní, mokrá hrana nejchladnější. Index\n\n$$\n\\mathrm{TVDI} = \\frac{T_s - T_{s,\\mathrm{mokrá}}}{T_{s,\\mathrm{suchá}}(\\mathrm{NDVI}) - T_{s,\\mathrm{mokrá}}}\n$$\n\nleží mezi 0 (vlhko) a 1 (sucho) (Sandholt a kol. 2002). Počítáme ho pro louky a pole.",
+            "## 4. Temperature–NDVI space and the TVDI drought index\n\nIn a plot of surface temperature against NDVI the pixels form a triangle or trapezoid. The upper, dry edge joins the warmest pixels at each NDVI (surfaces with no water to evaporate), the lower, wet edge the coolest. The index\n\n$$\n\\mathrm{TVDI} = \\frac{T_s - T_{s,\\mathrm{wet}}}{T_{s,\\mathrm{dry}}(\\mathrm{NDVI}) - T_{s,\\mathrm{wet}}}\n$$\n\nlies between 0 (wet) and 1 (dry) (Sandholt et al. 2002). We compute it for grassland and cropland.")),
         ("code", t('''
 NBINS = 20                                 # ◀ parametr: počet tříd NDVI pro hledání suché hrany
 land = np.isin(wc, [30, 40])                # louky a pole: TVDI se používá hlavně pro zemědělskou krajinu

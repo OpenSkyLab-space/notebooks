@@ -14,7 +14,7 @@ Rozložit výkon dronu na indukovaný, profilový a škodlivý, nakalibrovat mod
 
 Hodinový vítr v 10 a 120 m, teplota, vlhkost a tlak za posledních 92 dní z Open-Meteo pro Roztoky (modelová data, ne měření); hmotnost, vrtule, baterie a výdrž Mavicu 3E z technického listu DJI (45 min letu stálou rychlostí 32,4 km/h bez větru u hladiny moře do vybití, 38 min visení). Účinnost rotoru FM, indukční ztráty a obvodová rychlost listu jsou odhady; účinnost pohonu a plochu odporu notebook dopočítá kalibrací, takže v nich jsou schované i všechny ostatní ztráty (elektronika, kamera, baterie).
 
-Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
+Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Notebook je uložený bez výstupů; čísla a grafy vzniknou až při spuštění a u průběžně aktualizovaných dat se mohou mezi běhy lišit.
 
 ## Postup krok za krokem
 
@@ -63,7 +63,7 @@ Parametry, které student mění:
 
 ### 6. Visení těsně nad zemí
 
-Blízko země se proud pod rotorem nemůže volně rozšířit, indukovaná rychlost klesne a stejný tah stojí méně výkonu. Cheeseman a Bennett (1955) to popsali vztahem v_IGE / v_OGE = 1 − (R / 4z)², kde z je výška rotoru nad zemí. Vztah platí pro jeden rotor; u kvadrokoptéry se proudy čtyř vrtulí navíc ovlivňují.
+Blízko země se proud pod rotorem nemůže volně rozšířit, indukovaná rychlost klesne a stejný tah stojí méně výkonu. Cheeseman a Bennett (1955) to popsali vztahem $v_\mathrm{IGE} / v_\mathrm{OGE} = 1 - (R / 4z)^2$, kde $R$ je poloměr rotoru a $z$ jeho výška nad zemí. Vztah platí pro jeden rotor; u kvadrokoptéry se proudy čtyř vrtulí navíc ovlivňují.
 
 **Úkol 5.** Do jaké výšky nad zemí je vliv země u Mavicu znatelný (úspora výkonu nad 2 %)? Proč dron při přistání těsně nad zemí „plave“ a proč je to u velkých vrtulí výraznější v metrech? Proč ti vliv země nepomůže při letu nad vysokou vegetací nebo nad vodou se zvlněnou hladinou stejně jako nad betonem?
 

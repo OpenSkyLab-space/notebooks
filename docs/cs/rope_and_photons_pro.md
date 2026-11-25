@@ -14,13 +14,19 @@ Z odrazivosti L1C spočítat zář a počet fotoelektronů v pixelu, odvodit ods
 
 Copernicus Sentinel-2B L1C `S2B_MSIL1C_20240721T100559_N0510_R022_T33UVR_20240721T121133` (21. 7. 2024) z veřejného archivu Google Cloud: metadata MTD_MSIL1C a MTD_TL a výřezy 4 × 4 km pásem B02, B04, B08 a B11 kolem Roztok, asi 2 MB. Parametry přístroje (pupila 150 mm, výška dráhy 786 km) jsou převzaté z popisu MSI. Účinnost ETA a parametry dronu jsou orientační odhady: skutečný přístroj má složitější konstrukci (typy detektorů, u některých pásem sčítání více řádků), takže čísla ukazují řád, ne přesné SNR Sentinelu-2.
 
-Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
+Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Notebook je uložený bez výstupů; čísla a grafy vzniknou až při spuštění a u průběžně aktualizovaných dat se mohou mezi běhy lišit.
 
 ## Postup krok za krokem
 
 ### 1. Příprava a scéna Sentinel-2
 
-Z odrazivosti nad atmosférou ρ (TOA) dostaneme zář L = ρ · E0 · U · cos(θs) / π, kde E0 je sluneční ozáření v pásmu, U oprava na vzdálenost Země–Slunce a θs zenitový úhel Slunce. Všechny tři hodnoty jsou v metadatech scény.
+Z odrazivosti nad atmosférou $\rho$ (TOA) dostaneme spektrální zář
+
+$$
+L = \frac{\rho\, E_0\, U \cos\theta_s}{\pi},
+$$
+
+kde $E_0$ je spektrální sluneční ozářenost v pásmu (W·m⁻²·µm⁻¹), $U$ oprava na vzdálenost Země–Slunce a $\theta_s$ zenitový úhel Slunce; $L$ vyjde ve W·m⁻²·sr⁻¹·µm⁻¹. Všechny tři hodnoty jsou v metadatech scény.
 
 Parametry, které student mění:
 
@@ -28,7 +34,13 @@ Parametry, které student mění:
 
 ### 2. Fotonový rozpočet pixelu
 
-Dalekohled s plochou pupily A vidí jeden pixel pod prostorovým úhlem Ω = (pixel / výška)². Energie, která za dobu t přijde z pixelu, je L · A · Ω · Δλ · t; vydělená energií fotonu h·c/λ a vynásobená účinností ETA dává počet fotoelektronů N. Za t bereme dobu, za kterou stopa družice přejede jeden pixel. Příchod fotonů je náhodný (Poissonův), proto je šum √N a odstup signálu od šumu SNR = √N. Šum detektoru a elektroniky tu zanedbáváme.
+Dalekohled s plochou pupily $A$ vidí jeden pixel pod prostorovým úhlem $\Omega = (\text{pixel} / \text{výška})^2$. Energie, která za dobu $t$ přijde z pixelu, vydělená energií fotonu $hc/\lambda$ a vynásobená účinností $\eta$ (v kódu `ETA`) dává počet fotoelektronů
+
+$$
+N = \frac{L\, A\, \Omega\, \Delta\lambda\, t}{hc/\lambda}\, \eta .
+$$
+
+Za $t$ bereme dobu, za kterou stopa družice přejede jeden pixel. Příchod fotonů je náhodný (Poissonův), proto je šum $\sqrt{N}$ a odstup signálu od šumu $\mathrm{SNR} = N/\sqrt{N} = \sqrt{N}$. Šum detektoru a elektroniky tu zanedbáváme.
 
 Parametry, které student mění:
 

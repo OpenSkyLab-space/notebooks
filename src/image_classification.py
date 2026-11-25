@@ -144,54 +144,145 @@ ax[0].legend(); plt.show()
         ("md", t(
             "## 3. Trénovací a testovací pixely\n\nSousední pixely jsou si podobné, takže náhodné rozdělení by přesnost nadsadilo. Trénujeme proto na severní polovině výřezu a testujeme na jižní.",
             "## 3. Training and test pixels\n\nNeighbouring pixels are similar, so a random split would overstate accuracy. We therefore train on the northern half of the window and test on the southern half.")),
+        ("md", t(r"""Vezmeme **až `n_train` pixelů z každé třídy** na severu pro trénink a až
+2 000 pixelů z každé třídy na jihu pro test. Pokud je vhodných pixelů méně,
+vezmeme všechny. Maska `ok` už vymezuje pixely s vyhovující třídou SCL a
+s jednou z vybraných referenčních tříd WorldCover.
+
+Sever a jih vytvoříme jako dvě kopie masky `ok`: v severní masce vypneme
+spodní polovinu řádků, v jižní horní. Funkce `sample` potom pro každou třídu:
+
+1. Pomocí masky vybere její pixely v dané polovině snímku.
+2. Sestaví `class_features`: každý řádek představuje jeden pixel, sloupce jeho
+   šest spektrálních příznaků.
+3. Pomocí `rng.choice` náhodně vybere řádky. `replace=False` znamená, že tentýž
+   pixel nevybere dvakrát. `min` omezí požadovaný počet na dostupné pixely.
+4. Připojí referenční třídu převedenou na číslo 0–4 v pořadí `CLASSES`.
+
+Výstup `X` je tabulka příznaků vybraných pixelů a `y` jejich referenční třídy.
+`np.vstack` spojí skupiny pixelů pod sebe. Výběr po třídách omezuje
+převahu početných tříd; testovací přesnost proto nevyjadřuje přirozené plošné
+zastoupení tříd v celé krajině.
+
+Semínko `1` umožní opakovat celý výběr. Jednotlivá volání `sample` postupně
+posouvají stav generátoru. **Po změně `n_train` spusť tuto buňku a navazující
+modely znovu.**""", r"""We take **up to `n_train` pixels of each class** in the north for training and up to
+2,000 pixels of each class in the south for testing. If fewer suitable pixels exist,
+we take all of them. The mask `ok` already restricts the pixels to a suitable SCL class
+and to one of the selected WorldCover reference classes.
+
+North and south are two copies of the mask `ok`: in the northern mask we switch off
+the bottom half of the rows, in the southern one the top half. The function `sample` then, for each class:
+
+1. Uses the mask to select its pixels in the given half of the image.
+2. Builds `class_features`: each row is one pixel, the columns are its
+   six spectral features.
+3. Picks rows at random with `rng.choice`. `replace=False` means the same
+   pixel is never picked twice. `min` limits the requested count to the available pixels.
+4. Appends the reference class converted to a number 0–4 in the order of `CLASSES`.
+
+The output `X` is the feature table of the selected pixels and `y` their reference classes.
+`np.vstack` stacks the groups of pixels on top of each other. Sampling per class limits
+the dominance of abundant classes; the test accuracy therefore does not reflect the natural
+areal share of the classes in the whole landscape.
+
+The seed `1` makes the whole selection repeatable. Each call of `sample` advances
+the state of the generator. **After changing `n_train`, run this cell and the following
+models again.**""")),
         ("code", t('''
-n_train = 300      # ◀ parametr: počet trénovacích pixelů na třídu
+n_train = 300      # ◀ parametr: nejvýše trénovacích pixelů na třídu
 rng = np.random.default_rng(1)
-rows_ = np.arange(wc.shape[0])[:, None].repeat(wc.shape[1], 1)
-def sample(mask, n):
-    X, y = [], []
-    for i, k in enumerate(CLASSES):
-        idx = np.flatnonzero((mask & (wc == k)).ravel())
-        idx = rng.choice(idx, min(n, len(idx)), replace=False)
-        X.append(X_img.reshape(-1, len(FEAT))[idx]); y += [i] * len(idx)
-    return np.vstack(X), np.array(y)
-north, south = ok & (rows_ < wc.shape[0] // 2), ok & (rows_ >= wc.shape[0] // 2)
+
+middle_row = wc.shape[0] // 2
+north = ok.copy()
+north[middle_row:, :] = False
+south = ok.copy()
+south[:middle_row, :] = False
+
+
+def sample(region_mask, n):
+    """Vybere až n pixelů z každé třídy v dané oblasti, bez opakování."""
+    feature_groups, labels = [], []
+    for class_index, class_code in enumerate(CLASSES):
+        class_mask = region_mask & (wc == class_code)
+        class_features = X_img[class_mask]
+        sample_count = min(n, len(class_features))
+
+        chosen_features = rng.choice(class_features, size=sample_count, replace=False)
+        feature_groups.append(chosen_features)
+        labels.extend([class_index] * sample_count)
+
+    return np.vstack(feature_groups), np.array(labels)
+
+
 Xtr, ytr = sample(north, n_train)
 Xte, yte = sample(south, 2000)
 print("trénink:", np.bincount(ytr), "test:", np.bincount(yte))
-names = list(CLASSES.values())
-
-def report(model, title):
-    pred = model.predict(Xte)
-    cm = confusion_matrix(yte, pred, labels=range(5))
-    pa, ua = np.diag(cm) / cm.sum(1), np.diag(cm) / np.maximum(cm.sum(0), 1)
-    tab = pd.DataFrame(cm.astype(object), index=[f"ref {n}" for n in names], columns=names)
-    tab["PA"] = pa.round(2); tab.loc["UA"] = list(ua.round(2)) + [""]
-    print(f"{title}: celková přesnost test {np.mean(pred == yte):.1%}, trénink {model.score(Xtr, ytr):.1%}, kappa {cohen_kappa_score(yte, pred):.2f}")
-    return tab
 ''', '''
-n_train = 300      # ◀ parameter: number of training pixels per class
+n_train = 300      # ◀ parameter: at most this many training pixels per class
 rng = np.random.default_rng(1)
-rows_ = np.arange(wc.shape[0])[:, None].repeat(wc.shape[1], 1)
-def sample(mask, n):
-    X, y = [], []
-    for i, k in enumerate(CLASSES):
-        idx = np.flatnonzero((mask & (wc == k)).ravel())
-        idx = rng.choice(idx, min(n, len(idx)), replace=False)
-        X.append(X_img.reshape(-1, len(FEAT))[idx]); y += [i] * len(idx)
-    return np.vstack(X), np.array(y)
-north, south = ok & (rows_ < wc.shape[0] // 2), ok & (rows_ >= wc.shape[0] // 2)
+
+middle_row = wc.shape[0] // 2
+north = ok.copy()
+north[middle_row:, :] = False
+south = ok.copy()
+south[:middle_row, :] = False
+
+
+def sample(region_mask, n):
+    """Select up to n pixels of each class in the given region, without repetition."""
+    feature_groups, labels = [], []
+    for class_index, class_code in enumerate(CLASSES):
+        class_mask = region_mask & (wc == class_code)
+        class_features = X_img[class_mask]
+        sample_count = min(n, len(class_features))
+
+        chosen_features = rng.choice(class_features, size=sample_count, replace=False)
+        feature_groups.append(chosen_features)
+        labels.extend([class_index] * sample_count)
+
+    return np.vstack(feature_groups), np.array(labels)
+
+
 Xtr, ytr = sample(north, n_train)
 Xte, yte = sample(south, 2000)
 print("training:", np.bincount(ytr), "test:", np.bincount(yte))
+''')),
+        ("md", t(r"""### Jak budeme vyhodnocovat klasifikátory
+
+Funkce `report` porovná předpověď modelu na testovacích pixelech s referenčními
+třídami WorldCover. Vrátí chybovou matici s přesností zpracovatele (PA) a
+uživatele (UA) a vypíše celkovou přesnost na testu i tréninku a koeficient kappa.
+Stejnou funkci použijeme pro všechny modely níže.""", r"""### How we will evaluate the classifiers
+
+The function `report` compares the model's prediction on the test pixels with the WorldCover
+reference classes. It returns the confusion matrix with producer's (PA) and
+user's (UA) accuracy and prints the overall accuracy on the test and training pixels and the kappa coefficient.
+We use the same function for all models below.""")),
+        ("code", t('''
 names = list(CLASSES.values())
+
 
 def report(model, title):
     pred = model.predict(Xte)
     cm = confusion_matrix(yte, pred, labels=range(5))
     pa, ua = np.diag(cm) / cm.sum(1), np.diag(cm) / np.maximum(cm.sum(0), 1)
     tab = pd.DataFrame(cm.astype(object), index=[f"ref {n}" for n in names], columns=names)
-    tab["PA"] = pa.round(2); tab.loc["UA"] = list(ua.round(2)) + [""]
+    tab["PA"] = pa.round(2)
+    tab.loc["UA"] = list(ua.round(2)) + [""]
+    print(f"{title}: celková přesnost test {np.mean(pred == yte):.1%}, trénink {model.score(Xtr, ytr):.1%}, kappa {cohen_kappa_score(yte, pred):.2f}")
+    return tab
+''', '''
+names = list(CLASSES.values())
+
+
+def report(model, title):
+    pred = model.predict(Xte)
+    cm = confusion_matrix(yte, pred, labels=range(5))
+    pa, ua = np.diag(cm) / cm.sum(1), np.diag(cm) / np.maximum(cm.sum(0), 1)
+    tab = pd.DataFrame(cm.astype(object), index=[f"ref {n}" for n in names], columns=names)
+    tab["PA"] = pa.round(2)
+    tab.loc["UA"] = list(ua.round(2)) + [""]
     print(f"{title}: overall accuracy test {np.mean(pred == yte):.1%}, training {model.score(Xtr, ytr):.1%}, kappa {cohen_kappa_score(yte, pred):.2f}")
     return tab
 ''')),
@@ -254,7 +345,8 @@ ax[1].set(xlabel="max. tree depth", title="random forest (200 trees)"); ax[1].le
             "## 6. A neural network and overfitting\n\nA small network with one hidden layer. We train it on few pixels and watch training and test accuracy over the epochs.")),
         ("code", t('''
 hidden = 64        # ◀ parametr: počet skrytých neuronů
-n_small = 30       # ◀ parametr: trénovacích pixelů na třídu (malý vzorek se snáz přeučí)
+# Malý trénovací vzorek se snáz přeučí.
+n_small = 30       # ◀ parametr: nejvýše trénovacích pixelů na třídu
 Xs, ys = sample(north, n_small)
 mu, sd = Xs.mean(0), Xs.std(0)
 net = MLPClassifier((hidden,), learning_rate_init=0.01, alpha=0.0, random_state=0)
@@ -268,7 +360,8 @@ plt.xlabel("epocha"); plt.ylabel("celková přesnost"); plt.title(f"síť {hidde
 print(f"konec: trénink {hist[-1, 0]:.1%}, test {hist[-1, 1]:.1%}; nejlepší test {hist[:, 1].max():.1%} v epoše {hist[:, 1].argmax()}")
 ''', '''
 hidden = 64        # ◀ parameter: number of hidden neurons
-n_small = 30       # ◀ parameter: training pixels per class (a small sample overfits more easily)
+# A small training sample overfits more easily.
+n_small = 30       # ◀ parameter: at most this many training pixels per class
 Xs, ys = sample(north, n_small)
 mu, sd = Xs.mean(0), Xs.std(0)
 net = MLPClassifier((hidden,), learning_rate_init=0.01, alpha=0.0, random_state=0)
@@ -285,24 +378,73 @@ print(f"end: training {hist[-1, 0]:.1%}, test {hist[-1, 1]:.1%}; best test {hist
             "Vyzkoušej `hidden` 4, 64 a 256 a `n_small` 30 a 300. Kdy se síť přeučí (trénink roste, test klesá nebo stagnuje)? Co by pomohlo: víc dat, menší síť, nebo zastavit učení dřív? Proč je rozdíl trénink–test u sítě větší než u maximální věrohodnosti?",
             "Try `hidden` 4, 64 and 256 and `n_small` 30 and 300. When does the network overfit (training rises, test falls or stalls)? What would help: more data, a smaller network or stopping earlier? Why is the training–test gap larger for the network than for maximum likelihood?")),
         ("md", t("## 7. Mapa výsledku", "## 7. Result map")),
+        ("md", t(r"""Pro výslednou mapu použijeme `forest`: náhodný les s **200 stromy a maximální
+hloubkou 12**. Jeho nastavení je zde zvoleno předem; kód automaticky nevybírá
+nejlepší model z předchozího porovnání. Po natrénování zobrazíme jeho chybovou
+matici stejnou funkcí `report`.
+
+Klasifikátor očekává jeden pixel na řádku, proto vstupní snímek převedeme na
+tabulku příznaků a předpověď `pred` potom zpět na mapu. Převod na `float`
+umožní označit skryté pixely hodnotou `NaN`.
+
+Maska `visible_pixels` ponechá třídy SCL **4 = vegetace, 5 = nevegetační
+povrchy, 6 = voda**. Zápis `~visible_pixels` vybere ostatní pixely, například
+mraky, stíny nebo sníh; nastavením na `NaN` je v mapě skryjeme. Jde o masku
+zobrazení, která na rozdíl od trénovací masky `ok` nevyžaduje vybranou třídu
+WorldCover.
+
+Vlevo zůstává reference WorldCover 2021, vpravo předpověď ze Sentinelu-2 @YEAR@.
+Bílá čára v pravé mapě vyznačuje rozdělení na trénovací sever a testovací jih.""", r"""For the final map we use `forest`: a random forest with **200 trees and a maximum
+depth of 12**. Its settings are fixed here in advance; the code does not automatically pick
+the best model from the comparison above. After training we show its confusion
+matrix with the same `report` function.
+
+The classifier expects one pixel per row, so we turn the input image into a
+feature table and the prediction `pred` back into a map. Converting to `float`
+lets us mark hidden pixels with `NaN`.
+
+The mask `visible_pixels` keeps the SCL classes **4 = vegetation, 5 = not vegetated
+surfaces, 6 = water**. `~visible_pixels` selects all other pixels, for example
+clouds, shadows or snow; setting them to `NaN` hides them in the map. This is a display
+mask: unlike the training mask `ok`, it does not require a selected WorldCover
+class.
+
+The WorldCover 2021 reference stays on the left, the prediction from Sentinel-2 @YEAR@ on the right.
+The white line in the right map marks the split into the training north and the test south.""")),
         ("code", t('''
-best = RandomForestClassifier(200, max_depth=12, random_state=0, n_jobs=-1).fit(Xtr, ytr)
-display(report(best, "Náhodný les, hloubka 12"))
-pred = best.predict(X_img.reshape(-1, len(FEAT))).reshape(wc.shape).astype(float)
-pred[~np.isin(scl, [4, 5, 6])] = np.nan
-fig, ax = plt.subplots(1, 2, figsize=(11, 5))
-for a, (img, title) in zip(ax, [(lab, "WorldCover 2021"), (pred, "náhodný les, Sentinel-2 @YEAR@")]):
-    a.imshow(img, cmap=ListedColormap(COLORS), vmin=0, vmax=4, interpolation="nearest"); a.set_title(title); a.axis("off")
-a.axhline(wc.shape[0] / 2, color="w", lw=1); plt.show()
+forest = RandomForestClassifier(n_estimators=200, max_depth=12, random_state=0, n_jobs=-1)
+forest.fit(Xtr, ytr)
+display(report(forest, "Náhodný les, hloubka 12"))
+pred = forest.predict(X_img.reshape(-1, len(FEAT))).reshape(wc.shape).astype(float)
+# Vegetace (4), nevegetační povrchy (5) a voda (6).
+visible_pixels = np.isin(scl, [4, 5, 6])
+# Ostatní pixely v mapě skryj.
+pred[~visible_pixels] = np.nan
+fig, axes = plt.subplots(1, 2, figsize=(11, 5))
+maps = [(lab, "WorldCover 2021"), (pred, "náhodný les, Sentinel-2 @YEAR@")]
+for axis, (img, title) in zip(axes, maps):
+    axis.imshow(img, cmap=ListedColormap(COLORS), vmin=0, vmax=4, interpolation="nearest")
+    axis.set_title(title)
+    axis.axis("off")
+axes[1].axhline(wc.shape[0] / 2, color="w", lw=1)
+plt.show()
 ''', '''
-best = RandomForestClassifier(200, max_depth=12, random_state=0, n_jobs=-1).fit(Xtr, ytr)
-display(report(best, "Random forest, depth 12"))
-pred = best.predict(X_img.reshape(-1, len(FEAT))).reshape(wc.shape).astype(float)
-pred[~np.isin(scl, [4, 5, 6])] = np.nan
-fig, ax = plt.subplots(1, 2, figsize=(11, 5))
-for a, (img, title) in zip(ax, [(lab, "WorldCover 2021"), (pred, "random forest, Sentinel-2 @YEAR@")]):
-    a.imshow(img, cmap=ListedColormap(COLORS), vmin=0, vmax=4, interpolation="nearest"); a.set_title(title); a.axis("off")
-a.axhline(wc.shape[0] / 2, color="w", lw=1); plt.show()
+forest = RandomForestClassifier(n_estimators=200, max_depth=12, random_state=0, n_jobs=-1)
+forest.fit(Xtr, ytr)
+display(report(forest, "Random forest, depth 12"))
+pred = forest.predict(X_img.reshape(-1, len(FEAT))).reshape(wc.shape).astype(float)
+# Vegetation (4), not vegetated surfaces (5) and water (6).
+visible_pixels = np.isin(scl, [4, 5, 6])
+# Hide all other pixels in the map.
+pred[~visible_pixels] = np.nan
+fig, axes = plt.subplots(1, 2, figsize=(11, 5))
+maps = [(lab, "WorldCover 2021"), (pred, "random forest, Sentinel-2 @YEAR@")]
+for axis, (img, title) in zip(axes, maps):
+    axis.imshow(img, cmap=ListedColormap(COLORS), vmin=0, vmax=4, interpolation="nearest")
+    axis.set_title(title)
+    axis.axis("off")
+axes[1].axhline(wc.shape[0] / 2, color="w", lw=1)
+plt.show()
 ''')),
         ("task", t(
             "Najdi místa, kde se mapa liší od WorldCover. Je chyba vždy v klasifikaci? Uvažuj o tom, že WorldCover je z roku 2021 a sám má chyby, že jeden snímek z jednoho dne nerozliší louku od pole s pícninou ani zelené obilí na jaře od trávy a že pixel 10 m na okraji lesa je směs. Jak bys přesnost hodnotil poctivě?",

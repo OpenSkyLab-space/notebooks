@@ -14,7 +14,7 @@ Compute slope, aspect and the solar incidence angle from a DEM, measure the terr
 
 Landsat 8 OLI Collection 1 Level-1 from the Google Cloud public archive: `LC08_L1TP_191025_20190626_20190705_01_T1` (26 June 2019, sun elevation 60°) and `LC08_L1TP_191025_20181013_20181030_01_T1` (13 Oct 2018, sun elevation 31°), bands B2–B7, BQA and MTL; Copernicus DEM GLO-30 from the AWS Open Data registry; ESA WorldCover 2021 v200 classes. A 12 × 12 km window in the eastern Krkonoše mountains, about 25 MB.
 
-All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
+All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The notebook is stored without outputs; numbers and plots appear when it runs and may differ between runs where the data are updated continuously.
 
 ## Step by step
 
@@ -29,13 +29,19 @@ Parameters the student changes:
 
 ### 2. Slope illumination from the terrain model
 
-On flat ground direct sunlight arrives at the zenith angle θ_s, on a slope with gradient s and aspect a at the angle i: cos i = cos θ_s · cos s + sin θ_s · sin s · cos(φ_s − a), where φ_s is the sun azimuth. The direct irradiance of the slope is proportional to cos i; diffuse skylight arrives from all directions and depends much less on the slope aspect.
+On flat ground direct sunlight arrives at the zenith angle θ_s, on a slope with gradient $s$ and aspect $a$ at the angle $i$:
+
+$$
+\cos i = \cos\theta_s \cos s + \sin\theta_s \sin s \cos(\varphi_s - a),
+$$
+
+where $\varphi_s$ is the sun azimuth. The direct irradiance of the slope is proportional to cos i; diffuse skylight arrives from all directions and depends much less on the slope aspect.
 
 **Task 1.** Compare the cos i maps in summer and in autumn. Why do south- and north-facing slopes differ much more in autumn, and how many pixels are in self-shadow? Why does the TOA reflectance formula from the lab's notebook (dividing by the sine of the sun elevation) not give the true surface reflectance on a slope?
 
 ### 3. How strongly the terrain changes forest reflectance
 
-We take forest pixels according to WorldCover and fit a line ρ = m · cos i + b. If the slope were lit only by direct sun and the forest reflected equally in all directions, reflectance would be proportional to cos i and the offset b would be zero. The ratio C = b/m is the basis of the C-correction (Teillet et al. 1982).
+We take forest pixels according to WorldCover and fit a line $\rho = m \cos i + b$. If the slope were lit only by direct sun and the forest reflected equally in all directions, reflectance would be proportional to cos i and the offset b would be zero. The ratio $C = b/m$ is the basis of the C-correction (Teillet et al. 1982).
 
 **Task 2.** In which band and season is the relationship with cos i strongest? Why does the blue band have a large C, i.e. a large offset compared with the slope, and SWIR almost zero? Relate it to the share of diffuse skylight at different wavelengths.
 

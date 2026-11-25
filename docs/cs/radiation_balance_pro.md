@@ -14,7 +14,7 @@ Sestavit z reálného počasí sluneční a dlouhovlnné záření, spočítat d
 
 Albedo povrchů ze scény Sentinel-2 L2A `S2B_33UVR_20240721_0_L2A` (21. 7. 2024, okolí Roztok) a tříd ESA WorldCover 2021; hodinové počasí pro Prahu z Open-Meteo (posledních 92 dní, simulují se dny kolem nejslunečnějšího z nich). Stahuje se asi 5 MB. Vlastnosti povrchů (dostupnost vody, tepelná setrvačnost) jsou orientační a model je zjednodušený: výsledky ukazují souvislosti, nejsou předpovědí skutečné teploty.
 
-Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
+Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Notebook je uložený bez výstupů; čísla a grafy vzniknou až při spuštění a u průběžně aktualizovaných dat se mohou mezi běhy lišit.
 
 ## Postup krok za krokem
 
@@ -24,7 +24,7 @@ Albedo čtyř povrchů spočítáme stejně jako v základní verzi (Liang 2001,
 
 ### 2. Skutečné počasí jako vstup
 
-Z Open-Meteo vezmeme hodinové globální záření, teplotu, rosný bod, vítr, oblačnost a tlak. Dlouhovlnné záření oblohy L↓ počítáme z emisivity jasné oblohy (Brutsaert 1975) a oblačnost c přičteme ve tvaru Crawforda a Duchona (1999): ε = ε_jasno · (1 − c) + c. Oblačnost tu bereme z modelu počasí, ne z měření.
+Z Open-Meteo vezmeme hodinové globální záření, teplotu, rosný bod, vítr, oblačnost a tlak. Dlouhovlnné záření oblohy L↓ počítáme z emisivity jasné oblohy (Brutsaert 1975) a oblačnost c přičteme ve tvaru Crawforda a Duchona (1999): $\varepsilon = \varepsilon_\mathrm{jasno}\,(1 - c) + c$. Oblačnost tu bereme z modelu počasí, ne z měření.
 
 Parametry, které student mění:
 
@@ -35,7 +35,24 @@ Parametry, které student mění:
 
 ### 3. Model povrchu
 
-Čistá radiace Rn = (1 − albedo) · S + ε · L↓ − ε · σ · Ts⁴ se dělí na citelné teplo H = h · (Ts − T_vzduch), výpar LE = β · (L_v/c_p) · h · (q_sat(Ts) − q_vzduch) a tok do země G = Rn − H − LE. Teplotu povrchu Ts posouvá G podle modelu force-restore (Noilhan a Planton 1989): dTs/dt = C_T · G − (2π/τ) · (Ts − T2), kde C_T = 2√(π/τ)/P a P je tepelná setrvačnost. β říká, kolik vody má povrch k dispozici (0 suchý beton, 1 mokrý povrch).
+Čistá radiace se dělí na citelné teplo, výpar a tok do země:
+
+$$
+\begin{aligned}
+R_n &= (1 - \alpha)\, S + \varepsilon L_\downarrow - \varepsilon \sigma T_s^4,\\
+H &= h\,(T_s - T_\mathrm{vzduch}),\\
+LE &= \beta\, \frac{L_v}{c_p}\, h \left(q_\mathrm{sat}(T_s) - q_\mathrm{vzduch}\right),\\
+G &= R_n - H - LE.
+\end{aligned}
+$$
+
+Teplotu povrchu $T_s$ posouvá $G$ podle modelu force-restore (Noilhan a Planton 1989):
+
+$$
+\frac{dT_s}{dt} = C_T\, G - \frac{2\pi}{\tau}\,(T_s - T_2), \qquad C_T = \frac{2\sqrt{\pi/\tau}}{P},
+$$
+
+kde $\tau$ je délka dne (s), $T_2$ teplota hlubší vrstvy a $P$ tepelná setrvačnost (J·m⁻²·K⁻¹·s⁻¹ᐟ²). β říká, kolik vody má povrch k dispozici (0 suchý beton, 1 mokrý povrch).
 
 Parametry, které student mění:
 

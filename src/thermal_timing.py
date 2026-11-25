@@ -100,18 +100,18 @@ w[["temperature_2m", "shortwave_radiation", "cloud_cover", "wind_speed_10m"]].pl
 ''')),
         ("md", t(
             "## 2. Model povrchu a jeden jasný den\n\n"
-            "Pro každý povrch se každou minutu řeší energetická bilance **Rn = H + LE + G**:\n\n"
-            "- Rn: pohlcené sluneční záření (1 − albedo) · S plus dlouhovlnná bilance ε (L↓ − σ T⁴). L↓ z oblohy je z teploty a vlhkosti vzduchu (Brutsaert 1975) a z oblačnosti (Crawford a Duchon 1999).\n"
-            "- H: citelné teplo do vzduchu h · (T − Tₐ), h = 5,7 + 3,8 U, kde U je vítr ve 2 m (z větru v 10 m logaritmickým profilem, ×0,75).\n"
-            "- LE: výpar ρ L (q*(T) − qₐ) / (rₐ + r_s); odpor průduchů r_s je u louky 70 s/m, u lesa 100 s/m, voda se vypařuje volně, asfalt a panel vůbec.\n"
-            "- G: teplo do hloubky. Asfalt a půda mají 12 vrstev do 1 m, rybník je promíchaná vrstva vody 1 m, koruny lesa a FV panel jsou tenká vrstva bez vedení do země.\n\n"
+            "Pro každý povrch se každou minutu řeší energetická bilance $R_n = H + LE + G$:\n\n"
+            "- $R_n$: pohlcené sluneční záření $(1 - \\alpha)\\,S$ plus dlouhovlnná bilance $\\varepsilon\\,(L_\\downarrow - \\sigma T^4)$. L↓ z oblohy je z teploty a vlhkosti vzduchu (Brutsaert 1975) a z oblačnosti (Crawford a Duchon 1999).\n"
+            "- $H$: citelné teplo do vzduchu $h\\,(T - T_a)$, $h = 5{,}7 + 3{,}8\\,U$ (W·m⁻²·K⁻¹), kde $U$ je vítr ve 2 m (m/s) (z větru v 10 m logaritmickým profilem, ×0,75).\n"
+            "- $LE$: výpar $\\rho L\\,(q^*(T) - q_a) / (r_a + r_s)$; odpor průduchů $r_s$ je u louky 70 s/m, u lesa 100 s/m, voda se vypařuje volně, asfalt a panel vůbec.\n"
+            "- $G$: teplo do hloubky. Asfalt a půda mají 12 vrstev do 1 m, rybník je promíchaná vrstva vody 1 m, koruny lesa a FV panel jsou tenká vrstva bez vedení do země.\n\n"
             "Sluneční záření, teplota, vlhkost, oblačnost a vítr jsou skutečné hodinové hodnoty z Open-Meteo. Model běží od začátku období, prvních 14 dní slouží k rozběhu.",
             "## 2. The surface model and one clear day\n\n"
-            "For every surface the energy balance **Rn = H + LE + G** is solved every minute:\n\n"
-            "- Rn: absorbed solar radiation (1 − albedo) · S plus the long-wave balance ε (L↓ − σ T⁴). The sky L↓ comes from air temperature and humidity (Brutsaert 1975) and from cloud cover (Crawford and Duchon 1999).\n"
-            "- H: sensible heat to the air h · (T − Tₐ), h = 5.7 + 3.8 U, where U is the wind at 2 m (from the 10 m wind by a logarithmic profile, ×0.75).\n"
-            "- LE: evaporation ρ L (q*(T) − qₐ) / (rₐ + r_s); the stomatal resistance r_s is 70 s/m for the meadow and 100 s/m for the forest, water evaporates freely, asphalt and the panel not at all.\n"
-            "- G: heat into the ground. Asphalt and soil have 12 layers down to 1 m, the pond is a mixed water layer of 1 m, the forest canopy and the PV panel are a thin layer with no conduction into the ground.\n\n"
+            "For every surface the energy balance $R_n = H + LE + G$ is solved every minute:\n\n"
+            "- $R_n$: absorbed solar radiation $(1 - \\alpha)\\,S$ plus the long-wave balance $\\varepsilon\\,(L_\\downarrow - \\sigma T^4)$. The sky L↓ comes from air temperature and humidity (Brutsaert 1975) and from cloud cover (Crawford and Duchon 1999).\n"
+            "- $H$: sensible heat to the air $h\\,(T - T_a)$, $h = 5.7 + 3.8\\,U$ (W·m⁻²·K⁻¹), where $U$ is the wind at 2 m (m/s) (from the 10 m wind by a logarithmic profile, ×0.75).\n"
+            "- $LE$: evaporation $\\rho L\\,(q^*(T) - q_a) / (r_a + r_s)$; the stomatal resistance $r_s$ is 70 s/m for the meadow and 100 s/m for the forest, water evaporates freely, asphalt and the panel not at all.\n"
+            "- $G$: heat into the ground. Asphalt and soil have 12 layers down to 1 m, the pond is a mixed water layer of 1 m, the forest canopy and the PV panel are a thin layer with no conduction into the ground.\n\n"
             "Solar radiation, temperature, humidity, cloud cover and wind are real hourly values from Open-Meteo. The model runs from the start of the period; the first 14 days are spin-up.")),
         ("code", t('''
 SIG = 5.670e-8
@@ -364,10 +364,10 @@ pd.DataFrame(tab).round(1)
             "How do the noon maximum of asphalt, the morning minimum of the meadow and the asphalt − meadow contrast change with stronger wind? Why does wind reduce contrasts in a thermal image? What wind limit would you recommend for a thermal flight?")),
         ("md", t(
             "## 6. Emisivita v kameře a fotovoltaika\n\n"
-            "Kamera měří vyzařování W = ε σ T⁴ + (1 − ε) σ T_odr⁴, kde druhý člen je odražené okolí. Teplotu z něj počítá s emisivitou ε_k a odraženou teplotou T_odr, které nastavíš v kameře. Zjednodušení: počítáme v celém spektru, ne jen v pásmu 8–14 µm, a odražené okolí bereme jako oblohu.\n\n"
+            "Kamera měří vyzařování\n\n$$\nW = \\varepsilon \\sigma T^4 + (1 - \\varepsilon)\\, \\sigma T_\\mathrm{odr}^4,\n$$\n\nkde druhý člen je odražené okolí. Teplotu z něj počítá s emisivitou $\\varepsilon_k$ a odraženou teplotou $T_\\mathrm{odr}$, které nastavíš v kameře. Zjednodušení: počítáme v celém spektru, ne jen v pásmu 8–14 µm, a odražené okolí bereme jako oblohu.\n\n"
             "Pro kontrolu FV elektráren se doporučuje ozáření panelu aspoň 600 W/m² (IEA PVPS). Ozáření skloněné plochy máme z Open-Meteo.",
             "## 6. Emissivity in the camera and photovoltaics\n\n"
-            "The camera measures the exitance W = ε σ T⁴ + (1 − ε) σ T_refl⁴, where the second term is the reflected surroundings. It computes temperature using the emissivity ε_c and the reflected temperature T_refl set in the camera. Simplification: we compute over the whole spectrum, not only the 8–14 µm band, and take the reflected surroundings to be the sky.\n\n"
+            "The camera measures the exitance\n\n$$\nW = \\varepsilon \\sigma T^4 + (1 - \\varepsilon)\\, \\sigma T_\\mathrm{refl}^4,\n$$\n\nwhere the second term is the reflected surroundings. It computes temperature using the emissivity $\\varepsilon_c$ and the reflected temperature $T_\\mathrm{refl}$ set in the camera. Simplification: we compute over the whole spectrum, not only the 8–14 µm band, and take the reflected surroundings to be the sky.\n\n"
             "For inspecting PV plants an irradiance of at least 600 W/m² on the panel is recommended (IEA PVPS). The irradiance of the tilted surface comes from Open-Meteo.")),
         ("code", t('''
 EPS_CAM = z_viz("EPS_CAM", 1.00)   # ◀ parametr: emisivita nastavená v kameře (zkus 0,95 a 0,85)
