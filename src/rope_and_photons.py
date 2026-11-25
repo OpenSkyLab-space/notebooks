@@ -66,8 +66,8 @@ Here you compute this for the real bands of the """ + P["sat"] + " satellite.",
             "en": "from the metadata of a real Sentinel-2 scene, compute the frequency, photon energy and photon flux in each band and work out which detector each band needs.",
         },
         "data": {
-            "cs": f"metadata produktu {P['sat']} L1C, dlaždice {P['tile']} ({P['place_cs']}), {P['date_cs']} (`MTD_MSIL1C.xml` z veřejného archivu Google Cloud): střední vlnové délky, spektrální citlivost pásem a sluneční ozáření nad atmosférou. Stahuje se asi 50 kB.",
-            "en": f"the product metadata of {P['sat']} L1C, tile {P['tile']} ({P['place_en']}), {P['date_en']} (`MTD_MSIL1C.xml` from the Google Cloud public archive): central wavelengths, spectral response of the bands and top-of-atmosphere solar irradiance. About 50 kB is downloaded.",
+            "cs": f"metadata produktu {P['sat']} L1C, dlaždice {P['tile']} ({P['place_cs']}), {P['date_cs']} (`MTD_MSIL1C.xml` z veřejného archivu Google Cloud): střední vlnové délky, spektrální citlivost pásem a spektrální sluneční ozářenost nad atmosférou. Stahuje se asi 50 kB.",
+            "en": f"the product metadata of {P['sat']} L1C, tile {P['tile']} ({P['place_en']}), {P['date_en']} (`MTD_MSIL1C.xml` from the Google Cloud public archive): central wavelengths, spectral response of the bands and top-of-atmosphere solar spectral irradiance. About 50 kB is downloaded.",
         },
         "sources": {
             "cs": [
@@ -117,7 +117,7 @@ xml = requests.get(URL, timeout=60).text
 print(f"downloaded {len(xml) / 1000:.0f} kB")
 ''')),
         ("code", t('''
-# z XML vytáhneme pro každé pásmo: název, střední vlnovou délku, spektrální citlivost a sluneční ozáření E0
+# z XML vytáhneme pro každé pásmo: název, střední vlnovou délku, spektrální citlivost a spektrální sluneční ozářenost E0
 rows, srf = [], {}
 for m in re.finditer(r'<Spectral_Information bandId="(\\d+)" physicalBand="(\\w+)">(.*?)</Spectral_Information>', xml, re.S):
     bid, name, body = int(m.group(1)), m.group(2), m.group(3)
@@ -131,7 +131,7 @@ for m in re.finditer(r'<Spectral_Information bandId="(\\d+)" physicalBand="(\\w+
 bands = pd.DataFrame(rows).set_index("band")
 bands
 ''', '''
-# from the XML we take for each band: name, central wavelength, spectral response and solar irradiance E0
+# from the XML we take for each band: name, central wavelength, spectral response and solar spectral irradiance E0
 rows, srf = [], {}
 for m in re.finditer(r'<Spectral_Information bandId="(\\d+)" physicalBand="(\\w+)">(.*?)</Spectral_Information>', xml, re.S):
     bid, name, body = int(m.group(1)), m.group(2), m.group(3)
@@ -250,7 +250,7 @@ fig, ax1 = plt.subplots(figsize=(9, 3.2))
 ax1.plot(bands.lambda_nm, bands.E0_W_m2_um, "o-", c="tab:orange", label="E0 (W·m⁻²·µm⁻¹)")
 ax2 = ax1.twinx()
 ax2.plot(bands.lambda_nm, bands.photons_per_s_m2_um / 1e21, "s--", c="tab:blue", label="fotony (10²¹ s⁻¹·m⁻²·µm⁻¹)")
-ax1.set(xlabel="vlnová délka (nm)", ylabel="výkon"); ax2.set(ylabel="počet fotonů", ylim=(0, None)); ax1.set_ylim(0)
+ax1.set(xlabel="vlnová délka (nm)", ylabel="spektrální ozářenost E0"); ax2.set(ylabel="spektrální hustota toku fotonů", ylim=(0, None)); ax1.set_ylim(0)
 fig.legend(loc="lower left", bbox_to_anchor=(0.08, 0.15)); plt.show()
 bands[["E0_W_m2_um", "E_photon_eV", "photons_per_s_m2_um"]].style.format("{:.3g}")
 ''', '''
@@ -259,13 +259,13 @@ fig, ax1 = plt.subplots(figsize=(9, 3.2))
 ax1.plot(bands.lambda_nm, bands.E0_W_m2_um, "o-", c="tab:orange", label="E0 (W·m⁻²·µm⁻¹)")
 ax2 = ax1.twinx()
 ax2.plot(bands.lambda_nm, bands.photons_per_s_m2_um / 1e21, "s--", c="tab:blue", label="photons (10²¹ s⁻¹·m⁻²·µm⁻¹)")
-ax1.set(xlabel="wavelength (nm)", ylabel="power"); ax2.set(ylabel="number of photons", ylim=(0, None)); ax1.set_ylim(0)
+ax1.set(xlabel="wavelength (nm)", ylabel="spectral irradiance E0"); ax2.set(ylabel="spectral photon flux density", ylim=(0, None)); ax1.set_ylim(0)
 fig.legend(loc="lower left", bbox_to_anchor=(0.08, 0.15)); plt.show()
 bands[["E0_W_m2_um", "E_photon_eV", "photons_per_s_m2_um"]].style.format("{:.3g}")
 ''')),
         ("task", t(
-            "Výkon E0 klesá od modré (B2) k SWIR 2 (B12) více než dvacetkrát. Klesá stejně i počet fotonů? Vysvětli rozdíl. V kterém pásmu dopadá na metr čtvereční nejvíc fotonů na mikrometr spektra a proč to není pásmo s nejvyšším E0?",
-            "The power E0 falls more than twentyfold from blue (B2) to SWIR 2 (B12). Does the number of photons fall in the same way? Explain the difference. In which band does the most photons per micrometre fall on a square metre, and why is it not the band with the highest E0?")),
+            "Spektrální ozářenost E0 klesá od modré (B2) k SWIR 2 (B12) více než dvacetkrát. Klesá stejně i spektrální hustota toku fotonů? Vysvětli rozdíl. V kterém pásmu dopadá na metr čtvereční nejvíc fotonů na mikrometr spektra a proč to není pásmo s nejvyšším E0?",
+            "The spectral irradiance E0 falls more than twentyfold from blue (B2) to SWIR 2 (B12). Does the spectral photon flux density fall in the same way? Explain the difference. In which band does the most photons per micrometre fall on a square metre, and why is it not the band with the highest E0?")),
         ("md", t(
             "## 5. Které pásmo uvidí křemíkový čip\n\nFoton detektor uvolní elektron jen tehdy, když má aspoň energii zakázaného pásu materiálu. U křemíku je to asi 1,12 eV. Spočítáme mezní vlnovou délku a podíváme se, jak velká část citlivosti každého pásma leží pod ní.",
             "## 5. Which bands a silicon chip can see\n\nA photon frees an electron in a detector only if its energy is at least the band gap of the material. For silicon it is about 1.12 eV. We compute the cut-off wavelength and check how much of each band's response lies below it.")),

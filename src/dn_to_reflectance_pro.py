@@ -141,8 +141,8 @@ wc = on_grid(WORLDCOVER, shape, Resampling.mode, np.uint8)
 print(f"heights {dem.min():.0f}–{dem.max():.0f} m, forest according to WorldCover {np.mean(wc == 10):.0%} of the window")
 ''')),
         ("md", t(
-            "## 2. Osvětlení svahu z modelu terénu\n\nNa rovině dopadá přímé sluneční záření pod zenitovým úhlem θ_s, na svahu se sklonem s a orientací a pod úhlem i: cos i = cos θ_s · cos s + sin θ_s · sin s · cos(φ_s − a), kde φ_s je azimut Slunce. Přímé ozáření svahu je úměrné cos i; difuzní světlo oblohy dopadá ze všech směrů a na orientaci svahu závisí mnohem méně.",
-            "## 2. Slope illumination from the terrain model\n\nOn flat ground direct sunlight arrives at the zenith angle θ_s, on a slope with gradient s and aspect a at the angle i: cos i = cos θ_s · cos s + sin θ_s · sin s · cos(φ_s − a), where φ_s is the sun azimuth. The direct irradiance of the slope is proportional to cos i; diffuse skylight arrives from all directions and depends much less on the slope aspect.")),
+            "## 2. Osvětlení svahu z modelu terénu\n\nNa rovině dopadá přímé sluneční záření pod zenitovým úhlem θ_s, na svahu se sklonem $s$ a orientací $a$ pod úhlem $i$:\n\n$$\n\\cos i = \\cos\\theta_s \\cos s + \\sin\\theta_s \\sin s \\cos(\\varphi_s - a),\n$$\n\nkde $\\varphi_s$ je azimut Slunce. Přímé ozáření svahu je úměrné cos i; difuzní světlo oblohy dopadá ze všech směrů a na orientaci svahu závisí mnohem méně.",
+            "## 2. Slope illumination from the terrain model\n\nOn flat ground direct sunlight arrives at the zenith angle θ_s, on a slope with gradient $s$ and aspect $a$ at the angle $i$:\n\n$$\n\\cos i = \\cos\\theta_s \\cos s + \\sin\\theta_s \\sin s \\cos(\\varphi_s - a),\n$$\n\nwhere $\\varphi_s$ is the sun azimuth. The direct irradiance of the slope is proportional to cos i; diffuse skylight arrives from all directions and depends much less on the slope aspect.")),
         ("code", t('''
 dzdy, dzdx = np.gradient(dem, 30)                  # řádky jdou k jihu, sloupce k východu
 dzdE, dzdN = dzdx, -dzdy
@@ -184,8 +184,8 @@ for season, s in L8.items():
             "Porovnej mapy cos i v létě a na podzim. Proč se na podzim osvětlení jižních a severních svahů liší mnohem víc a kolik pixelů je ve vlastním stínu? Proč vzorec odrazivosti TOA z notebooku k laboratoři (dělení sinem výšky Slunce) na svahu nedává skutečnou odrazivost povrchu?",
             "Compare the cos i maps in summer and in autumn. Why do south- and north-facing slopes differ much more in autumn, and how many pixels are in self-shadow? Why does the TOA reflectance formula from the lab's notebook (dividing by the sine of the sun elevation) not give the true surface reflectance on a slope?")),
         ("md", t(
-            "## 3. Jak silně terén mění odrazivost lesa\n\nVezmeme lesní pixely podle WorldCoveru a proložíme přímku ρ = m · cos i + b. Kdyby svah osvětlovalo jen přímé Slunce a les odrážel stejně do všech směrů, byla by odrazivost úměrná cos i a posun b by byl nulový. Poměr C = b/m je základem C-korekce (Teillet a kol. 1982).",
-            "## 3. How strongly the terrain changes forest reflectance\n\nWe take forest pixels according to WorldCover and fit a line ρ = m · cos i + b. If the slope were lit only by direct sun and the forest reflected equally in all directions, reflectance would be proportional to cos i and the offset b would be zero. The ratio C = b/m is the basis of the C-correction (Teillet et al. 1982).")),
+            "## 3. Jak silně terén mění odrazivost lesa\n\nVezmeme lesní pixely podle WorldCoveru a proložíme přímku $\\rho = m \\cos i + b$. Kdyby svah osvětlovalo jen přímé Slunce a les odrážel stejně do všech směrů, byla by odrazivost úměrná cos i a posun b by byl nulový. Poměr $C = b/m$ je základem C-korekce (Teillet a kol. 1982).",
+            "## 3. How strongly the terrain changes forest reflectance\n\nWe take forest pixels according to WorldCover and fit a line $\\rho = m \\cos i + b$. If the slope were lit only by direct sun and the forest reflected equally in all directions, reflectance would be proportional to cos i and the offset b would be zero. The ratio $C = b/m$ is the basis of the C-correction (Teillet et al. 1982).")),
         ("code", t('''
 forest = (wc == 10) & (slope > np.radians(2))
 rows, rng = [], np.random.default_rng(0)

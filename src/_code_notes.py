@@ -349,8 +349,8 @@ NOTES["radiation_balance_pro"] = [
 NOTES["rope_and_photons"] = [
     ("Stáhne soubor metadat (XML) jedné skutečné scény Sentinelu-2 L1C.",
      "Downloads the metadata file (XML) of one real Sentinel-2 L1C scene."),
-    ("Z XML vytáhne pro každé pásmo název, střední vlnovou délku, spektrální citlivost po 1 nm a sluneční ozáření nad atmosférou E0. Ukáže tabulku.",
-     "Extracts from the XML, for each band, the name, central wavelength, spectral response in 1 nm steps and the top-of-atmosphere solar irradiance E0. It shows a table."),
+    ("Z XML vytáhne pro každé pásmo název, střední vlnovou délku, spektrální citlivost po 1 nm a spektrální sluneční ozářenost nad atmosférou E0. Ukáže tabulku.",
+     "Extracts from the XML, for each band, the name, central wavelength, spectral response in 1 nm steps and the top-of-atmosphere solar spectral irradiance E0. It shows a table."),
     ("Vykreslí spektrální citlivost všech pásem podle vlnové délky. Nic nepočítá.",
      "Plots the spectral response of all bands against wavelength. It computes nothing."),
     ("Ze střední vlnové délky každého pásma spočítá frekvenci f = c/λ a pro kontrolu součin λ · f. Ukáže tabulku.",

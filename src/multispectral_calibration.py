@@ -212,18 +212,18 @@ print("panel:", PANEL[1][1]["time"], " flight:", FLIGHT[1][1]["time"], " (UTC)")
         ("md", t(
             "## 2. Od DN k radianci\n\n"
             "Model MicaSense (stejný jako v knihovně `micasense/image.py`):\n\n"
-            "L = V(r) · R(y) · (DN − černá úroveň) / (zisk · expozice) · a₁ / 2¹⁶\n\n"
-            "- černá úroveň: signál bez světla (tag BlackLevel),\n"
-            "- V(r) = 1 / (1 + k₀r + … + k₅r⁶): korekce vinětace podle vzdálenosti r od středu vinětace (novější kamery ukládají místo toho 2D polynom v souřadnicích x, y),\n"
-            "- R(y) = 1 / (1 + a₂ y / expozice − a₃ y): korekce podle řádku (snímač se čte po řádcích),\n"
-            "- a₁: radiometrický kalibrační koeficient z výroby. Výsledek je spektrální radiance ve W/m²/sr/nm.",
+            "$$\nL = V(r)\\, R(y)\\, \\frac{DN - DN_\\mathrm{černá}}{g\\, t_e}\\, \\frac{a_1}{2^{16}}\n$$\n\n- $g$ je zisk a $t_e$ expozice (s),\n\n"
+            "- $DN_\\mathrm{černá}$ je černá úroveň, signál bez světla (tag BlackLevel),\n"
+            "- $V(r) = 1 / (1 + k_0 r + \\dots + k_5 r^6)$ je korekce vinětace podle vzdálenosti r od středu vinětace (novější kamery ukládají místo toho 2D polynom v souřadnicích x, y),\n"
+            "- $R(y) = 1 / (1 + a_2 y / t_e - a_3 y)$ je korekce podle řádku $y$ (snímač se čte po řádcích),\n"
+            "- $a_1$ je radiometrický kalibrační koeficient z výroby. Výsledek je spektrální radiance ve W/m²/sr/nm.",
             "## 2. From DN to radiance\n\n"
             "The MicaSense model (the same as in the library `micasense/image.py`):\n\n"
-            "L = V(r) · R(y) · (DN − black level) / (gain · exposure) · a₁ / 2¹⁶\n\n"
-            "- black level: the signal without light (BlackLevel tag),\n"
-            "- V(r) = 1 / (1 + k₀r + … + k₅r⁶): vignetting correction by the distance r from the vignetting centre (newer cameras store a 2D polynomial in x, y instead),\n"
-            "- R(y) = 1 / (1 + a₂ y / exposure − a₃ y): correction by row (the sensor is read out row by row),\n"
-            "- a₁: the factory radiometric calibration coefficient. The result is spectral radiance in W/m²/sr/nm.")),
+            "$$\nL = V(r)\\, R(y)\\, \\frac{DN - DN_\\mathrm{black}}{g\\, t_e}\\, \\frac{a_1}{2^{16}}\n$$\n\n- $g$ is the gain and $t_e$ the exposure (s),\n\n"
+            "- $DN_\\mathrm{black}$ is the black level, the signal without light (BlackLevel tag),\n"
+            "- $V(r) = 1 / (1 + k_0 r + \\dots + k_5 r^6)$ is the vignetting correction by the distance r from the vignetting centre (newer cameras store a 2D polynomial in x, y instead),\n"
+            "- $R(y) = 1 / (1 + a_2 y / t_e - a_3 y)$ is the correction by row $y$ (the sensor is read out row by row),\n"
+            "- $a_1$ is the factory radiometric calibration coefficient. The result is spectral radiance in W/m²/sr/nm.")),
         ("code", t('''
 def radiance(dn, m, vignette=True):
     y, x = np.indices(dn.shape)
@@ -271,8 +271,8 @@ print(f"vignetting: centre ×{V.min():.2f}, corner ×{V[0, 0]:.2f};  saturated p
             "Projdi pásma 1 až 5. O kolik procent zesiluje korekce vinětace signál v rohu snímku a ve kterém pásmu nejvíc? Kolik procent pixelů je saturovaných a kde ve snímku jsou? Proč saturovaný pixel nejde opravit žádnou kalibrací a co s tím při letu uděláš?",
             "Go through bands 1 to 5. By what percentage does the vignetting correction boost the signal in the corner of the image, and in which band most? What percentage of pixels is saturated and where in the image are they? Why can no calibration fix a saturated pixel, and what do you do about it during the flight?")),
         ("md", t(
-            "## 3. Kalibrační panel\n\nV metadatech snímku panelu je oblast uprostřed panelu, kterou na snímku našel software kamery (ReflectArea, čtyři rohy v pixelech), a jeho odrazivost v daném pásmu (Albedo) z kalibračního listu. Z průměrné radiance panelu L_p plyne koeficient k = ρ_panel / L_p a odrazivost každého pixelu ρ = k · L.",
-            "## 3. The calibration panel\n\nThe metadata of the panel image contain an area in the middle of the panel that the camera software found in the image (ReflectArea, four corners in pixels), and its reflectance in the given band (Albedo) from the calibration sheet. The mean radiance of the panel L_p gives the coefficient k = ρ_panel / L_p and the reflectance of every pixel ρ = k · L.")),
+            "## 3. Kalibrační panel\n\nV metadatech snímku panelu je oblast uprostřed panelu, kterou na snímku našel software kamery (ReflectArea, čtyři rohy v pixelech), a jeho odrazivost v daném pásmu (Albedo) z kalibračního listu. Z průměrné radiance panelu $L_p$ plyne koeficient a odrazivost každého pixelu:\n\n$$\nk = \\frac{\\rho_\\mathrm{panel}}{L_p}, \\qquad \\rho = k\\, L.\n$$",
+            "## 3. The calibration panel\n\nThe metadata of the panel image contain an area in the middle of the panel that the camera software found in the image (ReflectArea, four corners in pixels), and its reflectance in the given band (Albedo) from the calibration sheet. The mean radiance of the panel $L_p$ gives the coefficient and the reflectance of every pixel:\n\n$$\nk = \\frac{\\rho_\\mathrm{panel}}{L_p}, \\qquad \\rho = k\\, L.\n$$")),
         ("code", t('''
 SHRINK = 1.0                  # ◀ parametr: zmenšení oblasti z metadat (1 = celá oblast, 0,3 = jen střed)
 GROW_PX = 0                   # ◀ parametr: oblast naopak zvětšit o tolik pixelů (napodobí nepřesné vyznačení panelu)
@@ -327,9 +327,9 @@ plt.show()
             "Set GROW_PX to 30, 60 and 90 (look at the detail to see how far the area reaches): how do the mean panel radiance and the coefficient k change? By what percentage would that shift the reflectance of the whole map? Then set SHRINK = 0.2: what happens to the variability and why? Why are only pixels from the centre of the panel averaged, and why must the panel be large enough in the image (how many pixels does it have here)?")),
         ("md", t(
             "## 4. Senzor osvětlení DLS a jeho náklon\n\n"
-            "DLS měří ozáření na svou horní plochu. Když se dron nakloní ke Slunci, dopadá na senzor víc přímého záření, než kolik dopadá na vodorovný terén. DLS 2 proto rozkládá ozáření na přímou a rozptýlenou složku a přepočítává ho na vodorovnou plochu: E_vod = E_přímé · sin(výška Slunce) + E_rozptýlené.",
+            "DLS měří ozáření na svou horní plochu. Když se dron nakloní ke Slunci, dopadá na senzor víc přímého záření, než kolik dopadá na vodorovný terén. DLS 2 proto rozkládá ozáření na přímou a rozptýlenou složku a přepočítává ho na vodorovnou plochu: $$\nE_\\mathrm{vod} = E_\\mathrm{přímé} \\sin h_\\odot + E_\\mathrm{rozptýlené},\n$$\n\nkde $h_\\odot$ je výška Slunce nad obzorem.",
             "## 4. The DLS light sensor and its tilt\n\n"
-            "The DLS measures irradiance on its top surface. When the drone tilts towards the Sun, the sensor receives more direct radiation than the horizontal ground does. DLS 2 therefore splits irradiance into a direct and a diffuse component and converts it to a horizontal surface: E_hor = E_direct · sin(solar elevation) + E_diffuse.")),
+            "The DLS measures irradiance on its top surface. When the drone tilts towards the Sun, the sensor receives more direct radiation than the horizontal ground does. DLS 2 therefore splits irradiance into a direct and a diffuse component and converts it to a horizontal surface: $$\nE_\\mathrm{hor} = E_\\mathrm{direct} \\sin h_\\odot + E_\\mathrm{diffuse},\n$$\n\nwhere $h_\\odot$ is the solar elevation.")),
         ("code", t('''
 TILT = z_viz("TILT", 10)      # ◀ parametr: náklon senzoru DLS (°)
 rows = {}
@@ -362,14 +362,14 @@ for direction, sign in [("towards the Sun", 1), ("away from the Sun", -1)]:
             "By what percentage did the horizontal irradiance change between the panel image and the flight image (the first cell printed the image times)? How large a reflectance error does a tilt of 10° and 20° towards and away from the Sun cause? Why is the error larger with a low Sun, and why does a large diffuse component (overcast) help?")),
         ("md", t(
             "## 5. Tři způsoby kalibrace\n\n"
-            "- **jen panel:** ρ = k · L. Předpokládá, že se osvětlení od snímku panelu nezměnilo.\n"
-            "- **jen DLS:** ρ = π · L / E_vod. Spoléhá na tovární kalibraci kamery i DLS.\n"
-            "- **panel + DLS:** ρ = k · L · E_vod(panel) / E_vod(snímek). Panel určí absolutní úroveň, DLS sleduje změny osvětlení.\n\n"
+            "- **jen panel:** $\\rho = k\\,L$. Předpokládá, že se osvětlení od snímku panelu nezměnilo.\n"
+            "- **jen DLS:** $\\rho = \\pi L / E_\\mathrm{vod}$. Spoléhá na tovární kalibraci kamery i DLS.\n"
+            "- **panel + DLS:** $\\rho = k\\,L\\,E_\\mathrm{vod}(\\text{panel}) / E_\\mathrm{vod}(\\text{snímek})$. Panel určí absolutní úroveň, DLS sleduje změny osvětlení.\n\n"
             "Kontrola: když metodu „jen DLS“ použijeme na samotný panel, měli bychom dostat jeho známou odrazivost.",
             "## 5. Three ways to calibrate\n\n"
-            "- **panel only:** ρ = k · L. Assumes the illumination has not changed since the panel image.\n"
-            "- **DLS only:** ρ = π · L / E_hor. Relies on the factory calibration of both the camera and the DLS.\n"
-            "- **panel + DLS:** ρ = k · L · E_hor(panel) / E_hor(image). The panel sets the absolute level, the DLS tracks changes in illumination.\n\n"
+            "- **panel only:** $\\rho = k\\,L$. Assumes the illumination has not changed since the panel image.\n"
+            "- **DLS only:** $\\rho = \\pi L / E_\\mathrm{hor}$. Relies on the factory calibration of both the camera and the DLS.\n"
+            "- **panel + DLS:** $\\rho = k\\,L\\,E_\\mathrm{hor}(\\text{panel}) / E_\\mathrm{hor}(\\text{image})$. The panel sets the absolute level, the DLS tracks changes in illumination.\n\n"
             "Check: when we apply the “DLS only” method to the panel itself, we should get its known reflectance.")),
         ("code", t('''
 def shift_to(ref, img):
@@ -432,8 +432,8 @@ ax.set_title("flight image (co-registered bands), regions for comparison"); ax.a
             "Jakou odrazivost panelu dá metoda „jen DLS“ a o kolik procent se liší od kalibračního listu? Která metoda je tu nejspolehlivější a proč? O kolik se liší „jen panel“ a „panel + DLS“ a čím to je (vrať se ke kroku 4)? Odpovídají křivky @REGS_CS@ tomu, co znáš ze spektrálních signatur?",
             "What panel reflectance does the “DLS only” method give, and by what percentage does it differ from the calibration sheet? Which method is the most reliable here and why? How much do “panel only” and “panel + DLS” differ, and why (go back to step 4)? Do the curves of the @REGS_EN@ match what you know from spectral signatures?")),
         ("md", t(
-            "## 6. NDVI a co s ním dělá kalibrace\n\nNDVI = (ρ_NIR − ρ_R) / (ρ_NIR + ρ_R). Porovnáme NDVI z radiance (bez kalibrace), z kalibrace „panel + DLS“ a z kalibrace bez korekce vinětace.",
-            "## 6. NDVI and what calibration does to it\n\nNDVI = (ρ_NIR − ρ_R) / (ρ_NIR + ρ_R). We compare NDVI from radiance (no calibration), from the “panel + DLS” calibration, and from a calibration without vignetting correction.")),
+            "## 6. NDVI a co s ním dělá kalibrace\n\n$$\n\\mathrm{NDVI} = \\frac{\\rho_\\mathrm{NIR} - \\rho_R}{\\rho_\\mathrm{NIR} + \\rho_R}.\n$$\n\nPorovnáme NDVI z radiance (bez kalibrace), z kalibrace „panel + DLS“ a z kalibrace bez korekce vinětace.",
+            "## 6. NDVI and what calibration does to it\n\n$$\n\\mathrm{NDVI} = \\frac{\\rho_\\mathrm{NIR} - \\rho_R}{\\rho_\\mathrm{NIR} + \\rho_R}.\n$$\n\nWe compare NDVI from radiance (no calibration), from the “panel + DLS” calibration, and from a calibration without vignetting correction.")),
         ("code", t('''
 NDVI_MIN = 0.5                # ◀ parametr: práh NDVI pro „vegetaci“
 def calibrated(b, vignette=True):

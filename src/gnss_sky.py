@@ -376,8 +376,8 @@ for s, g in vis.groupby("system"):
 ax.legend(loc="lower left", bbox_to_anchor=(0.9, 0.85)); ax.set_title("GNSS sky over the site (centre = zenith)"); plt.show()
 ''')),
         ("md", t(
-            "## 3. DOP během dne\n\nDOP spočítáme z geometrie: každá družice dá řádek matice G s jednotkovým vektorem směru (východ, sever, nahoru) a jedničkou pro hodiny přijímače (každý systém má vlastní posun hodin). Q = (GᵀG)⁻¹, HDOP = √(Q_EE + Q_NN), VDOP = √Q_UU, PDOP = √(Q_EE + Q_NN + Q_UU).",
-            "## 3. DOP over a day\n\nWe compute DOP from geometry: each satellite gives a row of the matrix G with the unit direction vector (east, north, up) and a one for the receiver clock (each system has its own clock offset). Q = (GᵀG)⁻¹, HDOP = √(Q_EE + Q_NN), VDOP = √Q_UU, PDOP = √(Q_EE + Q_NN + Q_UU).")),
+            "## 3. DOP během dne\n\nDOP spočítáme z geometrie: každá družice dá řádek matice G s jednotkovým vektorem směru (východ, sever, nahoru) a jedničkou pro hodiny přijímače (každý systém má vlastní posun hodin). Z matice $G$ spočítáme\n\n$$\nQ = \\left(G^\\mathsf{T} G\\right)^{-1}, \\quad\n\\mathrm{HDOP} = \\sqrt{Q_{EE} + Q_{NN}}, \\quad\n\\mathrm{VDOP} = \\sqrt{Q_{UU}}, \\quad\n\\mathrm{PDOP} = \\sqrt{Q_{EE} + Q_{NN} + Q_{UU}},\n$$\n\nkde $Q_{EE}$, $Q_{NN}$ a $Q_{UU}$ jsou diagonální prvky $Q$ pro východ, sever a výšku. DOP je bezrozměrný násobek chyby měření vzdálenosti.",
+            "## 3. DOP over a day\n\nWe compute DOP from geometry: each satellite gives a row of the matrix G with the unit direction vector (east, north, up) and a one for the receiver clock (each system has its own clock offset). From the matrix $G$ we compute\n\n$$\nQ = \\left(G^\\mathsf{T} G\\right)^{-1}, \\quad\n\\mathrm{HDOP} = \\sqrt{Q_{EE} + Q_{NN}}, \\quad\n\\mathrm{VDOP} = \\sqrt{Q_{UU}}, \\quad\n\\mathrm{PDOP} = \\sqrt{Q_{EE} + Q_{NN} + Q_{UU}},\n$$\n\nwhere $Q_{EE}$, $Q_{NN}$ and $Q_{UU}$ are the diagonal elements of $Q$ for east, north and up. DOP is a dimensionless multiplier of the range measurement error.")),
         ("code", t('''
 def dop(df, systems=("GPS", "Galileo", "GLONASS", "BeiDou")):
     df = df[df.systém.isin(systems)]

@@ -145,8 +145,8 @@ for code, name in classes.items():
             "Který vegetační povrch má červenou hranu nejdál a proč? Má smysl počítat REP u vody nebo zástavby? Podívej se, jaké hodnoty vyjdou, a vysvětli, proč index bez vegetace nedává fyzikální smysl, i když vrátí číslo.",
             "Which vegetated surface has the red edge furthest and why? Does it make sense to compute REP for water or built-up areas? Look at the values and explain why the index has no physical meaning without vegetation even though it returns a number.")),
         ("md", t(
-            "## 4. Nasycení NDVI během sezóny\n\nVezmeme jeden pixel pole @FIELD_CS@ a všechny bezoblačné snímky z roku @YEAR@. Porovnáme NDVI = (NIR − R)/(NIR + R), NDRE = (NIR − RE1)/(NIR + RE1) a NDMI = (NIR − SWIR1)/(NIR + SWIR1).",
-            "## 4. NDVI saturation during the season\n\nWe take one field pixel @FIELD_EN@ and all cloud-free images from @YEAR@. We compare NDVI = (NIR − R)/(NIR + R), NDRE = (NIR − RE1)/(NIR + RE1) and NDMI = (NIR − SWIR1)/(NIR + SWIR1).")),
+            "## 4. Nasycení NDVI během sezóny\n\nVezmeme jeden pixel pole @FIELD_CS@ a všechny bezoblačné snímky z roku @YEAR@. Porovnáme tři normalizované rozdíly odrazivostí:\n\n$$\n\\mathrm{NDVI} = \\frac{\\mathrm{NIR} - R}{\\mathrm{NIR} + R}, \\quad\n\\mathrm{NDRE} = \\frac{\\mathrm{NIR} - \\mathrm{RE1}}{\\mathrm{NIR} + \\mathrm{RE1}}, \\quad\n\\mathrm{NDMI} = \\frac{\\mathrm{NIR} - \\mathrm{SWIR1}}{\\mathrm{NIR} + \\mathrm{SWIR1}}.\n$$",
+            "## 4. NDVI saturation during the season\n\nWe take one field pixel @FIELD_EN@ and all cloud-free images from @YEAR@. We compare three normalised reflectance differences:\n\n$$\n\\mathrm{NDVI} = \\frac{\\mathrm{NIR} - R}{\\mathrm{NIR} + R}, \\quad\n\\mathrm{NDRE} = \\frac{\\mathrm{NIR} - \\mathrm{RE1}}{\\mathrm{NIR} + \\mathrm{RE1}}, \\quad\n\\mathrm{NDMI} = \\frac{\\mathrm{NIR} - \\mathrm{SWIR1}}{\\mathrm{NIR} + \\mathrm{SWIR1}}.\n$$")),
         ("code", t('''
 lon, lat = @FLON@, @FLAT@          # ◀ parametr: bod (pole @FIELD_CS@); zkus i les, např. @FOREST@
 search = requests.post("https://earth-search.aws.element84.com/v1/search", json={

@@ -105,8 +105,8 @@ im = ax[0].imshow(dmr, cmap="terrain", extent=(0, W, 0, Hh)); fig.colorbar(im, a
 ax[1].imshow(forest, cmap="Greens", extent=(0, W, 0, Hh)); ax[1].set_title("forest from DMP 1G − DMR 5G"); plt.show()
 ''')),
         ("md", t(
-            "## 2. Slunce, svahy a stíny\n\nPřímé záření dopadá na svah úměrně cos i, kde i je úhel mezi paprskem a kolmicí ke svahu: cos i = cos z · cos s + sin z · sin s · cos(φ − A), z je zenitový úhel Slunce, φ jeho azimut, s sklon a A orientace svahu. Buňka je ve stínu, když terén ve směru Slunce stíní paprsek. Mapy ukazují cos i ve stínu nulové.",
-            "## 2. Sun, slopes and shadows\n\nDirect radiation falls on a slope in proportion to cos i, where i is the angle between the ray and the slope normal: cos i = cos z · cos s + sin z · sin s · cos(φ − A), z is the solar zenith angle, φ its azimuth, s the slope and A the slope aspect. A cell is in shadow when the terrain in the direction of the Sun blocks the ray. The maps show cos i, zero in shadow.")),
+            "## 2. Slunce, svahy a stíny\n\nPřímé záření dopadá na svah úměrně cos i, kde $i$ je úhel mezi paprskem a kolmicí ke svahu:\n\n$$\n\\cos i = \\cos z \\cos s + \\sin z \\sin s \\cos(\\varphi - A),\n$$\n\n$z$ je zenitový úhel Slunce, $\\varphi$ jeho azimut, $s$ sklon a $A$ orientace svahu. Buňka je ve stínu, když terén ve směru Slunce stíní paprsek. Mapy ukazují cos i ve stínu nulové.",
+            "## 2. Sun, slopes and shadows\n\nDirect radiation falls on a slope in proportion to cos i, where $i$ is the angle between the ray and the slope normal:\n\n$$\n\\cos i = \\cos z \\cos s + \\sin z \\sin s \\cos(\\varphi - A),\n$$\n\n$z$ is the solar zenith angle, $\\varphi$ its azimuth, $s$ the slope and $A$ the slope aspect. A cell is in shadow when the terrain in the direction of the Sun blocks the ray. The maps show cos i, zero in shadow.")),
         ("code", t('''
 def sunpos(ts, lat, lon):
     """Zenitový úhel a azimut Slunce (rad; azimut od severu po směru hodin) pro časy v UTC, vzorce NOAA."""
