@@ -482,10 +482,10 @@ def ndvi_on_thermal(d):
 def score(d):
     n, _, _ = ndvi_on_thermal(d); ok = np.isfinite(n) & (n != 0)
     return np.corrcoef(n[ok], Tb[ok])[0, 1]
-best = min(((dy, dx) for dy in range(-80, 81, 4) for dx in range(-80, 81, 4)), key=score)        # hrubé hledání posunu
-best = min(((best[0] + dy, best[1] + dx) for dy in np.arange(-4, 4.5, 0.5) for dx in np.arange(-4, 4.5, 0.5)), key=score)
-N_t, ym, xm = ndvi_on_thermal(best)
-print(f"1 termální pixel = {s_t:.2f} pixelu MS; zpřesňující posun ({best[0]:.1f}, {best[1]:.1f}) px MS; korelace NDVI a teploty r = {score(best):.2f}")
+thermal_shift = min(((dy, dx) for dy in range(-80, 81, 4) for dx in range(-80, 81, 4)), key=score)        # hrubé hledání posunu
+thermal_shift = min(((thermal_shift[0] + dy, thermal_shift[1] + dx) for dy in np.arange(-4, 4.5, 0.5) for dx in np.arange(-4, 4.5, 0.5)), key=score)
+N_t, ym, xm = ndvi_on_thermal(thermal_shift)
+print(f"1 termální pixel = {s_t:.2f} pixelu MS; zpřesňující posun ({thermal_shift[0]:.1f}, {thermal_shift[1]:.1f}) px MS; korelace NDVI a teploty r = {score(thermal_shift):.2f}")
 
 def t_corr(tb, eps, t_sky):
     """Oprava na emisivitu v přiblížení šedého tělesa: σT_b⁴ = ε σT⁴ + (1 − ε) σT_obl⁴."""
@@ -528,10 +528,10 @@ def ndvi_on_thermal(d):
 def score(d):
     n, _, _ = ndvi_on_thermal(d); ok = np.isfinite(n) & (n != 0)
     return np.corrcoef(n[ok], Tb[ok])[0, 1]
-best = min(((dy, dx) for dy in range(-80, 81, 4) for dx in range(-80, 81, 4)), key=score)        # coarse search for the shift
-best = min(((best[0] + dy, best[1] + dx) for dy in np.arange(-4, 4.5, 0.5) for dx in np.arange(-4, 4.5, 0.5)), key=score)
-N_t, ym, xm = ndvi_on_thermal(best)
-print(f"1 thermal pixel = {s_t:.2f} MS pixels; refining shift ({best[0]:.1f}, {best[1]:.1f}) MS px; correlation of NDVI and temperature r = {score(best):.2f}")
+thermal_shift = min(((dy, dx) for dy in range(-80, 81, 4) for dx in range(-80, 81, 4)), key=score)        # coarse search for the shift
+thermal_shift = min(((thermal_shift[0] + dy, thermal_shift[1] + dx) for dy in np.arange(-4, 4.5, 0.5) for dx in np.arange(-4, 4.5, 0.5)), key=score)
+N_t, ym, xm = ndvi_on_thermal(thermal_shift)
+print(f"1 thermal pixel = {s_t:.2f} MS pixels; refining shift ({thermal_shift[0]:.1f}, {thermal_shift[1]:.1f}) MS px; correlation of NDVI and temperature r = {score(thermal_shift):.2f}")
 
 def t_corr(tb, eps, t_sky):
     """Emissivity correction in the grey-body approximation: σT_b⁴ = ε σT⁴ + (1 − ε) σT_sky⁴."""

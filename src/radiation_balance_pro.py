@@ -99,9 +99,9 @@ w = open_meteo({"latitude": LAT, "longitude": LON, "past_days": 92, "forecast_da
                 "hourly": "shortwave_radiation,temperature_2m,dew_point_2m,wind_speed_10m,cloud_cover,surface_pressure"})
 met = pd.DataFrame(w["hourly"]).assign(time=lambda d: pd.to_datetime(d.time)).set_index("time").dropna()
 daily = met.shortwave_radiation.resample("D").sum() * 3600 / 1e6            # MJ/m² za den
-best = daily.idxmax()
+sunniest_day = daily.idxmax()
 N_DAYS = 4                                   # ◀ parametr: kolik dní simulovat (nejslunečnější den je uprostřed)
-start = best - pd.Timedelta(days=N_DAYS // 2)
+start = sunniest_day - pd.Timedelta(days=N_DAYS // 2)
 F = met.loc[start: start + pd.Timedelta(days=N_DAYS) - pd.Timedelta(hours=1)].copy()
 SIGMA = 5.670374e-8
 F["Ta"] = F.temperature_2m + 273.15
@@ -109,7 +109,7 @@ F["e_a"] = 6.112 * np.exp(17.62 * F.dew_point_2m / (243.12 + F.dew_point_2m))   
 eps_clear = 1.24 * (F.e_a / F.Ta) ** (1 / 7)                                          # Brutsaert 1975
 F["L_sky"] = (eps_clear * (1 - F.cloud_cover / 100) + F.cloud_cover / 100) * SIGMA * F.Ta ** 4
 F["q_a"] = 0.622 * F.e_a / F.surface_pressure
-print(f"nejslunečnější den {best.date()} ({daily.max():.1f} MJ/m²), simulace {F.index[0]} až {F.index[-1]} UTC")
+print(f"nejslunečnější den {sunniest_day.date()} ({daily.max():.1f} MJ/m²), simulace {F.index[0]} až {F.index[-1]} UTC")
 fig, ax = plt.subplots(1, 2, figsize=(13, 3.6))
 F[["shortwave_radiation", "L_sky"]].plot(ax=ax[0]); ax[0].set(ylabel="W/m²", title="sluneční a dlouhovlnné záření oblohy")
 F[["temperature_2m", "dew_point_2m"]].plot(ax=ax[1]); (F.cloud_cover / 10).plot(ax=ax[1], ls=":", label="oblačnost / 10 (%)")
@@ -120,9 +120,9 @@ w = open_meteo({"latitude": LAT, "longitude": LON, "past_days": 92, "forecast_da
                 "hourly": "shortwave_radiation,temperature_2m,dew_point_2m,wind_speed_10m,cloud_cover,surface_pressure"})
 met = pd.DataFrame(w["hourly"]).assign(time=lambda d: pd.to_datetime(d.time)).set_index("time").dropna()
 daily = met.shortwave_radiation.resample("D").sum() * 3600 / 1e6            # MJ/m² per day
-best = daily.idxmax()
+sunniest_day = daily.idxmax()
 N_DAYS = 4                                   # ◀ parameter: how many days to simulate (the sunniest day is in the middle)
-start = best - pd.Timedelta(days=N_DAYS // 2)
+start = sunniest_day - pd.Timedelta(days=N_DAYS // 2)
 F = met.loc[start: start + pd.Timedelta(days=N_DAYS) - pd.Timedelta(hours=1)].copy()
 SIGMA = 5.670374e-8
 F["Ta"] = F.temperature_2m + 273.15
@@ -130,7 +130,7 @@ F["e_a"] = 6.112 * np.exp(17.62 * F.dew_point_2m / (243.12 + F.dew_point_2m))   
 eps_clear = 1.24 * (F.e_a / F.Ta) ** (1 / 7)                                          # Brutsaert 1975
 F["L_sky"] = (eps_clear * (1 - F.cloud_cover / 100) + F.cloud_cover / 100) * SIGMA * F.Ta ** 4
 F["q_a"] = 0.622 * F.e_a / F.surface_pressure
-print(f"sunniest day {best.date()} ({daily.max():.1f} MJ/m²), simulation {F.index[0]} to {F.index[-1]} UTC")
+print(f"sunniest day {sunniest_day.date()} ({daily.max():.1f} MJ/m²), simulation {F.index[0]} to {F.index[-1]} UTC")
 fig, ax = plt.subplots(1, 2, figsize=(13, 3.6))
 F[["shortwave_radiation", "L_sky"]].plot(ax=ax[0]); ax[0].set(ylabel="W/m²", title="solar and longwave sky radiation")
 F[["temperature_2m", "dew_point_2m"]].plot(ax=ax[1]); (F.cloud_cover / 10).plot(ax=ax[1], ls=":", label="cloud cover / 10 (%)")
@@ -224,7 +224,7 @@ ax.set(ylabel="surface temperature (°C)", title="diurnal course of surface temp
             "Which surface is warmest at noon and which at night? Why is the built-up surface cooler than the field at noon although it hardly evaporates, and the warmest at night? At what time UTC does the surface reach its maximum, and why only after solar noon (in Prague around 11:00 UTC)?")),
         ("md", t("## 4. Kam se energie během dne rozdělí", "## 4. Where the energy goes during the day")),
         ("code", t('''
-day = F.index.normalize() == best
+day = F.index.normalize() == sunniest_day
 rows = {}
 for name, r in runs.items():
     d = r[day]
@@ -233,7 +233,7 @@ for name, r in runs.items():
                   "max Ts (°C)": d.Ts.max(), "hodina max (UTC)": d.Ts.idxmax().hour, "min Ts noc (°C)": d.Ts.min()}
 pd.DataFrame(rows).T.round(2)
 ''', '''
-day = F.index.normalize() == best
+day = F.index.normalize() == sunniest_day
 rows = {}
 for name, r in runs.items():
     d = r[day]

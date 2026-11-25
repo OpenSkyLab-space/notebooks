@@ -31,8 +31,8 @@ NOTES["blackbody_radiation"] = [
 
 NOTES["blackbody_radiation_pro"] = [
     PIP_RASTERIO,
-    ("Načte knihovny a definuje Planckův zákon (`planck`) a jeho inverzi (`planck_inv`) v jednotkách µm a W·m⁻²·sr⁻¹·µm⁻¹.",
-     "Loads the libraries and defines Planck's law (`planck`) and its inverse (`planck_inv`) in units of µm and W·m⁻²·sr⁻¹·µm⁻¹."),
+    ("Načte knihovny.", "Loads the libraries."),  # sloučeno do sbalené přípravy
+    None,  # planck a planck_inv: vysvětleno vzorci v buňce Markdown nad kódem
     ("Pro dvě scény Landsatu 8 stáhne metadata a výřez pásem 4, 5, 10 a masky kvality QA. Spočítá NDVI, zář a jasovou teplotu B10 a podle QA označí pixely bez mraků. Na stejnou mřížku převzorkuje mapu krajinného pokryvu ESA WorldCover a vypíše čas snímku, výšku Slunce a podíl jasných pixelů.",
      "For two Landsat 8 scenes it downloads the metadata and a window of bands 4, 5, 10 and the QA quality mask. It computes NDVI, radiance and B10 brightness temperature and marks cloud-free pixels from QA. It resamples the ESA WorldCover land cover map onto the same grid and prints the acquisition time, sun elevation and share of clear pixels."),
     ("Odhadne emisivitu z NDVI (vodu podle WorldCoveru) a řeší rovnici přenosu záření pro teplotu povrchu, jednou jen s emisivitou a jednou i s atmosférou (parametry `TAU`, `L_UP`, `L_DOWN`). Vypíše, jak medián teploty závisí na propustnosti τ, a ukáže tabulku mediánů pro třídy pokryvu.",

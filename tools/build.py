@@ -88,7 +88,7 @@ def lift_comments(code):
         if m and m["text"]:
             text, tag = m["text"], f"# ◀ {m['kw']}"
             pm = re.match(r"^(?P<main>[^()]+) \((?P<detail>[^()]+)\)$", text)
-            if pm and len(f"{head}  {tag}: {pm['main']}") <= LINE_LENGTH:
+            if pm and len(pm["detail"]) > 12 and len(f"{head}  {tag}: {pm['main']}") <= LINE_LENGTH:
                 above, inline = pm["detail"], f"{head}  {tag}: {pm['main']}"
             else:
                 above, inline = text, f"{head}  {tag}"

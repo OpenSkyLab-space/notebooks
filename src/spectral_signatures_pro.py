@@ -246,11 +246,11 @@ x, y = Transformer.from_crs(4326, grid[1], always_xy=True).transform(PLON, PLAT)
 col, row = [int(v) for v in ~grid[0] * (x, y)]
 obs = np.array([scenes[day]["refl"][b][row, col] for b in INV])
 rmse = np.sqrt(((LUT[day] - obs) ** 2).mean(1))
-best = np.argsort(rmse)[:K]
-sol = lut.iloc[best].assign(ccc=lambda d: d.lai * d.cab, rmse=rmse[best])
-print(f"{day}, bod {PLON}, {PLAT}: NDVI {(obs[6] - obs[2]) / (obs[6] + obs[2]):.2f}, nejlepší shoda RMSE {rmse[best[0]]:.4f}")
+best_fits = np.argsort(rmse)[:K]
+sol = lut.iloc[best_fits].assign(ccc=lambda d: d.lai * d.cab, rmse=rmse[best_fits])
+print(f"{day}, bod {PLON}, {PLAT}: NDVI {(obs[6] - obs[2]) / (obs[6] + obs[2]):.2f}, nejlepší shoda RMSE {rmse[best_fits[0]]:.4f}")
 fig, ax = plt.subplots(1, 3, figsize=(15, 4))
-for i in best[:10]:
+for i in best_fits[:10]:
     ax[0].plot(cwl / 1000, LUT[day][i], color="0.7", lw=1)
 ax[0].plot(cwl / 1000, obs, "ko-", label="Sentinel-2"); ax[0].set(xlabel="vlnová délka (µm)", ylabel="odrazivost", title="pixel a 10 nejlepších simulací"); ax[0].legend()
 for a, v in zip(ax[1:], ["ala", "cab"]):
@@ -267,11 +267,11 @@ x, y = Transformer.from_crs(4326, grid[1], always_xy=True).transform(PLON, PLAT)
 col, row = [int(v) for v in ~grid[0] * (x, y)]
 obs = np.array([scenes[day]["refl"][b][row, col] for b in INV])
 rmse = np.sqrt(((LUT[day] - obs) ** 2).mean(1))
-best = np.argsort(rmse)[:K]
-sol = lut.iloc[best].assign(ccc=lambda d: d.lai * d.cab, rmse=rmse[best])
-print(f"{day}, point {PLON}, {PLAT}: NDVI {(obs[6] - obs[2]) / (obs[6] + obs[2]):.2f}, best match RMSE {rmse[best[0]]:.4f}")
+best_fits = np.argsort(rmse)[:K]
+sol = lut.iloc[best_fits].assign(ccc=lambda d: d.lai * d.cab, rmse=rmse[best_fits])
+print(f"{day}, point {PLON}, {PLAT}: NDVI {(obs[6] - obs[2]) / (obs[6] + obs[2]):.2f}, best match RMSE {rmse[best_fits[0]]:.4f}")
 fig, ax = plt.subplots(1, 3, figsize=(15, 4))
-for i in best[:10]:
+for i in best_fits[:10]:
     ax[0].plot(cwl / 1000, LUT[day][i], color="0.7", lw=1)
 ax[0].plot(cwl / 1000, obs, "ko-", label="Sentinel-2"); ax[0].set(xlabel="wavelength (µm)", ylabel="reflectance", title="pixel and the 10 best simulations"); ax[0].legend()
 for a, v in zip(ax[1:], ["ala", "cab"]):

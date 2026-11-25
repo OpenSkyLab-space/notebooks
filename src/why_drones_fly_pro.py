@@ -192,9 +192,9 @@ WIND_LIMIT = 12.0                   # ◀ parametr: odolnost vůči větru podle
 print(f"{len(day)} denních hodin s daty za 92 dní, vítr ve 120 m: medián {day.wind_speed_120m.median():.1f} m/s, 90. percentil {day.wind_speed_120m.quantile(0.9):.1f} m/s")
 for thr in [6, 9, WIND_LIMIT]:
     print(f"  vítr ve 120 m nad {thr:4.1f} m/s: {np.mean(day.wind_speed_120m > thr):5.1%} hodin, v 10 m: {np.mean(day.wind_speed_10m > thr):5.1%}")
-best = {wv: min(power(V, RHO0, fA, eta).sum() / (V - wv) / 3.6 for V in Vs[Vs > wv + 0.5]) for wv in np.arange(0, 16, 0.5)}
-e_back = np.interp(day.wind_speed_120m, list(best), list(best.values()))
-print(f"energie na km návratu proti větru ve 120 m: medián {np.median(e_back):.2f} Wh/km, 90. percentil {np.percentile(e_back, 90):.2f} Wh/km (bez větru {best[0]:.2f})")
+energy_per_km = {wv: min(power(V, RHO0, fA, eta).sum() / (V - wv) / 3.6 for V in Vs[Vs > wv + 0.5]) for wv in np.arange(0, 16, 0.5)}
+e_back = np.interp(day.wind_speed_120m, list(energy_per_km), list(energy_per_km.values()))
+print(f"energie na km návratu proti větru ve 120 m: medián {np.median(e_back):.2f} Wh/km, 90. percentil {np.percentile(e_back, 90):.2f} Wh/km (bez větru {energy_per_km[0]:.2f})")
 plt.figure(figsize=(9, 3.2)); plt.hist([day.wind_speed_10m, day.wind_speed_120m], bins=np.arange(0, 20, 1), label=["10 m", "120 m"])
 plt.axvline(WIND_LIMIT, color="r", ls=":"); plt.xlabel("rychlost větru (m/s)"); plt.ylabel("hodin"); plt.legend(); plt.show()
 ''', '''
@@ -207,9 +207,9 @@ WIND_LIMIT = 12.0                   # ◀ parameter: wind resistance according t
 print(f"{len(day)} daytime hours with data in 92 days, wind at 120 m: median {day.wind_speed_120m.median():.1f} m/s, 90th percentile {day.wind_speed_120m.quantile(0.9):.1f} m/s")
 for thr in [6, 9, WIND_LIMIT]:
     print(f"  wind at 120 m above {thr:4.1f} m/s: {np.mean(day.wind_speed_120m > thr):5.1%} of hours, at 10 m: {np.mean(day.wind_speed_10m > thr):5.1%}")
-best = {wv: min(power(V, RHO0, fA, eta).sum() / (V - wv) / 3.6 for V in Vs[Vs > wv + 0.5]) for wv in np.arange(0, 16, 0.5)}
-e_back = np.interp(day.wind_speed_120m, list(best), list(best.values()))
-print(f"energy per km of a return against the wind at 120 m: median {np.median(e_back):.2f} Wh/km, 90th percentile {np.percentile(e_back, 90):.2f} Wh/km (no wind {best[0]:.2f})")
+energy_per_km = {wv: min(power(V, RHO0, fA, eta).sum() / (V - wv) / 3.6 for V in Vs[Vs > wv + 0.5]) for wv in np.arange(0, 16, 0.5)}
+e_back = np.interp(day.wind_speed_120m, list(energy_per_km), list(energy_per_km.values()))
+print(f"energy per km of a return against the wind at 120 m: median {np.median(e_back):.2f} Wh/km, 90th percentile {np.percentile(e_back, 90):.2f} Wh/km (no wind {energy_per_km[0]:.2f})")
 plt.figure(figsize=(9, 3.2)); plt.hist([day.wind_speed_10m, day.wind_speed_120m], bins=np.arange(0, 20, 1), label=["10 m", "120 m"])
 plt.axvline(WIND_LIMIT, color="r", ls=":"); plt.xlabel("wind speed (m/s)"); plt.ylabel("hours"); plt.legend(); plt.show()
 ''')),

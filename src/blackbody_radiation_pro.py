@@ -51,11 +51,6 @@ from rasterio.warp import reproject, Resampling
 from rasterio.windows import from_bounds
 from pyproj import Transformer
 warnings.filterwarnings("ignore")
-C1, C2 = 1.191042e8, 1.4387752e4         # Planckovy konstanty pro λ v µm a zář ve W·m⁻²·sr⁻¹·µm⁻¹
-def planck(lam, T):
-    return C1 / lam**5 / (np.exp(C2 / (lam * T)) - 1)
-def planck_inv(lam, L):
-    return C2 / (lam * np.log(C1 / (lam**5 * L) + 1))
 ''', '''
 import requests, warnings
 import numpy as np, pandas as pd
@@ -65,10 +60,47 @@ from rasterio.warp import reproject, Resampling
 from rasterio.windows import from_bounds
 from pyproj import Transformer
 warnings.filterwarnings("ignore")
-C1, C2 = 1.191042e8, 1.4387752e4         # Planck constants for λ in µm and radiance in W·m⁻²·sr⁻¹·µm⁻¹
+''')),
+        ("md", t(r"""Planckův zákon a jeho inverzi zapíšeme rovnou v jednotkách notebooku, vlnovou délku $\lambda$ v µm a spektrální zář $L_\lambda$ ve $\mathrm{W\,m^{-2}\,sr^{-1}\,\mu m^{-1}}$:
+
+$$
+L_\lambda(\lambda, T) = \frac{C_1}{\lambda^5 \left[\exp\!\left(\frac{C_2}{\lambda T}\right) - 1\right]}, \qquad
+T_b(\lambda, L_\lambda) = \frac{C_2}{\lambda \ln\!\left(\frac{C_1}{\lambda^5 L_\lambda} + 1\right)}.
+$$
+
+$C_1 = 2hc^2 = 1{,}191\,042\times10^{8}\ \mathrm{W\,m^{-2}\,sr^{-1}\,\mu m^{4}}$ a $C_2 = hc/k = 1{,}438\,775\,2\times10^{4}\ \mathrm{\mu m\,K}$ v sobě mají převod z metrů na mikrometry, proto ve funkcích není žádné `1e-6`. $T$ i jasová teplota $T_b$ jsou v kelvinech.""", r"""We write Planck's law and its inverse directly in the units of this notebook, wavelength $\lambda$ in µm and spectral radiance $L_\lambda$ in $\mathrm{W\,m^{-2}\,sr^{-1}\,\mu m^{-1}}$:
+
+$$
+L_\lambda(\lambda, T) = \frac{C_1}{\lambda^5 \left[\exp\!\left(\frac{C_2}{\lambda T}\right) - 1\right]}, \qquad
+T_b(\lambda, L_\lambda) = \frac{C_2}{\lambda \ln\!\left(\frac{C_1}{\lambda^5 L_\lambda} + 1\right)}.
+$$
+
+$C_1 = 2hc^2 = 1.191\,042\times10^{8}\ \mathrm{W\,m^{-2}\,sr^{-1}\,\mu m^{4}}$ and $C_2 = hc/k = 1.438\,775\,2\times10^{4}\ \mathrm{\mu m\,K}$ already contain the conversion from metres to micrometres, so the functions need no `1e-6`. $T$ and the brightness temperature $T_b$ are in kelvin.""")),
+        ("code", t('''
+# Planckovy konstanty pro λ v µm a zář ve W·m⁻²·sr⁻¹·µm⁻¹
+C1, C2 = 1.191042e8, 1.4387752e4
+
+
 def planck(lam, T):
+    """Spektrální zář černého tělesa (W·m⁻²·sr⁻¹·µm⁻¹) pro vlnovou délku v µm a teplotu v K."""
     return C1 / lam**5 / (np.exp(C2 / (lam * T)) - 1)
+
+
 def planck_inv(lam, L):
+    """Jasová teplota (K) pro vlnovou délku v µm a zář ve W·m⁻²·sr⁻¹·µm⁻¹."""
+    return C2 / (lam * np.log(C1 / (lam**5 * L) + 1))
+''', '''
+# Planck constants for λ in µm and radiance in W·m⁻²·sr⁻¹·µm⁻¹
+C1, C2 = 1.191042e8, 1.4387752e4
+
+
+def planck(lam, T):
+    """Blackbody spectral radiance (W·m⁻²·sr⁻¹·µm⁻¹) for wavelength in µm and temperature in K."""
+    return C1 / lam**5 / (np.exp(C2 / (lam * T)) - 1)
+
+
+def planck_inv(lam, L):
+    """Brightness temperature (K) for wavelength in µm and radiance in W·m⁻²·sr⁻¹·µm⁻¹."""
     return C2 / (lam * np.log(C1 / (lam**5 * L) + 1))
 ''')),
         ("code", t('''
