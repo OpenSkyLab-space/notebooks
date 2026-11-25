@@ -14,7 +14,7 @@ Compute the Sun's position, the illumination of slopes and terrain shadows, run 
 
 DMR 5G (terrain) and DMP 1G (surface) from ČÚZK, 4 m cells, a 1 × 0.7 km area on the left slope of the Vltava valley at Roztoky; hourly temperature, humidity, direct (on a normal surface) and diffuse radiation, cloud cover and wind from Open-Meteo for the last 92 days (weather model, not on-site measurement); thermal properties of meadow and forest as in the basic version. The model ignores cold air draining into the valley at night, radiation reflected from neighbouring slopes and changing soil moisture; DMP 1G dates from 2009–2013.
 
-All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
+All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The notebook is stored without outputs; numbers and plots appear when it runs and may differ between runs where the data are updated continuously.
 
 ## Step by step
 
@@ -30,7 +30,13 @@ Parameters the student changes:
 
 ### 2. Sun, slopes and shadows
 
-Direct radiation falls on a slope in proportion to cos i, where i is the angle between the ray and the slope normal: cos i = cos z · cos s + sin z · sin s · cos(φ − A), z is the solar zenith angle, φ its azimuth, s the slope and A the slope aspect. A cell is in shadow when the terrain in the direction of the Sun blocks the ray. The maps show cos i, zero in shadow.
+Direct radiation falls on a slope in proportion to cos i, where $i$ is the angle between the ray and the slope normal:
+
+$$
+\cos i = \cos z \cos s + \sin z \sin s \cos(\varphi - A),
+$$
+
+$z$ is the solar zenith angle, $\varphi$ its azimuth, $s$ the slope and $A$ the slope aspect. A cell is in shadow when the terrain in the direction of the Sun blocks the ray. The maps show cos i, zero in shadow.
 
 Parameters the student changes:
 

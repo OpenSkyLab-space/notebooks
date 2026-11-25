@@ -14,13 +14,20 @@ Compute surface temperature from the radiative transfer equation and estimate th
 
 Landsat 8 OLI/TIRS Collection 1 Level-1 from the Google Cloud public archive: `LC08_L1TP_191025_20190626_20190705_01_T1` (26 June 2019, heat wave) and `LC08_L1TP_191025_20170519_20170525_01_T1` (19 May 2017), bands B4, B5, B10, BQA and MTL; ESA WorldCover 2021 v200 classes. A 30 × 30 km window around Prague, about 25 MB. The atmospheric parameters (transmittance, upwelling and downwelling radiance) are not downloaded: they are given as indicative values that can be changed; real values for a given day and place come for instance from the NASA calculator (Barsi et al. 2005).
 
-All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
+All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The notebook is stored without outputs; numbers and plots appear when it runs and may differ between runs where the data are updated continuously.
 
 ## Step by step
 
 ### 1. Setup and two scenes
 
-Installs the libraries Colab lacks (`rasterio`) and downloads the data.
+We write Planck's law and its inverse directly in the units of this notebook, wavelength $\lambda$ in µm and spectral radiance $L_\lambda$ in $\mathrm{W\,m^{-2}\,sr^{-1}\,\mu m^{-1}}$:
+
+$$
+L_\lambda(\lambda, T) = \frac{C_1}{\lambda^5 \left[\exp\!\left(\frac{C_2}{\lambda T}\right) - 1\right]}, \qquad
+T_b(\lambda, L_\lambda) = \frac{C_2}{\lambda \ln\!\left(\frac{C_1}{\lambda^5 L_\lambda} + 1\right)}.
+$$
+
+$C_1 = 2hc^2 = 1.191\,042\times10^{8}\ \mathrm{W\,m^{-2}\,sr^{-1}\,\mu m^{4}}$ and $C_2 = hc/k = 1.438\,775\,2\times10^{4}\ \mathrm{\mu m\,K}$ already contain the conversion from metres to micrometres, so the functions need no `1e-6`. $T$ and the brightness temperature $T_b$ are in kelvin.
 
 Parameters the student changes:
 
@@ -29,7 +36,13 @@ Parameters the student changes:
 
 ### 2. Surface temperature from the radiative transfer equation
 
-The sensor above the atmosphere measures L = τ · [ε · B(Ts) + (1 − ε) · L↓] + L↑: the surface emission attenuated by the atmosphere, plus reflected sky radiation and the emission of the atmosphere itself. We solve the equation for Ts. Emissivity is estimated from NDVI as in the basic version; the atmospheric parameters τ, L↑ and L↓ are indicative values for a humid summer atmosphere.
+The sensor above the atmosphere measures
+
+$$
+L = \tau \left[\varepsilon\, B(T_s) + (1 - \varepsilon)\, L_\downarrow\right] + L_\uparrow :
+$$
+
+the surface emission $\varepsilon B(T_s)$ attenuated by the atmospheric transmittance $\tau$, plus reflected sky radiation $L_\downarrow$ and the emission of the atmosphere itself $L_\uparrow$ (all in W·m⁻²·sr⁻¹·µm⁻¹, $B$ is the Planck function). We solve the equation for Ts. Emissivity is estimated from NDVI as in the basic version; the atmospheric parameters τ, L↑ and L↓ are indicative values for a humid summer atmosphere.
 
 Parameters the student changes:
 
@@ -45,7 +58,13 @@ We compare the surface temperature of built-up land with the surrounding farmlan
 
 ### 4. Temperature–NDVI space and the TVDI drought index
 
-In a plot of surface temperature against NDVI the pixels form a triangle or trapezoid. The upper, dry edge joins the warmest pixels at each NDVI (surfaces with no water to evaporate), the lower, wet edge the coolest. TVDI = (Ts − Ts_wet) / (Ts_dry(NDVI) − Ts_wet) lies between 0 (wet) and 1 (dry) (Sandholt et al. 2002). We compute it for grassland and cropland.
+In a plot of surface temperature against NDVI the pixels form a triangle or trapezoid. The upper, dry edge joins the warmest pixels at each NDVI (surfaces with no water to evaporate), the lower, wet edge the coolest. The index
+
+$$
+\mathrm{TVDI} = \frac{T_s - T_{s,\mathrm{wet}}}{T_{s,\mathrm{dry}}(\mathrm{NDVI}) - T_{s,\mathrm{wet}}}
+$$
+
+lies between 0 (wet) and 1 (dry) (Sandholt et al. 2002). We compute it for grassland and cropland.
 
 Parameters the student changes:
 

@@ -14,7 +14,7 @@ Determine the strips, speed and image spacing from image positions and times and
 
 A metadata table of 253 images of a flight over Bahna on 31 Oct 2025 (EXIF and DJI XMP) with SfM camera centres, in local coordinates (OpenSkyLab, CC BY 4.0).
 
-All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
+All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The notebook is stored without outputs; numbers and plots appear when it runs and may differ between runs where the data are updated continuously.
 
 ## Step by step
 

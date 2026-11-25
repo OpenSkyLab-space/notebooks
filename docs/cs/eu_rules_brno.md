@@ -14,7 +14,7 @@ Načíst seznam zeměpisných zón a jejich soubory GeoJSON, určit zóny pro za
 
 Zeměpisné zóny UAS ve formátu GeoJSON (referenční hranice) ze stránky ŘLP https://aim.rlp.cz/?lang=cz&p=uas-gz, stažené v okamžiku spuštění; nadmořská výška terénu z Digitálního modelu reliéfu ČR 5. generace (DMR 5G, ČÚZK).
 
-Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
+Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Notebook je uložený bez výstupů; čísla a grafy vzniknou až při spuštění a u průběžně aktualizovaných dat se mohou mezi běhy lišit.
 
 ## Postup krok za krokem
 

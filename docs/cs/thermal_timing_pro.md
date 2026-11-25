@@ -14,7 +14,7 @@ Spočítat polohu Slunce, osvit svahů a stíny terénu, spustit energetickou bi
 
 DMR 5G (terén) a DMP 1G (povrch) z ČÚZK, buňka 4 m, území 1 × 0,7 km na levém svahu údolí Vltavy u Roztok; hodinová teplota, vlhkost, přímé (na kolmou plochu) a rozptýlené záření, oblačnost a vítr z Open-Meteo za posledních 92 dní (model počasí, ne měření na místě); tepelné vlastnosti louky a lesa stejné jako v základní verzi. Model nepočítá se stékáním studeného vzduchu do údolí v noci, s odraženým zářením z okolních svahů ani s vlhkostí půdy, která se mění; DMP 1G je z let 2009–2013.
 
-Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
+Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Notebook je uložený bez výstupů; čísla a grafy vzniknou až při spuštění a u průběžně aktualizovaných dat se mohou mezi běhy lišit.
 
 ## Postup krok za krokem
 
@@ -30,7 +30,13 @@ Parametry, které student mění:
 
 ### 2. Slunce, svahy a stíny
 
-Přímé záření dopadá na svah úměrně cos i, kde i je úhel mezi paprskem a kolmicí ke svahu: cos i = cos z · cos s + sin z · sin s · cos(φ − A), z je zenitový úhel Slunce, φ jeho azimut, s sklon a A orientace svahu. Buňka je ve stínu, když terén ve směru Slunce stíní paprsek. Mapy ukazují cos i ve stínu nulové.
+Přímé záření dopadá na svah úměrně cos i, kde $i$ je úhel mezi paprskem a kolmicí ke svahu:
+
+$$
+\cos i = \cos z \cos s + \sin z \sin s \cos(\varphi - A),
+$$
+
+$z$ je zenitový úhel Slunce, $\varphi$ jeho azimut, $s$ sklon a $A$ orientace svahu. Buňka je ve stínu, když terén ve směru Slunce stíní paprsek. Mapy ukazují cos i ve stínu nulové.
 
 Parametry, které student mění:
 

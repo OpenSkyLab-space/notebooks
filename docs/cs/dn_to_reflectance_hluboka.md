@@ -14,7 +14,7 @@ Převést DN na zář a odrazivost TOA, ukázat, proč DN ze dvou dnů nejsou sr
 
 Landsat 8 OLI Collection 1 Level-1 z veřejného archivu Google Cloud: `LC08_L1TP_191026_20190626_20190705_01_T1` (26. 6. 2019, výška Slunce 61°) a `LC08_L1TP_191026_20190218_20190222_01_T1` (18. 2. 2019, výška Slunce 27°), pásma B1–B7, BQA a MTL. Pro srovnání Sentinel-2 L2A `S2B_33UVQ_20190625_0_L2A` (25. 6. 2019) z Earth Search. Výřez 12 × 12 km kolem Hluboké nad Vltavou, asi 25 MB.
 
-Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
+Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Notebook je uložený bez výstupů; čísla a grafy vzniknou až při spuštění a u průběžně aktualizovaných dat se mohou mezi běhy lišit.
 
 ## Postup krok za krokem
 
@@ -53,13 +53,78 @@ Parametry, které student mění:
 
 ### 6. Empirická přímka
 
-V terénu se na snímek položí tmavý a světlý panel se změřenou odrazivostí. Tady jako panely poslouží tmavé a světlé pixely, jejichž odrazivost na povrchu známe ze Sentinelu-2. Pro každé pásmo proložíme přímku ρ_BOA = a · ρ_TOA + b: posun b souvisí se září dráhy a sklon s propustností atmosféry: pro ρ_TOA ≈ ρ_dráhy + T · ρ_BOA vychází a ≈ 1/T a b ≈ −ρ_dráhy/T.
+Empirická přímka opravuje odrazivost pomocí sklonu a posunu. V terénu mohou
+jako reference sloužit fyzické kalibrační panely se známou odrazivostí.
+V tomto cvičení použijeme **referenční pixely**: jejich referenční odrazivost
+převezmeme ze snímku Sentinel-2 L2A.
+
+Pro každé pásmo hledáme přímku mezi odrazivostí TOA Landsatu a referenční
+odrazivostí BOA. Touto přímkou potom opravíme celé pásmo:
+
+$$
+\widehat{\rho}_{\mathrm{BOA}} = a\,\rho_{\mathrm{TOA}} + b.
+$$
+
+- $\rho_{\mathrm{TOA}}$ je vstupní odrazivost na horní hranici atmosféry.
+- $\widehat{\rho}_{\mathrm{BOA}}$ je náš odhad odrazivosti na povrchu.
+- $a$ je **sklon** (`slope`): mění měřítko hodnot.
+- $b$ je **posun** (`offset`): ke každé hodnotě přičítá stejnou opravu.
+
+Odrazivost, sklon i posun jsou bezrozměrné. Pro zjednodušený model atmosféry
+
+$$
+\rho_{\mathrm{TOA}} \approx \rho_{\mathrm{dráhy}} + T\,\rho_{\mathrm{BOA}}
+\quad\Rightarrow\quad
+a \approx \frac{1}{T},\qquad b \approx -\frac{\rho_{\mathrm{dráhy}}}{T},
+$$
+
+kde $T$ je propustnost atmosféry a $\rho_{\mathrm{dráhy}}$ příspěvek rozptylu
+v atmosféře vyjádřený jako odrazivost. Tento fyzikální výklad je přibližný:
+zde srovnáváme dva různé senzory a referenční BOA je sama výsledkem zpracování.
+
+### 6.1 Vyber referenční pixely a oprav snímek
+
+V každém pásmu vybereme podle Sentinelu-2 `n_reference` nejtmavších a stejný
+počet nejsvětlejších platných pixelů. Při `n_reference = 300` tedy přímku
+prokládáme **600 dvojicemi hodnot**, ne dvěma průměry skupin. Různá pásma
+mohou vybrat různé pixely.
+
+Zápis `[valid]` vybere hodnoty na společných platných místech obou snímků
+ve stejném pořadí. `np.argsort` vrátí jejich indexy od nejtmavších po
+nejsvětlejší. `np.polyfit(..., deg=1)` z vybraných dvojic vypočítá sklon
+a posun přímky. Tu pak použijeme na celé pásmo Landsatu.
+
+**Po změně `n_reference` spusť znovu všechny tři buňky této části (6.1–6.3).**
+
+### 6.2 Porovnej chyby všech tří postupů
+
+Tabulka ukáže sklon a posun v každém pásmu a RMSE původní odrazivosti TOA,
+korekce DOS a empirické přímky proti referenci Sentinel-2 BOA:
+
+$$
+\mathrm{RMSE} = \sqrt{\frac{1}{N}\sum_{i=1}^{N}
+\left(\rho_i^{\mathrm{odhad}}-\rho_i^{\mathrm{reference}}\right)^2}.
+$$
+
+$N$ je počet všech platných pixelů a $i$ označuje jeden z nich. Menší RMSE
+znamená lepší shodu s referencí. Všechny metody hodnotíme na stejných pixelech,
+včetně těch použitých k proložení přímky; nejde tedy o nezávislé ověření přesnosti.
+
+### 6.3 Zobraz shodu se Sentinelem-2
+
+Na vodorovné ose je referenční BOA, na svislé ose odrazivost daného postupu.
+Černá přímka 1 : 1 označuje úplnou shodu. Barvy rozlišují modré pásmo B2,
+červené B4 a blízké infračervené B5.
+
+Pro přehlednost vykreslíme jen **4 000 náhodně vybraných platných pixelů**,
+stejných pro všechny grafy i pásma. Pevné semínko `0` zajistí opakovatelný
+výběr. Tento vzorek slouží pouze ke kreslení; kalibraci ani RMSE nemění.
 
 Parametry, které student mění:
 
-- `n_panel = 300`: kolik nejtmavších a nejsvětlejších pixelů použít jako panely
+- `n_reference = 300`: pixelů v každé skupině
 
-**Úkol 5.** Proč má empirická přímka v modrých pásmech záporný posun a sklon jiný než 1? Co fyzikálně vyjadřují? Která metoda dopadla nejlépe a proč DOS nemůže opravit sklon? Nastav `n_panel = 20`: co se stane se spolehlivostí přímky? Proč v terénu stačí dva panely, ale musí ležet ve stejném snímku a za stejného osvětlení?
+**Úkol 5.** Proč má empirická přímka v modrých pásmech záporný posun a sklon jiný než 1? Co fyzikálně vyjadřují? Která metoda má nejmenší RMSE v jednotlivých pásmech a proč DOS nemůže opravit sklon? Nastav `n_reference = 20` a znovu spusť buňky 6.1–6.3: jak se změní sklon, posun a RMSE? Proč v terénu stačí k určení přímky dva kalibrační panely s různou známou odrazivostí, ale musí ležet ve stejném snímku a za stejného osvětlení?
 
 **Rozšíření (nepovinné).** Porovnej výsledky se spolužákem, který spustil notebook pro jiné místo: vyšel podobný rozdíl TOA − BOA nad vodou a podobný sklon empirické přímky? Čím se mohou lišit (jiný den, jiný opar, jiná výška Slunce)?
 

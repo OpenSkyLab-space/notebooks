@@ -64,7 +64,7 @@ def s2_window(item_id, lon, lat, half):
 CUZK_HELPER = {
     "cs": '''
 def cuzk_raster(service, x0, y0, x1, y1, res=2.0):
-    """Výřez rastru ČÚZK (dmr5g, dmp1g, dmp_obrazova_korelace) v S-JTSK (EPSG:5514), výšky v Bpv.
+    """Výřez rastru ČÚZK (dmr5g, dmp1g, dmp = DMP OK) v S-JTSK (EPSG:5514), výšky v Bpv.
     Vrací pole výšek (řádek 0 = sever) a jeho transformaci."""
     nx, ny = int(round((x1 - x0) / res)), int(round((y1 - y0) / res))
     url = f"https://ags.cuzk.cz/arcgis2/rest/services/{service}/ImageServer/exportImage"
@@ -81,7 +81,7 @@ def cuzk_raster(service, x0, y0, x1, y1, res=2.0):
 ''',
     "en": '''
 def cuzk_raster(service, x0, y0, x1, y1, res=2.0):
-    """Window of a ČÚZK raster (dmr5g, dmp1g, dmp_obrazova_korelace) in S-JTSK (EPSG:5514), heights in Bpv.
+    """Window of a ČÚZK raster (dmr5g, dmp1g, dmp = DMP OK) in S-JTSK (EPSG:5514), heights in Bpv.
     Returns the height array (row 0 = north) and its transform."""
     nx, ny = int(round((x1 - x0) / res)), int(round((y1 - y0) / res))
     url = f"https://ags.cuzk.cz/arcgis2/rest/services/{service}/ImageServer/exportImage"

@@ -14,7 +14,7 @@ Dekódovat METAR, spočítat relativní vlhkost a odhad základny oblačnosti, p
 
 Zprávy METAR a TAF z letišť Praha (LKPR), Brno (LKTB), Ostrava (LKMT) a Karlovy Vary (LKKV) ze služby NOAA Aviation Weather Center; hodinová předpověď z Open-Meteo pro Roztoky u Prahy. Data se mění každou půlhodinu, tvoje čísla budou jiná než v uloženém notebooku.
 
-Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
+Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Notebook je uložený bez výstupů; čísla a grafy vzniknou až při spuštění a u průběžně aktualizovaných dat se mohou mezi běhy lišit.
 
 ## Postup krok za krokem
 
@@ -46,7 +46,11 @@ Parametry, které student mění:
 
 ### 4. Cesta zpět proti větru
 
-Dron letí vůči vzduchu rychlostí V, vítr ve výšce letu má rychlost U. Na trase D tam po větru a zpět proti větru trvá let t = D/(V + U) + D/(V − U).
+Dron letí vůči vzduchu rychlostí V, vítr ve výšce letu má rychlost U. Na trase $D$ tam po větru a zpět proti větru trvá let
+
+$$
+t = \frac{D}{V + U} + \frac{D}{V - U}.
+$$
 
 Parametry, které student mění:
 

@@ -14,7 +14,7 @@ Ze skutečné odrazivosti spočítat pohltivost a albedo povrchů, použít Kirc
 
 Sentinel-2 L2A (odrazivost na povrchu) z katalogu Earth Search na AWS: scéna `S2B_33UVQ_20240731_0_L2A` (31. 7. 2024, okolí Hluboké nad Vltavou) a `S2A_33UVQ_20230209_0_L2A` (9. 2. 2023, Šumava kolem Plechého se sněhem); třídy pokryvu ESA WorldCover 2021; hodinové počasí pro České Budějovice z Open-Meteo (posledních 92 dní). Stahuje se asi 15 MB.
 
-Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
+Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Notebook je uložený bez výstupů; čísla a grafy vzniknou až při spuštění a u průběžně aktualizovaných dat se mohou mezi běhy lišit.
 
 ## Postup krok za krokem
 
@@ -42,9 +42,11 @@ Albedo je odrazivost vážená spektrem Slunce. Liang (2001) ho pro pásma Lands
 
 Z Open-Meteo vezmeme nejslunečnější hodinu posledních 92 dní v Českých Budějovicích: globální záření S, teplotu vzduchu, rosný bod a vítr. Povrch v rovnováze (bez vypařování a vedení do země) splní
 
-(1 − albedo) · S + ε · L↓ = ε · σ · T⁴ + h · (T − T_vzduch),
+$$
+(1 - \alpha)\, S + \varepsilon L_\downarrow = \varepsilon \sigma T^4 + h\,(T - T_\mathrm{vzduch}),
+$$
 
-kde L↓ je dlouhovlnné záření oblohy (Brutsaert 1975, jasná obloha) a h = 5,7 + 3,8 · u je přestup tepla prouděním.
+kde $\alpha$ je albedo, $S$ globální záření (W·m⁻²), $\varepsilon$ emisivita povrchu, $\sigma$ Stefanova–Boltzmannova konstanta, $T$ teplota povrchu (K), $L_\downarrow$ dlouhovlnné záření oblohy (Brutsaert 1975, jasná obloha) a $h = 5{,}7 + 3{,}8\,u$ součinitel přestupu tepla prouděním (W·m⁻²·K⁻¹) pro rychlost větru $u$ (m/s).
 
 Parametry, které student mění:
 

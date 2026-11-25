@@ -14,7 +14,7 @@ Convert DN to radiance step by step, compute the calibration coefficient from th
 
 Two captures (5 multispectral bands) from a MicaSense Altum-PT camera with DLS 2 from the MicaSense sample data (repository micasense/imageprocessing, MIT licence): IMG_0000 (RP06 panel, 15 August 2022 19:16 UTC) and IMG_0010 (flight 3 minutes later about 97 m above ground), 48.51° N, 122.42° W. The Altum-PT also has a panchromatic band 6 and a thermal band 7, which this notebook does not use.
 
-All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
+All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The notebook is stored without outputs; numbers and plots appear when it runs and may differ between runs where the data are updated continuously.
 
 ## Step by step
 
@@ -26,12 +26,16 @@ Loads the libraries and downloads the data.
 
 The MicaSense model (the same as in the library `micasense/image.py`):
 
-L = V(r) · R(y) · (DN − black level) / (gain · exposure) · a₁ / 2¹⁶
+$$
+L = V(r)\, R(y)\, \frac{DN - DN_\mathrm{black}}{g\, t_e}\, \frac{a_1}{2^{16}}
+$$
 
-- black level: the signal without light (BlackLevel tag),
-- V(r) = 1 / (1 + k₀r + … + k₅r⁶): vignetting correction by the distance r from the vignetting centre (newer cameras store a 2D polynomial in x, y instead),
-- R(y) = 1 / (1 + a₂ y / exposure − a₃ y): correction by row (the sensor is read out row by row),
-- a₁: the factory radiometric calibration coefficient. The result is spectral radiance in W/m²/sr/nm.
+- $g$ is the gain and $t_e$ the exposure (s),
+
+- $DN_\mathrm{black}$ is the black level, the signal without light (BlackLevel tag),
+- $V(r) = 1 / (1 + k_0 r + \dots + k_5 r^6)$ is the vignetting correction by the distance r from the vignetting centre (newer cameras store a 2D polynomial in x, y instead),
+- $R(y) = 1 / (1 + a_2 y / t_e - a_3 y)$ is the correction by row $y$ (the sensor is read out row by row),
+- $a_1$ is the factory radiometric calibration coefficient. The result is spectral radiance in W/m²/sr/nm.
 
 Parameters the student changes:
 
@@ -41,7 +45,11 @@ Parameters the student changes:
 
 ### 3. The calibration panel
 
-The metadata of the panel image contain an area in the middle of the panel that the camera software found in the image (ReflectArea, four corners in pixels), and its reflectance in the given band (Albedo) from the calibration sheet. The mean radiance of the panel L_p gives the coefficient k = ρ_panel / L_p and the reflectance of every pixel ρ = k · L.
+The metadata of the panel image contain an area in the middle of the panel that the camera software found in the image (ReflectArea, four corners in pixels), and its reflectance in the given band (Albedo) from the calibration sheet. The mean radiance of the panel $L_p$ gives the coefficient and the reflectance of every pixel:
+
+$$
+k = \frac{\rho_\mathrm{panel}}{L_p}, \qquad \rho = k\, L.
+$$
 
 Parameters the student changes:
 
@@ -52,7 +60,11 @@ Parameters the student changes:
 
 ### 4. The DLS light sensor and its tilt
 
-The DLS measures irradiance on its top surface. When the drone tilts towards the Sun, the sensor receives more direct radiation than the horizontal ground does. DLS 2 therefore splits irradiance into a direct and a diffuse component and converts it to a horizontal surface: E_hor = E_direct · sin(solar elevation) + E_diffuse.
+The DLS measures irradiance on its top surface. When the drone tilts towards the Sun, the sensor receives more direct radiation than the horizontal ground does. DLS 2 therefore splits irradiance into a direct and a diffuse component and converts it to a horizontal surface: $$
+E_\mathrm{hor} = E_\mathrm{direct} \sin h_\odot + E_\mathrm{diffuse},
+$$
+
+where $h_\odot$ is the solar elevation.
 
 Parameters the student changes:
 
@@ -62,9 +74,9 @@ Parameters the student changes:
 
 ### 5. Three ways to calibrate
 
-- **panel only:** ρ = k · L. Assumes the illumination has not changed since the panel image.
-- **DLS only:** ρ = π · L / E_hor. Relies on the factory calibration of both the camera and the DLS.
-- **panel + DLS:** ρ = k · L · E_hor(panel) / E_hor(image). The panel sets the absolute level, the DLS tracks changes in illumination.
+- **panel only:** $\rho = k\,L$. Assumes the illumination has not changed since the panel image.
+- **DLS only:** $\rho = \pi L / E_\mathrm{hor}$. Relies on the factory calibration of both the camera and the DLS.
+- **panel + DLS:** $\rho = k\,L\,E_\mathrm{hor}(\text{panel}) / E_\mathrm{hor}(\text{image})$. The panel sets the absolute level, the DLS tracks changes in illumination.
 
 Check: when we apply the “DLS only” method to the panel itself, we should get its known reflectance.
 
@@ -76,7 +88,11 @@ Parameters the student changes:
 
 ### 6. NDVI and what calibration does to it
 
-NDVI = (ρ_NIR − ρ_R) / (ρ_NIR + ρ_R). We compare NDVI from radiance (no calibration), from the “panel + DLS” calibration, and from a calibration without vignetting correction.
+$$
+\mathrm{NDVI} = \frac{\rho_\mathrm{NIR} - \rho_R}{\rho_\mathrm{NIR} + \rho_R}.
+$$
+
+We compare NDVI from radiance (no calibration), from the “panel + DLS” calibration, and from a calibration without vignetting correction.
 
 Parameters the student changes:
 

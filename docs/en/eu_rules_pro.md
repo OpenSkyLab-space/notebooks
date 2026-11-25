@@ -14,7 +14,7 @@ Sort zones by their lower limit and determine where they concern a drone, combin
 
 UAS geographical zones as GeoJSON (reference boundaries) from the ŘLP page https://aim.rlp.cz/?lang=en&p=uas-gz, downloaded at run time, except layers larger than the chosen limit; METAR reports of Brno-Tuřany airport (LKTB) for the last 7 days from the Aviation Weather Center (NOAA); terrain elevation from the Digital terrain model of the Czech Republic, 5th generation (DMR 5G, ČÚZK). The conversion of a flight level to true altitude uses the ICAO standard atmosphere with the temperature adjusted to the airport; it is an approximation.
 
-All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
+All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The notebook is stored without outputs; numbers and plots appear when it runs and may differ between runs where the data are updated continuously.
 
 ## Step by step
 

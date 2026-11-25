@@ -14,7 +14,7 @@ Roztřídit zóny podle dolní hranice a určit, kde se týkají dronu, spojit g
 
 Zeměpisné zóny UAS ve formátu GeoJSON (referenční hranice) ze stránky ŘLP https://aim.rlp.cz/?lang=cz&p=uas-gz, stažené v okamžiku spuštění, kromě vrstev větších než zvolený limit; zprávy METAR letiště Brno-Tuřany (LKTB) za posledních 7 dní z Aviation Weather Center (NOAA); nadmořská výška terénu z Digitálního modelu reliéfu ČR 5. generace (DMR 5G, ČÚZK). Převod letové hladiny na skutečnou výšku používá standardní atmosféru ICAO s teplotou upravenou podle letiště, je to přiblížení.
 
-Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
+Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Notebook je uložený bez výstupů; čísla a grafy vzniknou až při spuštění a u průběžně aktualizovaných dat se mohou mezi běhy lišit.
 
 ## Postup krok za krokem
 

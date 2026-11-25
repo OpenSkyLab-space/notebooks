@@ -81,7 +81,15 @@ def lift_comments(code):
         row, col = tok.start[0] - 1, tok.start[1]
         line = lines[row]
         head = line[:col].rstrip()
-        if not head.strip() or len(f"{head}  {tok.string}") <= LINE_LENGTH:
+        if not head.strip():
+            # a comment on its own line: wrap it at LINE_LENGTH (Colab form directives stay as they are)
+            if len(line) > LINE_LENGTH and not tok.string.startswith(("# @", "#@")):
+                import textwrap
+                indent = line[: len(line) - len(line.lstrip())]
+                lines[row:row + 1] = [f"{indent}# {w}" for w in textwrap.wrap(
+                    tok.string.lstrip("# "), LINE_LENGTH - len(indent) - 2, break_long_words=False)]
+            continue
+        if len(f"{head}  {tok.string}") <= LINE_LENGTH:
             continue
         indent = line[: len(line) - len(line.lstrip())]
         m = PARAM_TAG.match(tok.string)

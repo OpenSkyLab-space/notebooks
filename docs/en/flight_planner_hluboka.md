@@ -14,7 +14,7 @@ Compute flight height for a target GSD, line spacing, trigger interval and speed
 
 DMR 5G (ČÚZK, ImageServer, heights in Bpv, 2 m cells) for a 1.2 × 0.8 km area in a valley near Hosín east of Hluboká nad Vltavou; hourly wind forecast at 10, 80 and 120 m from Open-Meteo; camera parameters from manufacturers' data sheets (same as in the lab).
 
-All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
+All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The notebook is stored without outputs; numbers and plots appear when it runs and may differ between runs where the data are updated continuously.
 
 ## Step by step
 
@@ -24,7 +24,13 @@ Installs the libraries Colab lacks (`rasterio`) and downloads the data.
 
 ### 2. Camera, height and GSD
 
-GSD = H · p / f, where p is the pixel pitch on the sensor (sensor width / pixel count). From a target GSD, H = GSD · f / p.
+The ground sampling distance (GSD) follows from similar triangles:
+
+$$
+\mathrm{GSD} = \frac{H\,p}{f}, \qquad H = \frac{\mathrm{GSD}\, f}{p},
+$$
+
+where $H$ is the flight height above ground, $f$ the focal length and $p$ the pixel pitch on the sensor (sensor width / pixel count); $H$ and GSD are in metres, $p$ and $f$ in millimetres. The code takes the target GSD in cm/px, hence the division by 100.
 
 Parameters the student changes:
 
@@ -48,7 +54,13 @@ Parameters the student changes:
 
 ### 4. Constant height or terrain following?
 
-At a constant height above the take-off point, the height above ground changes with terrain: H_AGL = H0 + z_takeoff − z. GSD and footprint change with it, while base and line spacing stay fixed, so the actual overlap changes.
+At a constant height above the take-off point, the height above ground changes with terrain:
+
+$$
+H_\mathrm{AGL} = H_0 + z_\mathrm{takeoff} - z,
+$$
+
+where $H_0$ is the set height above the take-off point, $z_\mathrm{takeoff}$ its elevation and $z$ the terrain elevation below the drone. GSD and footprint change with it, while base and line spacing stay fixed, so the actual overlap changes.
 
 Parameters the student changes:
 
@@ -58,7 +70,13 @@ Parameters the student changes:
 
 ### 5. Real wind, motion blur and rolling shutter
 
-We take today's wind forecast for this area from Open-Meteo. Blur = ground speed · exposure / GSD; rolling-shutter skew = ground speed · sensor readout time / GSD. The Zenmuse P1 and Mavic 3E have a mechanical shutter, so skew practically disappears for them (t_read = 0); the default 30 ms is an order-of-magnitude value for an electronic rolling shutter.
+We take today's wind forecast for this area from Open-Meteo. We express blur and rolling-shutter skew in pixels:
+
+$$
+\text{blur} = \frac{v_g\, t_\mathrm{exp}}{\mathrm{GSD}}, \qquad \text{skew} = \frac{v_g\, t_\mathrm{read}}{\mathrm{GSD}},
+$$
+
+where $v_g$ is the ground speed, $t_\mathrm{exp}$ the exposure and $t_\mathrm{read}$ the sensor readout time. The Zenmuse P1 and Mavic 3E have a mechanical shutter, so skew practically disappears for them (t_read = 0); the default 30 ms is an order-of-magnitude value for an electronic rolling shutter.
 
 Parameters the student changes:
 

@@ -14,7 +14,7 @@ Compute absorptance and albedo of surfaces from real reflectance, apply Kirchhof
 
 Sentinel-2 L2A (surface reflectance) from the Earth Search catalogue on AWS: scene `S2B_33UVR_20240721_0_L2A` (21 July 2024, near Roztoky u Prahy) and `S2A_33UWS_20240308_0_L2A` (8 March 2024, snow in the Krkonoše mountains); land-cover classes from ESA WorldCover 2021; hourly weather for Prague from Open-Meteo (last 92 days). About 15 MB is downloaded.
 
-All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
+All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The notebook is stored without outputs; numbers and plots appear when it runs and may differ between runs where the data are updated continuously.
 
 ## Step by step
 
@@ -42,9 +42,11 @@ Albedo is reflectance weighted by the solar spectrum. Liang (2001) derived it fo
 
 From Open-Meteo we take the sunniest hour of the last 92 days in Prague: global radiation S, air temperature, dew point and wind. A surface in equilibrium (no evaporation and no conduction into the ground) satisfies
 
-(1 − albedo) · S + ε · L↓ = ε · σ · T⁴ + h · (T − T_air),
+$$
+(1 - \alpha)\, S + \varepsilon L_\downarrow = \varepsilon \sigma T^4 + h\,(T - T_\mathrm{air}),
+$$
 
-where L↓ is the longwave radiation of the sky (Brutsaert 1975, clear sky) and h = 5.7 + 3.8 · u is convective heat transfer.
+where $\alpha$ is the albedo, $S$ global radiation (W·m⁻²), $\varepsilon$ the surface emissivity, $\sigma$ the Stefan–Boltzmann constant, $T$ the surface temperature (K), $L_\downarrow$ the longwave sky radiation (Brutsaert 1975, clear sky) and $h = 5.7 + 3.8\,u$ the convective heat transfer coefficient (W·m⁻²·K⁻¹) for wind speed $u$ (m/s).
 
 Parameters the student changes:
 

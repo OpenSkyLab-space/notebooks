@@ -4,7 +4,27 @@ Description of the notebook for the lab [Rope and photons](https://openskylab.sp
 
 ## What the notebook is about
 
-In the lab you saw that a wave on a rope obeys c = λ · f and that both amplitude and frequency carry energy. Light is different: the energy of one photon depends only on frequency, E = h · f, and brightness is the number of photons. Here you compute it for the real bands of the Sentinel-2 satellite.
+In the lab you watched a wave on a rope. Its speed $v$, wavelength
+$\lambda$ (the distance between neighbouring crests) and frequency $f$ (the number of
+oscillations per second) are linked by
+
+$$
+v = \lambda f.
+$$
+
+**Light in vacuum obeys the same relation**, with the speed of light $c$. Light
+carries energy in photons. From the wavelength we get the frequency and the energy
+of one photon:
+
+$$
+f = \frac{c}{\lambda}, \qquad E = hf.
+$$
+
+$h$ is the Planck constant; we express energy in electronvolts (eV),
+a unit of energy. **A shorter wavelength means a higher frequency and a larger photon
+energy.** At the same frequency, more photons arriving on the same area per second
+deliver more energy; the energy of each photon does not change.
+Here you compute this for the real bands of the Sentinel-2C satellite.
 
 ## Goal
 
@@ -12,9 +32,9 @@ From the metadata of a real Sentinel-2 scene, compute the frequency, photon ener
 
 ## Data
 
-The product metadata of Sentinel-2C L1C, tile 33UXQ (around Brno), 5 February 2025 (`MTD_MSIL1C.xml` from the Google Cloud public archive): central wavelengths, spectral response of the bands and top-of-atmosphere solar irradiance. About 50 kB is downloaded.
+The product metadata of Sentinel-2C L1C, tile 33UXQ (around Brno), 5 February 2025 (`MTD_MSIL1C.xml` from the Google Cloud public archive): central wavelengths, spectral response of the bands and top-of-atmosphere solar spectral irradiance. About 50 kB is downloaded.
 
-All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
+All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The notebook is stored without outputs; numbers and plots appear when it runs and may differ between runs where the data are updated continuously.
 
 ## Step by step
 
@@ -30,15 +50,36 @@ Loads the libraries and downloads the data.
 
 ### 3. Energy of one photon
 
-Loads the libraries and downloads the data.
+The energy of one photon is given by the Planck–Einstein relation:
+
+$$
+E = hf = \frac{hc}{\lambda}.
+$$
+
+We use $h \approx 6.626\times10^{-34}\ \mathrm{J\,s}$,
+$c \approx 3.00\times10^8\ \mathrm{m\,s^{-1}}$ and the wavelength
+$\lambda$ in metres, so the result comes out in joules.
+Since $1\ \mathrm{eV} = 1.602\,176\,634\times10^{-19}\ \mathrm{J}$,
+we convert the energy to eV by dividing by this value. In the code it is the
+numerical value of `e`, the elementary charge in coulombs, from `scipy.constants`.
 
 **Task 2.** Check the energy ratio of the blue and red photon from the wavelengths alone, without constants. Why is the ratio of λ enough? How does the energy of one photon change when the blue light is twice as bright?
 
-### 4. Brightness is the number of photons
+### 4. From radiant energy to photon flux
 
-The metadata give the top-of-atmosphere solar irradiance E0 in W·m⁻²·µm⁻¹ for each band. Dividing it by the energy of one photon gives the number of photons per second falling on one square metre within one micrometre of spectrum.
+The metadata give the top-of-atmosphere solar spectral irradiance $E_0$
+in $\mathrm{W\,m^{-2}\,\mu m^{-1}}$. Dividing it by the energy of one photon
+in joules gives the number of photons arriving per second on one square metre
+per unit wavelength, here per micrometre:
 
-**Task 3.** The power E0 falls more than twentyfold from blue (B2) to SWIR 2 (B12). Does the number of photons fall in the same way? Explain the difference. In which band does the most photons per micrometre fall on a square metre, and why is it not the band with the highest E0?
+$$
+\Phi_\lambda = \frac{E_0}{E}.
+$$
+
+$\Phi_\lambda$ has the unit $\mathrm{s^{-1}\,m^{-2}\,\mu m^{-1}}$.
+It is the spectral photon flux density, not the total number of photons in the band.
+
+**Task 3.** The spectral irradiance E0 falls more than twentyfold from blue (B2) to SWIR 2 (B12). Does the spectral photon flux density fall in the same way? Explain the difference. In which band does the most photons per micrometre fall on a square metre, and why is it not the band with the highest E0?
 
 ### 5. Which bands a silicon chip can see
 
@@ -71,7 +112,7 @@ A Google account and a browser; the notebook runs in Google Colab and nothing is
 ## Data sources and references
 
 - Copernicus Sentinel-2 data 2025, ESA; L1C metadata from the Google Cloud public archive (`gcp-public-data-sentinel-2`). Licence: [Legal notice on the use of Copernicus Sentinel Data](https://sentinels.copernicus.eu/documents/247904/690755/Sentinel_Data_Legal_Notice), free use with attribution.
-- Constants h, c, e, k: exactly defined SI values since 2019, taken from `scipy.constants`.
+- Constants h, c, e, k: exactly defined SI values since 2019, taken from `scipy.constants`; CODATA 2022 overview: [NIST](https://physics.nist.gov/cuu/pdf/wall_2022.pdf).
 - Silicon band gap 1.12 eV at 300 K: Sze, S. M., Ng, K. K. (2007). *Physics of Semiconductor Devices*, 3rd ed. Wiley.
 - Sentinel-1 radar frequency (C band) 5.405 GHz: ESA, Sentinel-1 User Handbook.
 

@@ -14,7 +14,7 @@ Convert DN to radiance and TOA reflectance, show why DN from two days are not co
 
 Landsat 8 OLI Collection 1 Level-1 from the Google Cloud public archive: `LC08_L1TP_191025_20190626_20190705_01_T1` (26 June 2019, sun elevation 60°) and `LC08_L1TP_191025_20190218_20190222_01_T1` (18 Feb 2019, sun elevation 26°), bands B1–B7, BQA and MTL. For comparison Sentinel-2 L2A `S2B_33UVR_20190625_0_L2A` (25 June 2019) from Earth Search. A 12 × 12 km window around central Prague, about 25 MB.
 
-All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
+All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The notebook is stored without outputs; numbers and plots appear when it runs and may differ between runs where the data are updated continuously.
 
 ## Step by step
 
@@ -53,13 +53,78 @@ Parameters the student changes:
 
 ### 6. Empirical line
 
-In the field a dark and a bright panel with measured reflectance are placed in the image. Here the panels are dark and bright pixels whose surface reflectance we know from Sentinel-2. For each band we fit a line ρ_BOA = a · ρ_TOA + b: the offset b relates to path radiance and the slope a to atmospheric transmittance: for ρ_TOA ≈ ρ_path + T · ρ_BOA we get a ≈ 1/T and b ≈ −ρ_path/T.
+The empirical line corrects reflectance with a slope and an offset. In the field the
+reference can be physical calibration panels with known reflectance.
+In this exercise we use **reference pixels**: their reference reflectance
+is taken from a Sentinel-2 L2A image.
+
+For each band we look for a line between the Landsat TOA reflectance and the reference
+BOA reflectance. We then correct the whole band with this line:
+
+$$
+\widehat{\rho}_{\mathrm{BOA}} = a\,\rho_{\mathrm{TOA}} + b.
+$$
+
+- $\rho_{\mathrm{TOA}}$ is the input top-of-atmosphere reflectance.
+- $\widehat{\rho}_{\mathrm{BOA}}$ is our estimate of the surface reflectance.
+- $a$ is the **slope** (`slope`): it scales the values.
+- $b$ is the **offset** (`offset`): it adds the same correction to every value.
+
+Reflectance, slope and offset are dimensionless. For a simplified model of the atmosphere
+
+$$
+\rho_{\mathrm{TOA}} \approx \rho_{\mathrm{path}} + T\,\rho_{\mathrm{BOA}}
+\quad\Rightarrow\quad
+a \approx \frac{1}{T},\qquad b \approx -\frac{\rho_{\mathrm{path}}}{T},
+$$
+
+where $T$ is the atmospheric transmittance and $\rho_{\mathrm{path}}$ the contribution of
+atmospheric scattering expressed as reflectance. This physical reading is approximate:
+here we compare two different sensors, and the reference BOA is itself a product of processing.
+
+### 6.1 Select reference pixels and correct the image
+
+In each band we select, according to Sentinel-2, the `n_reference` darkest and the same
+number of brightest valid pixels. With `n_reference = 300` the line is therefore fitted
+to **600 pairs of values**, not to two group means. Different bands
+may select different pixels.
+
+Indexing with `[valid]` picks the values at the valid locations shared by both images,
+in the same order. `np.argsort` returns their indices from darkest to
+brightest. `np.polyfit(..., deg=1)` computes the slope and offset of the line
+from the selected pairs. We then apply the line to the whole Landsat band.
+
+**After changing `n_reference`, run all three cells of this part again (6.1–6.3).**
+
+### 6.2 Compare the errors of all three approaches
+
+The table shows the slope and offset in each band and the RMSE of the original TOA reflectance,
+of the DOS correction and of the empirical line against the Sentinel-2 BOA reference:
+
+$$
+\mathrm{RMSE} = \sqrt{\frac{1}{N}\sum_{i=1}^{N}
+\left(\rho_i^{\mathrm{estimate}}-\rho_i^{\mathrm{reference}}\right)^2}.
+$$
+
+$N$ is the number of all valid pixels and $i$ denotes one of them. A smaller RMSE
+means better agreement with the reference. All methods are evaluated on the same pixels,
+including those used to fit the line, so this is not an independent accuracy assessment.
+
+### 6.3 Show the agreement with Sentinel-2
+
+The horizontal axis shows the reference BOA, the vertical axis the reflectance from the given approach.
+The black 1 : 1 line marks perfect agreement. Colours distinguish the blue band B2,
+the red B4 and the near-infrared B5.
+
+For clarity we plot only **4,000 randomly selected valid pixels**,
+the same for all plots and bands. The fixed seed `0` makes the selection
+repeatable. This sample is used only for plotting; it changes neither the calibration nor the RMSE.
 
 Parameters the student changes:
 
-- `n_panel = 300`: how many darkest and brightest pixels to use as panels
+- `n_reference = 300`: pixels in each group
 
-**Task 5.** Why does the empirical line have a negative offset and a slope different from 1 in the blue bands? What do they express physically? Which method did best and why can DOS not correct the slope? Set `n_panel = 20`: what happens to the reliability of the line? Why are two panels enough in the field, but must be in the same image and under the same illumination?
+**Task 5.** Why does the empirical line have a negative offset and a slope different from 1 in the blue bands? What do they express physically? Which method has the smallest RMSE in each band, and why can DOS not correct the slope? Set `n_reference = 20` and run cells 6.1–6.3 again: how do the slope, offset and RMSE change? Why are two calibration panels with different known reflectance enough to determine the line in the field, but must they be in the same image and under the same illumination?
 
 **Extension (optional).** Compare your results with a classmate who ran the notebook for another place: did you get a similar TOA − BOA difference over water and a similar empirical line slope? What could make them differ (another day, other haze, another sun elevation)?
 

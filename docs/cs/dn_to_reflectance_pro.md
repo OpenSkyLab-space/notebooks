@@ -14,7 +14,7 @@ Spočítat sklon, orientaci a úhel dopadu slunečního záření z DEM, změři
 
 Landsat 8 OLI Collection 1 Level-1 z veřejného archivu Google Cloud: `LC08_L1TP_191025_20190626_20190705_01_T1` (26. 6. 2019, výška Slunce 60°) a `LC08_L1TP_191025_20181013_20181030_01_T1` (13. 10. 2018, výška Slunce 31°), pásma B2–B7, BQA a MTL; Copernicus DEM GLO-30 z registru AWS Open Data; třídy ESA WorldCover 2021 v200. Výřez 12 × 12 km ve východních Krkonoších, asi 25 MB.
 
-Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
+Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Notebook je uložený bez výstupů; čísla a grafy vzniknou až při spuštění a u průběžně aktualizovaných dat se mohou mezi běhy lišit.
 
 ## Postup krok za krokem
 
@@ -29,13 +29,19 @@ Parametry, které student mění:
 
 ### 2. Osvětlení svahu z modelu terénu
 
-Na rovině dopadá přímé sluneční záření pod zenitovým úhlem θ_s, na svahu se sklonem s a orientací a pod úhlem i: cos i = cos θ_s · cos s + sin θ_s · sin s · cos(φ_s − a), kde φ_s je azimut Slunce. Přímé ozáření svahu je úměrné cos i; difuzní světlo oblohy dopadá ze všech směrů a na orientaci svahu závisí mnohem méně.
+Na rovině dopadá přímé sluneční záření pod zenitovým úhlem θ_s, na svahu se sklonem $s$ a orientací $a$ pod úhlem $i$:
+
+$$
+\cos i = \cos\theta_s \cos s + \sin\theta_s \sin s \cos(\varphi_s - a),
+$$
+
+kde $\varphi_s$ je azimut Slunce. Přímé ozáření svahu je úměrné cos i; difuzní světlo oblohy dopadá ze všech směrů a na orientaci svahu závisí mnohem méně.
 
 **Úkol 1.** Porovnej mapy cos i v létě a na podzim. Proč se na podzim osvětlení jižních a severních svahů liší mnohem víc a kolik pixelů je ve vlastním stínu? Proč vzorec odrazivosti TOA z notebooku k laboratoři (dělení sinem výšky Slunce) na svahu nedává skutečnou odrazivost povrchu?
 
 ### 3. Jak silně terén mění odrazivost lesa
 
-Vezmeme lesní pixely podle WorldCoveru a proložíme přímku ρ = m · cos i + b. Kdyby svah osvětlovalo jen přímé Slunce a les odrážel stejně do všech směrů, byla by odrazivost úměrná cos i a posun b by byl nulový. Poměr C = b/m je základem C-korekce (Teillet a kol. 1982).
+Vezmeme lesní pixely podle WorldCoveru a proložíme přímku $\rho = m \cos i + b$. Kdyby svah osvětlovalo jen přímé Slunce a les odrážel stejně do všech směrů, byla by odrazivost úměrná cos i a posun b by byl nulový. Poměr $C = b/m$ je základem C-korekce (Teillet a kol. 1982).
 
 **Úkol 2.** Ve kterém pásmu a období je vztah s cos i nejsilnější? Proč má modrá pásmo velké C, tedy velký posun ve srovnání se sklonem, a SWIR skoro nulové? Spoj to s podílem difuzního světla oblohy v jednotlivých vlnových délkách.
 

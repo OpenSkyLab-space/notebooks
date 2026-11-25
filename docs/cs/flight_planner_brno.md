@@ -14,7 +14,7 @@ Spočítat výšku letu pro cílové GSD, rozestup linek, interval a rychlost, r
 
 DMR 5G (ČÚZK, služba ImageServer, výšky v Bpv, buňka 2 m) pro území 1,2 × 0,8 km na svahu nad Brněnskou přehradou u Kozí horky (Brno-Bystrc); hodinová předpověď větru ve 10, 80 a 120 m z Open-Meteo; parametry kamer z technických listů výrobců (stejné jako v laboratoři).
 
-Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
+Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Notebook je uložený bez výstupů; čísla a grafy vzniknou až při spuštění a u průběžně aktualizovaných dat se mohou mezi běhy lišit.
 
 ## Postup krok za krokem
 
@@ -24,7 +24,13 @@ Nainstaluje knihovny, které Colab nemá předem (`rasterio`), a stáhne data.
 
 ### 2. Kamera, výška a GSD
 
-GSD = H · p / f, kde p je velikost pixelu na čipu (šířka čipu / počet pixelů). Z cílového GSD tedy H = GSD · f / p.
+Velikost pixelu na zemi (GSD) plyne z podobnosti trojúhelníků:
+
+$$
+\mathrm{GSD} = \frac{H\,p}{f}, \qquad H = \frac{\mathrm{GSD}\, f}{p},
+$$
+
+kde $H$ je výška letu nad zemí, $f$ ohnisková vzdálenost a $p$ velikost pixelu na čipu (šířka čipu / počet pixelů); $H$ a GSD jsou v metrech, $p$ a $f$ v milimetrech. Cílové GSD se v kódu zadává v cm/px, proto se dělí 100.
 
 Parametry, které student mění:
 
@@ -48,7 +54,13 @@ Parametry, které student mění:
 
 ### 4. Stálá výška, nebo sledování terénu?
 
-Při stálé výšce nad místem vzletu se výška nad zemí mění s terénem: H_AGL = H0 + z_vzlet − z. S ní se mění GSD i záběr, ale báze a rozestup linek zůstávají, takže se mění skutečný překryv.
+Při stálé výšce nad místem vzletu se výška nad zemí mění s terénem:
+
+$$
+H_\mathrm{AGL} = H_0 + z_\mathrm{vzlet} - z,
+$$
+
+kde $H_0$ je nastavená výška nad místem vzletu, $z_\mathrm{vzlet}$ jeho nadmořská výška a $z$ nadmořská výška terénu pod dronem. S ní se mění GSD i záběr, ale báze a rozestup linek zůstávají, takže se mění skutečný překryv.
 
 Parametry, které student mění:
 
@@ -58,7 +70,13 @@ Parametry, které student mění:
 
 ### 5. Skutečný vítr, rozmazání a postupná závěrka
 
-Z Open-Meteo vezmeme předpověď větru pro toto území na dnešek. Rozmazání = rychlost vůči zemi · expozice / GSD; zkosení postupnou závěrkou = rychlost vůči zemi · doba vyčtení čipu / GSD. Zenmuse P1 a Mavic 3E mají mechanickou závěrku, takže u nich zkosení prakticky odpadá (t_read = 0); výchozích 30 ms je řádová hodnota pro elektronickou postupnou závěrku.
+Z Open-Meteo vezmeme předpověď větru pro toto území na dnešek. Rozmazání a zkosení postupnou závěrkou vyjádříme v pixelech:
+
+$$
+\text{rozmazání} = \frac{v_g\, t_\mathrm{exp}}{\mathrm{GSD}}, \qquad \text{zkosení} = \frac{v_g\, t_\mathrm{read}}{\mathrm{GSD}},
+$$
+
+kde $v_g$ je rychlost vůči zemi, $t_\mathrm{exp}$ expozice a $t_\mathrm{read}$ doba vyčtení čipu. Zenmuse P1 a Mavic 3E mají mechanickou závěrku, takže u nich zkosení prakticky odpadá ($t_\mathrm{read} = 0$); výchozích 30 ms je řádová hodnota pro elektronickou postupnou závěrku.
 
 Parametry, které student mění:
 

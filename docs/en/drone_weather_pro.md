@@ -14,7 +14,7 @@ Decode a week of METAR reports, verify the model against them (bias, RMSE, corre
 
 METAR reports for the last 7 days from Prague (LKPR), Brno (LKTB), Ostrava (LKMT) and Karlovy Vary (LKKV) airports from the NOAA Aviation Weather Center; hourly Open-Meteo data for the same 7 days at the airport coordinates and for 92 days for Roztoky (wind at 10, 80 and 120 m, gusts, temperature at 2 and 120 m, dew point, precipitation, visibility). Open-Meteo values for past days are stored short-range model forecasts, not measurements. The data change continuously, so your numbers will differ from the stored notebook.
 
-All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
+All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The notebook is stored without outputs; numbers and plots appear when it runs and may differ between runs where the data are updated continuously.
 
 ## Step by step
 

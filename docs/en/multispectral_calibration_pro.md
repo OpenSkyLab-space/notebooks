@@ -14,7 +14,7 @@ Measure the parallax between bands and from it the camera's distance from the pa
 
 Two captures (all 7 bands) from a MicaSense Altum-PT camera with DLS 2 from the MicaSense sample data (repository micasense/imageprocessing, MIT licence): IMG_0000 (RP06 panel, 15 August 2022 19:16 UTC) and IMG_0010 (flight 3 minutes later, about 97 m above ground), 48.51° N, 122.42° W. The five multispectral bands have 2064 × 1544 pixels, the panchromatic band 4112 × 3008 and the thermal band 320 × 256. The thermal band is in centikelvin and the camera assumes an emissivity of 1.0 (accuracy ±5 K according to the manufacturer).
 
-All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
+All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The notebook is stored without outputs; numbers and plots appear when it runs and may differ between runs where the data are updated continuously.
 
 ## Step by step
 
@@ -30,7 +30,7 @@ Two lenses a distance T apart see the same point at a distance H shifted by Δ =
 
 ### 3. Scale and rotation of the bands
 
-We measure the shift separately in each 256 × 256 pixel tile and fit it with an affine transform d = t + A · (x, y): t is the shift at the centre, the matrix A gives the difference in scale and the rotation. The scale difference should match the ratio of the focal lengths, the rotation the third RigRelatives angle (in degrees in the metadata).
+We measure the shift separately in each 256 × 256 pixel tile and fit it with an affine transform $\mathbf{d} = \mathbf{t} + A\,(x, y)^\mathsf{T}$: $\mathbf{t}$ is the shift at the centre, the matrix $A$ gives the difference in scale and the rotation. The scale difference should match the ratio of the focal lengths, the rotation the third RigRelatives angle (in degrees in the metadata).
 
 Parameters the student changes:
 

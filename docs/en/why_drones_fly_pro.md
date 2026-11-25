@@ -14,7 +14,7 @@ Split drone power into induced, profile and parasite parts, calibrate the model 
 
 Hourly wind at 10 and 120 m, temperature, humidity and pressure for the last 92 days from Open-Meteo for Roztoky (model data, not measurements); mass, propellers, battery and endurance of the Mavic 3E from the DJI data sheet (45 min of flight at a constant 32.4 km/h without wind at sea level until empty, 38 min of hover). The rotor figure of merit FM, the induced losses and the blade tip speed are estimates; the drive efficiency and drag area are calibrated by the notebook, so they also absorb all other losses (electronics, camera, battery).
 
-All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
+All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The notebook is stored without outputs; numbers and plots appear when it runs and may differ between runs where the data are updated continuously.
 
 ## Step by step
 

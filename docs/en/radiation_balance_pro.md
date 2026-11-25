@@ -14,7 +14,7 @@ Build solar and longwave radiation from real weather, compute the diurnal course
 
 Surface albedo from the Sentinel-2 L2A scene `S2B_33UVR_20240721_0_L2A` (21 July 2024, near Roztoky) and ESA WorldCover 2021 classes; hourly weather for Prague from Open-Meteo (last 92 days; the days around the sunniest one are simulated). About 5 MB is downloaded. The surface properties (water availability, thermal inertia) are indicative and the model is simplified: the results show relationships, they are not a forecast of the real temperature.
 
-All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
+All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The notebook is stored without outputs; numbers and plots appear when it runs and may differ between runs where the data are updated continuously.
 
 ## Step by step
 
@@ -24,7 +24,7 @@ We compute the albedo of four surfaces as in the basic version (Liang 2001, Sent
 
 ### 2. Real weather as input
 
-From Open-Meteo we take hourly global radiation, temperature, dew point, wind, cloud cover and pressure. Longwave sky radiation L↓ is computed from the clear-sky emissivity (Brutsaert 1975) and the cloud cover c is added in the form of Crawford and Duchon (1999): ε = ε_clear · (1 − c) + c. The cloud cover comes from the weather model here, not from measurements.
+From Open-Meteo we take hourly global radiation, temperature, dew point, wind, cloud cover and pressure. Longwave sky radiation L↓ is computed from the clear-sky emissivity (Brutsaert 1975) and the cloud cover c is added in the form of Crawford and Duchon (1999): $\varepsilon = \varepsilon_\mathrm{clear}\,(1 - c) + c$. The cloud cover comes from the weather model here, not from measurements.
 
 Parameters the student changes:
 
@@ -35,7 +35,24 @@ Parameters the student changes:
 
 ### 3. The surface model
 
-Net radiation Rn = (1 − albedo) · S + ε · L↓ − ε · σ · Ts⁴ splits into sensible heat H = h · (Ts − T_air), evaporation LE = β · (L_v/c_p) · h · (q_sat(Ts) − q_air) and ground heat flux G = Rn − H − LE. The surface temperature Ts is driven by G in the force-restore model (Noilhan and Planton 1989): dTs/dt = C_T · G − (2π/τ) · (Ts − T2), with C_T = 2√(π/τ)/P, where P is thermal inertia. β says how much water the surface has available (0 dry concrete, 1 wet surface).
+Net radiation splits into sensible heat, evaporation and ground heat flux:
+
+$$
+\begin{aligned}
+R_n &= (1 - \alpha)\, S + \varepsilon L_\downarrow - \varepsilon \sigma T_s^4,\\
+H &= h\,(T_s - T_\mathrm{air}),\\
+LE &= \beta\, \frac{L_v}{c_p}\, h \left(q_\mathrm{sat}(T_s) - q_\mathrm{air}\right),\\
+G &= R_n - H - LE.
+\end{aligned}
+$$
+
+The surface temperature $T_s$ is driven by $G$ in the force-restore model (Noilhan and Planton 1989):
+
+$$
+\frac{dT_s}{dt} = C_T\, G - \frac{2\pi}{\tau}\,(T_s - T_2), \qquad C_T = \frac{2\sqrt{\pi/\tau}}{P},
+$$
+
+where $\tau$ is the length of the day (s), $T_2$ the temperature of the deeper layer and $P$ the thermal inertia (J·m⁻²·K⁻¹·s⁻¹ᐟ²). β says how much water the surface has available (0 dry concrete, 1 wet surface).
 
 Parameters the student changes:
 

@@ -14,7 +14,7 @@ Convert the Landsat 8 thermal band from DN to radiance and brightness temperatur
 
 Landsat 8 OLI/TIRS, Collection 1 Level-1, scene `LC08_L1TP_191025_20190626_20190705_01_T1` (26 June 2019, 9:51 UTC, cloud cover 0.1 %), bands B4, B5 and B10 and the MTL file with calibration constants from the Google Cloud public archive. Only a 16 × 16 km window around central Prague is read (about 3 MB).
 
-All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
+All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The notebook is stored without outputs; numbers and plots appear when it runs and may differ between runs where the data are updated continuously.
 
 ## Step by step
 
@@ -24,7 +24,59 @@ Installs the libraries Colab lacks (`rasterio`) and downloads the data.
 
 ### 2. Planck's law, Wien and the fourth power
 
-Loads the libraries and downloads the data.
+### From temperature to spectral radiance: Planck's law
+
+Planck's law describes how blackbody radiation depends on wavelength and temperature:
+
+$$
+L_\lambda(\lambda, T) =
+\frac{2 h c^2}{\lambda^5}
+\frac{1}{\exp\!\left(\frac{h c}{\lambda k T}\right)-1}.
+$$
+
+| Symbol | Meaning | Unit in the formula |
+| --- | --- | --- |
+| $\lambda$ | wavelength | $\mathrm{m}$ |
+| $T$ | blackbody temperature | $\mathrm{K}$ |
+| $h$ | Planck constant | $\mathrm{J\,s}$ |
+| $c$ | speed of light in vacuum | $\mathrm{m\,s^{-1}}$ |
+| $k$ | Boltzmann constant | $\mathrm{J\,K^{-1}}$ |
+
+The spectral radiance $L_\lambda$ in this formula has the unit
+$\mathrm{W\,m^{-2}\,sr^{-1}\,m^{-1}}$: it is expressed per metre of wavelength.
+
+**How the formula maps to the code:** `planck(lam_um, T)` takes the wavelength in µm
+and the temperature in K. The first `1e-6` converts the wavelength from µm to m. The last
+`1e-6` converts the computed radiance to $\mathrm{W\,m^{-2}\,sr^{-1}\,\mu m^{-1}}$, that is,
+per µm of wavelength, the unit used in this notebook.
+
+`np.expm1(x)` computes $e^x-1$; for small $x$ it is numerically more accurate
+than writing `np.exp(x) - 1` directly.
+
+### From spectral radiance to brightness temperature
+
+The **brightness temperature** $T_b$ is the temperature of a blackbody that would
+have the measured spectral radiance at the given wavelength. Solving Planck's law for
+the temperature gives:
+
+$$
+T_b(\lambda, L_\lambda) =
+\frac{h c}{\lambda k}
+\frac{1}{\ln\!\left(1+\frac{2 h c^2}{\lambda^5 L_\lambda}\right)}.
+$$
+
+Symbols and units are the same as above: $\lambda$ is in metres and $L_\lambda$
+is the radiance per metre of wavelength. The resulting temperature $T_b$ is in kelvin.
+For a real surface the brightness temperature can differ from its actual temperature;
+the role of emissivity is explored later in this notebook.
+
+**How the formula maps to the code:** `planck_inv(lam_um, L)` takes the wavelength
+in µm and the radiance in $\mathrm{W\,m^{-2}\,sr^{-1}\,\mu m^{-1}}$. It therefore multiplies
+the wavelength by `1e-6` and the radiance by `1e6`, so that the formula works per metre.
+The function returns the brightness temperature in K.
+
+`np.log1p(x)` computes the natural logarithm $\ln(1+x)$; for small $x$
+it is numerically more accurate than writing `np.log(1 + x)` directly.
 
 Parameters the student changes:
 
@@ -34,7 +86,13 @@ Parameters the student changes:
 
 ### 3. A real scene: from DN to brightness temperature
 
-Band B10 (10.6–11.2 µm) stores digital numbers (DN). The MTL file holds the linear conversion to radiance, L = M · DN + A, and the constants K1, K2 that turn radiance into brightness temperature, T = K2 / ln(K1 / L + 1). It is Planck's law simplified for one band.
+Band B10 (10.6–11.2 µm) stores digital numbers (DN). The MTL file holds the coefficients of the linear conversion to spectral radiance and the constants $K_1$, $K_2$ that turn radiance into brightness temperature:
+
+$$
+L_\lambda = M_L \cdot DN + A_L, \qquad T_b = \frac{K_2}{\ln\!\left(\frac{K_1}{L_\lambda} + 1\right)}.
+$$
+
+$M_L$ and $A_L$ are `RADIANCE_MULT_BAND_10` and `RADIANCE_ADD_BAND_10`, $L_\lambda$ comes out in W·m⁻²·sr⁻¹·µm⁻¹ and $T_b$ in kelvin. The second formula is Planck's law simplified for one band: $K_1$ and $K_2$ contain the constants $h$, $c$, $k$ and the effective wavelength of the band.
 
 Parameters the student changes:
 
@@ -44,7 +102,7 @@ Parameters the student changes:
 
 ### 4. Emissivity
 
-Real surfaces emit less than a blackbody: L = ε · B(T). We estimate emissivity from NDVI with a simplified threshold method after Sobrino et al. (2004): bare surface 0.97, full vegetation 0.99, in between according to the vegetation fraction with a correction for multiple scattering between plants and soil. Water (NDVI < 0) gets a typical value of 0.991. Sky reflection and the atmosphere are ignored for now.
+Real surfaces emit less than a blackbody: $L_\lambda = \varepsilon \, B_\lambda(T)$, where $B_\lambda$ is the Planck function and $\varepsilon$ the emissivity (0 to 1). We estimate emissivity from NDVI with a simplified threshold method after Sobrino et al. (2004): bare surface 0.97, full vegetation 0.99, in between according to the vegetation fraction with a correction for multiple scattering between plants and soil. Water (NDVI < 0) gets a typical value of 0.991. Sky reflection and the atmosphere are ignored for now.
 
 Parameters the student changes:
 
@@ -55,7 +113,11 @@ Parameters the student changes:
 
 ### 5. Sky reflection
 
-A surface with emissivity ε reflects 1 − ε of the longwave radiation coming from the sky. A clear sky is very cold at 10 µm, an overcast sky has roughly the temperature of the cloud base. The sensor receives L = ε · B(T) + (1 − ε) · B(T_sky).
+A surface with emissivity ε reflects 1 − ε of the longwave radiation coming from the sky. A clear sky is very cold at 10 µm, an overcast sky has roughly the temperature of the cloud base. The sensor receives
+
+$$
+L_\lambda = \varepsilon \, B_\lambda(T) + (1 - \varepsilon) \, B_\lambda(T_\mathrm{sky}).
+$$
 
 Parameters the student changes:
 
@@ -65,7 +127,7 @@ Parameters the student changes:
 
 ### 6. A fire smaller than a pixel
 
-A pixel is a mixture: a fraction p burns at the fire temperature, the rest has the background temperature. As background we take the median real brightness temperature of the window (Prague) and compare the 3.9 µm band (the fire bands of MODIS and VIIRS lie between 3.7 and 4.1 µm) with the 10.9 µm band.
+A pixel is a mixture: a fraction $p$ burns at the fire temperature, the rest has the background temperature, so $L_\lambda = p \, B_\lambda(T_\mathrm{fire}) + (1 - p) \, B_\lambda(T_\mathrm{bg})$. As background we take the median real brightness temperature of the window (Prague) and compare the 3.9 µm band (the fire bands of MODIS and VIIRS lie between 3.7 and 4.1 µm) with the 10.9 µm band.
 
 Parameters the student changes:
 

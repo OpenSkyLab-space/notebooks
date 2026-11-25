@@ -14,7 +14,7 @@ Načíst a prohlédnout mračna bodů LAZ, zjistit, z kolikátého odrazu pochá
 
 ČÚZK: DMR 5G (body terénu z leteckého laserového skenování, LAZ) a DMP 1G (body povrchu, LAZ) pro mapový list Kralupy nad Vltavou 7-7, rastry DMR 5G, DMP 1G a DMP OK (obrazová korelace) z obrazové služby ČÚZK; vše v S-JTSK (EPSG:5514), výšky Bpv. Data ČÚZK jsou otevřená (CC BY 4.0).
 
-Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
+Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Notebook je uložený bez výstupů; čísla a grafy vzniknou až při spuštění a u průběžně aktualizovaných dat se mohou mezi běhy lišit.
 
 ## Postup krok za krokem
 
@@ -42,7 +42,13 @@ Parametry, které student mění:
 
 ### 3. CHM z lidaru a z fotogrammetrie
 
-CHM = DSM − DTM. DTM bereme vždy z lidaru (DMR 5G). DSM jednou z lidaru (DMP 1G), jednou z obrazové korelace leteckých měřických snímků (DMP OK), které ČÚZK pořídil později (letecké měřické snímkování probíhá obvykle od jara do léta). Obrazová korelace je stejný princip jako fotogrammetrie z dronu.
+Výška porostu je rozdíl modelu povrchu a modelu terénu:
+
+$$
+\mathrm{CHM} = \mathrm{DSM} - \mathrm{DTM}.
+$$
+
+DTM bereme vždy z lidaru (DMR 5G). DSM jednou z lidaru (DMP 1G), jednou z obrazové korelace leteckých měřických snímků (DMP OK), které ČÚZK pořídil později (letecké měřické snímkování probíhá obvykle od jara do léta). Obrazová korelace je stejný princip jako fotogrammetrie z dronu.
 
 **Úkol 3.** Který CHM ukazuje v lese vyšší porost a o kolik (medián, 95. percentil)? Najdi aspoň tři důvody: roky mezi snímkováním, listí v létě a v době skenování, jak obrazová korelace „vyhlazuje“ mezery mezi korunami. Kde v mapě jsou rozdíly největší?
 

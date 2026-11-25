@@ -14,7 +14,7 @@ Z poloh a časů snímků určit řady, rychlost a rozestup snímků a najít ch
 
 Tabulka metadat 253 snímků letu nad Bahnami 31. 10. 2025 (EXIF a XMP od DJI) se středy kamer ze SfM, v místních souřadnicích (OpenSkyLab, CC BY 4.0).
 
-Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
+Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Notebook je uložený bez výstupů; čísla a grafy vzniknou až při spuštění a u průběžně aktualizovaných dat se mohou mezi běhy lišit.
 
 ## Postup krok za krokem
 

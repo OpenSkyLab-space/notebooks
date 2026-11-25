@@ -14,7 +14,7 @@ Porovnat skutečné spektrální křivky povrchů, najít polohu červené hrany
 
 Sentinel-2 L2A z katalogu Earth Search na AWS: scéna `S2B_33UVR_20240721_0_L2A` (21. 7. 2024, okolí Roztok), bezoblačné scény dlaždice 33UVR z března až října 2024 pro časovou řadu a `S2A_33UWS_20240308_0_L2A` (Krkonoše se sněhem); třídy ESA WorldCover 2021. Stahuje se asi 30 MB, časová řada trvá 1 až 3 minuty.
 
-Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
+Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Notebook je uložený bez výstupů; čísla a grafy vzniknou až při spuštění a u průběžně aktualizovaných dat se mohou mezi běhy lišit.
 
 ## Postup krok za krokem
 
@@ -36,7 +36,13 @@ Načte knihovny a stáhne data.
 
 ### 4. Nasycení NDVI během sezóny
 
-Vezmeme jeden pixel pole u Únětic a všechny bezoblačné snímky z roku 2024. Porovnáme NDVI = (NIR − R)/(NIR + R), NDRE = (NIR − RE1)/(NIR + RE1) a NDMI = (NIR − SWIR1)/(NIR + SWIR1).
+Vezmeme jeden pixel pole u Únětic a všechny bezoblačné snímky z roku 2024. Porovnáme tři normalizované rozdíly odrazivostí:
+
+$$
+\mathrm{NDVI} = \frac{\mathrm{NIR} - R}{\mathrm{NIR} + R}, \quad
+\mathrm{NDRE} = \frac{\mathrm{NIR} - \mathrm{RE1}}{\mathrm{NIR} + \mathrm{RE1}}, \quad
+\mathrm{NDMI} = \frac{\mathrm{NIR} - \mathrm{SWIR1}}{\mathrm{NIR} + \mathrm{SWIR1}}.
+$$
 
 Parametry, které student mění:
 

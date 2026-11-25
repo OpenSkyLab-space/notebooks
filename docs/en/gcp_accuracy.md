@@ -14,7 +14,7 @@ Estimate a similarity (Helmert) transformation from ground control points, compa
 
 ČÚZK trigonometric and densification points around Prague with S-JTSK coordinates, Bpv elevation and ETRS89 coordinates (B, L, ellipsoidal height) from static GNSS observations, BodovaPole service (layer 2).
 
-All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
+All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The notebook is stored without outputs; numbers and plots appear when it runs and may differ between runs where the data are updated continuously.
 
 ## Step by step
 
@@ -29,7 +29,19 @@ Parameters the student changes:
 
 ### 2. Helmert transformation from ground control points
 
-A similarity transformation has 4 parameters (shift x, y, rotation, scale): x' = a·x − b·y + tₓ, y' = b·x + a·y + t_y. We estimate it by least squares from the ground control points and then apply it to all points. A residual on a control point only says how well the transformation adapted to those points. Accuracy is shown by check points that did not enter the computation. RMSE_H = √(mean(Δx² + Δy²)).
+A similarity transformation has 4 parameters (the shift $t_x$, $t_y$ and the rotation and scale in $a$, $b$):
+
+$$
+x' = a\,x - b\,y + t_x, \qquad y' = b\,x + a\,y + t_y.
+$$
+
+We estimate it by least squares from the ground control points and then apply it to all points. A residual on a control point only says how well the transformation adapted to those points. Accuracy is shown by check points that did not enter the computation. The position error is summarised by
+
+$$
+\mathrm{RMSE}_H = \sqrt{\frac{1}{N}\sum_{i=1}^{N}\left(\Delta x_i^2 + \Delta y_i^2\right)},
+$$
+
+where $\Delta x_i$, $\Delta y_i$ are the residuals at the $N$ check points in metres.
 
 Note: S-JTSK has its own distortions and the scale of the Křovák projection changes with latitude, so even the best similarity transformation over such an area is not perfect. ČÚZK therefore converts with a transformation plus a correction grid. For us this is an advantage: there is a real error, unknown in advance, that the check points have to reveal.
 
@@ -41,7 +53,13 @@ Parameters the student changes:
 
 ### 3. Comparing layouts, position and height
 
-GNSS gives the ellipsoidal height h, maps in Czechia use the normal height in Bpv: H = h − ζ, where ζ is the height anomaly (about 44–46 m around Prague). If we estimate ζ from the control points as a constant or as a plane, we get heights at the check points. RMSE_V = √(mean ΔH²).
+GNSS gives the ellipsoidal height $h$, maps in Czechia use the normal height in Bpv:
+
+$$
+H = h - \zeta,
+$$
+
+where $\zeta$ is the height anomaly (about 44–46 m around Prague). If we estimate ζ from the control points as a constant or as a plane, we get heights at the check points. The height error is summarised by $\mathrm{RMSE}_V = \sqrt{\frac{1}{N}\sum_{i} \Delta H_i^2}$.
 
 A single control point can only give a shift in position. UTM and S-JTSK, however, are rotated relative to each other and have a different scale, so the error here comes out in kilometres. For an image block from RTK or PPK, rotation and scale are already set by the image positions.
 

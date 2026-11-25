@@ -14,7 +14,7 @@ Najít práh NDVI a SAVI pro vegetaci, porovnat minimální vzdálenost, maximá
 
 Sentinel-2 L2A `S2B_33UXQ_20240814_0_L2A` (14. 8. 2024) z katalogu Earth Search na AWS, výřez 4 × 4 km kolem Brněnské přehrady a Bystrce; reference ESA WorldCover 10 m 2021 v200. Stahuje se asi 20 MB.
 
-Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
+Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Notebook je uložený bez výstupů; čísla a grafy vzniknou až při spuštění a u průběžně aktualizovaných dat se mohou mezi běhy lišit.
 
 ## Postup krok za krokem
 
@@ -38,9 +38,40 @@ Parametry, které student mění:
 
 Sousední pixely jsou si podobné, takže náhodné rozdělení by přesnost nadsadilo. Trénujeme proto na severní polovině výřezu a testujeme na jižní.
 
+Vezmeme **až `n_train` pixelů z každé třídy** na severu pro trénink a až
+2 000 pixelů z každé třídy na jihu pro test. Pokud je vhodných pixelů méně,
+vezmeme všechny. Maska `ok` už vymezuje pixely s vyhovující třídou SCL a
+s jednou z vybraných referenčních tříd WorldCover.
+
+Sever a jih vytvoříme jako dvě kopie masky `ok`: v severní masce vypneme
+spodní polovinu řádků, v jižní horní. Funkce `sample` potom pro každou třídu:
+
+1. Pomocí masky vybere její pixely v dané polovině snímku.
+2. Sestaví `class_features`: každý řádek představuje jeden pixel, sloupce jeho
+   šest spektrálních příznaků.
+3. Pomocí `rng.choice` náhodně vybere řádky. `replace=False` znamená, že tentýž
+   pixel nevybere dvakrát. `min` omezí požadovaný počet na dostupné pixely.
+4. Připojí referenční třídu převedenou na číslo 0–4 v pořadí `CLASSES`.
+
+Výstup `X` je tabulka příznaků vybraných pixelů a `y` jejich referenční třídy.
+`np.vstack` spojí skupiny pixelů pod sebe. Výběr po třídách omezuje
+převahu početných tříd; testovací přesnost proto nevyjadřuje přirozené plošné
+zastoupení tříd v celé krajině.
+
+Semínko `1` umožní opakovat celý výběr. Jednotlivá volání `sample` postupně
+posouvají stav generátoru. **Po změně `n_train` spusť tuto buňku a navazující
+modely znovu.**
+
+### Jak budeme vyhodnocovat klasifikátory
+
+Funkce `report` porovná předpověď modelu na testovacích pixelech s referenčními
+třídami WorldCover. Vrátí chybovou matici s přesností zpracovatele (PA) a
+uživatele (UA) a vypíše celkovou přesnost na testu i tréninku a koeficient kappa.
+Stejnou funkci použijeme pro všechny modely níže.
+
 Parametry, které student mění:
 
-- `n_train = 300`: počet trénovacích pixelů na třídu
+- `n_train = 300`: nejvýše trénovacích pixelů na třídu
 
 ### 4. Minimální vzdálenost a maximální věrohodnost
 
@@ -61,13 +92,29 @@ Malá síť s jednou skrytou vrstvou. Učíme ji na málo pixelech a sledujeme p
 Parametry, které student mění:
 
 - `hidden = 64`: počet skrytých neuronů
-- `n_small = 30`: trénovacích pixelů na třídu (malý vzorek se snáz přeučí)
+- `n_small = 30`: nejvýše trénovacích pixelů na třídu
 
 **Úkol 5.** Vyzkoušej `hidden` 4, 64 a 256 a `n_small` 30 a 300. Kdy se síť přeučí (trénink roste, test klesá nebo stagnuje)? Co by pomohlo: víc dat, menší síť, nebo zastavit učení dřív? Proč je rozdíl trénink–test u sítě větší než u maximální věrohodnosti?
 
 ### 7. Mapa výsledku
 
-Načte knihovny a stáhne data.
+Pro výslednou mapu použijeme `forest`: náhodný les s **200 stromy a maximální
+hloubkou 12**. Jeho nastavení je zde zvoleno předem; kód automaticky nevybírá
+nejlepší model z předchozího porovnání. Po natrénování zobrazíme jeho chybovou
+matici stejnou funkcí `report`.
+
+Klasifikátor očekává jeden pixel na řádku, proto vstupní snímek převedeme na
+tabulku příznaků a předpověď `pred` potom zpět na mapu. Převod na `float`
+umožní označit skryté pixely hodnotou `NaN`.
+
+Maska `visible_pixels` ponechá třídy SCL **4 = vegetace, 5 = nevegetační
+povrchy, 6 = voda**. Zápis `~visible_pixels` vybere ostatní pixely, například
+mraky, stíny nebo sníh; nastavením na `NaN` je v mapě skryjeme. Jde o masku
+zobrazení, která na rozdíl od trénovací masky `ok` nevyžaduje vybranou třídu
+WorldCover.
+
+Vlevo zůstává reference WorldCover 2021, vpravo předpověď ze Sentinelu-2 2024.
+Bílá čára v pravé mapě vyznačuje rozdělení na trénovací sever a testovací jih.
 
 **Úkol 6.** Najdi místa, kde se mapa liší od WorldCover. Je chyba vždy v klasifikaci? Uvažuj o tom, že WorldCover je z roku 2021 a sám má chyby, že jeden snímek z jednoho dne nerozliší louku od pole s pícninou ani zelené obilí na jaře od trávy a že pixel 10 m na okraji lesa je směs. Jak bys přesnost hodnotil poctivě?
 

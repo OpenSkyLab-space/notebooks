@@ -14,7 +14,7 @@ Compute the daily course of surface temperatures from real radiation, temperatur
 
 Hourly air temperature and humidity, global radiation on a horizontal and a tilted surface, cloud cover, wind at 10 m and soil surface temperature from Open-Meteo for Hluboká nad Vltavou, whatever the service returns for the last 92 days, usually two to three months (weather model, not an on-site measurement); thermal properties of materials from the literature.
 
-All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The stored outputs come from a real run; a new run may give different numbers where the data are updated continuously.
+All data are open and are downloaded inside the notebook when it runs, with no registration and no keys. The notebook is stored without outputs; numbers and plots appear when it runs and may differ between runs where the data are updated continuously.
 
 ## Step by step
 
@@ -29,12 +29,12 @@ Parameters the student changes:
 
 ### 2. The surface model and one clear day
 
-For every surface the energy balance **Rn = H + LE + G** is solved every minute:
+For every surface the energy balance $R_n = H + LE + G$ is solved every minute:
 
-- Rn: absorbed solar radiation (1 − albedo) · S plus the long-wave balance ε (L↓ − σ T⁴). The sky L↓ comes from air temperature and humidity (Brutsaert 1975) and from cloud cover (Crawford and Duchon 1999).
-- H: sensible heat to the air h · (T − Tₐ), h = 5.7 + 3.8 U, where U is the wind at 2 m (from the 10 m wind by a logarithmic profile, ×0.75).
-- LE: evaporation ρ L (q*(T) − qₐ) / (rₐ + r_s); the stomatal resistance r_s is 70 s/m for the meadow and 100 s/m for the forest, water evaporates freely, asphalt and the panel not at all.
-- G: heat into the ground. Asphalt and soil have 12 layers down to 1 m, the pond is a mixed water layer of 1 m, the forest canopy and the PV panel are a thin layer with no conduction into the ground.
+- $R_n$: absorbed solar radiation $(1 - \alpha)\,S$ plus the long-wave balance $\varepsilon\,(L_\downarrow - \sigma T^4)$. The sky L↓ comes from air temperature and humidity (Brutsaert 1975) and from cloud cover (Crawford and Duchon 1999).
+- $H$: sensible heat to the air $h\,(T - T_a)$, $h = 5.7 + 3.8\,U$ (W·m⁻²·K⁻¹), where $U$ is the wind at 2 m (m/s) (from the 10 m wind by a logarithmic profile, ×0.75).
+- $LE$: evaporation $\rho L\,(q^*(T) - q_a) / (r_a + r_s)$; the stomatal resistance $r_s$ is 70 s/m for the meadow and 100 s/m for the forest, water evaporates freely, asphalt and the panel not at all.
+- $G$: heat into the ground. Asphalt and soil have 12 layers down to 1 m, the pond is a mixed water layer of 1 m, the forest canopy and the PV panel are a thin layer with no conduction into the ground.
 
 Solar radiation, temperature, humidity, cloud cover and wind are real hourly values from Open-Meteo. The model runs from the start of the period; the first 14 days are spin-up.
 
@@ -79,7 +79,13 @@ Parameters the student changes:
 
 ### 6. Emissivity in the camera and photovoltaics
 
-The camera measures the exitance W = ε σ T⁴ + (1 − ε) σ T_refl⁴, where the second term is the reflected surroundings. It computes temperature using the emissivity ε_c and the reflected temperature T_refl set in the camera. Simplification: we compute over the whole spectrum, not only the 8–14 µm band, and take the reflected surroundings to be the sky.
+The camera measures the exitance
+
+$$
+W = \varepsilon \sigma T^4 + (1 - \varepsilon)\, \sigma T_\mathrm{refl}^4,
+$$
+
+where the second term is the reflected surroundings. It computes temperature using the emissivity $\varepsilon_c$ and the reflected temperature $T_\mathrm{refl}$ set in the camera. Simplification: we compute over the whole spectrum, not only the 8–14 µm band, and take the reflected surroundings to be the sky.
 
 For inspecting PV plants an irradiance of at least 600 W/m² on the panel is recommended (IEA PVPS). The irradiance of the tilted surface comes from Open-Meteo.
 

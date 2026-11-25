@@ -14,7 +14,7 @@ Spočítat vztlak tenkého profilu a jeho mez, indukovanou rychlost a výkon př
 
 Hodinová teplota, tlak a vlhkost za posledních 92 dní z Open-Meteo pro Brno, Praděd a Gerlachovský štít; hmotnost, průměr vrtulí, baterie a výdrž dronů z technických listů DJI.
 
-Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Uložené výstupy v notebooku pocházejí ze skutečného běhu; při novém spuštění se čísla mohou lišit, pokud se data průběžně aktualizují.
+Všechna data jsou otevřená a stahují se přímo v notebooku při spuštění, bez registrace a bez klíčů. Notebook je uložený bez výstupů; čísla a grafy vzniknou až při spuštění a u průběžně aktualizovaných dat se mohou mezi běhy lišit.
 
 ## Postup krok za krokem
 
@@ -24,7 +24,13 @@ Načte knihovny a stáhne data.
 
 ### 2. Vztlak profilu a pád
 
-Podle teorie tenkého profilu roste součinitel vztlaku lineárně s úhlem náběhu: c_L = 2π (α − α₀), kde α₀ ≈ −2 · prohnutí / hloubka (záporné pro prohnutý profil). Skutečný profil se ale při úhlu kolem 12–16° odtrhne a vztlak spadne. Vztlak L = ½ ρ v² S c_L.
+Podle teorie tenkého profilu roste součinitel vztlaku lineárně s úhlem náběhu $\alpha$ (v radiánech):
+
+$$
+c_L = 2\pi\,(\alpha - \alpha_0), \qquad \alpha_0 \approx -2\,\frac{\text{prohnutí}}{\text{hloubka}},
+$$
+
+kde $\alpha_0$ je úhel nulového vztlaku (záporný pro prohnutý profil). Skutečný profil se ale při úhlu kolem 12–16° odtrhne a vztlak spadne. Vztlak je $L = \tfrac{1}{2}\rho v^2 S\, c_L$ (N) pro hustotu vzduchu $\rho$ (kg·m⁻³), rychlost $v$ (m/s) a plochu křídla $S$ (m²).
 
 Parametry, které student mění:
 
@@ -35,13 +41,20 @@ Parametry, které student mění:
 
 ### 3. Dva pohledy na jednu sílu
 
-Rotor při visení vrhá vzduch dolů. Teorie hybnosti: tah T = ṁ · w, kde w = 2 v_i je rychlost vzduchu daleko pod rotorem a ṁ = ρ A v_i hmotnostní tok diskem. Odtud v_i = √(T / (2 ρ A)). Tentýž tah je i rozdíl tlaků nad a pod diskem: Δp = T / A.
+Rotor při visení vrhá vzduch dolů. Podle teorie hybnosti je tah
+
+$$
+T = \dot m\, w, \qquad w = 2 v_i, \qquad \dot m = \rho A v_i
+\quad\Rightarrow\quad v_i = \sqrt{\frac{T}{2 \rho A}},
+$$
+
+kde $v_i$ je indukovaná rychlost v disku rotoru, $w$ rychlost vzduchu daleko pod rotorem, $\dot m$ hmotnostní tok diskem a $A$ plocha disku. Tentýž tah je i rozdíl tlaků nad a pod diskem: $\Delta p = T / A$.
 
 **Úkol 2.** Ověř, že sloupec ṁ · 2 v_i dává stejné číslo jako tah rotoru. Proč jsou rozdíl tlaků a hybnost vrženého vzduchu dva popisy téže síly, ne dvě síly, které se sčítají? Proč má Matrice 350 větší zatížení disku a vyšší indukovanou rychlost, i když má mnohem větší vrtule?
 
 ### 4. Skutečná hustota vzduchu: nížina, hory, teplo a chlad
 
-Ideální výkon při visení je P = T^(3/2) / √(2 ρ A), tedy roste s 1/√ρ. Hustotu spočítáme z tlaku, teploty a vlhkosti za posledních 92 dní. Vypsaná nadmořská výška je výška bodu modelu Open-Meteo; u štítů je nižší než skutečný vrchol (Gerlachovský štít má 2655 m n. m.).
+Ideální výkon při visení je $P = T^{3/2} / \sqrt{2 \rho A}$, tedy roste s $1/\sqrt{\rho}$. Hustotu spočítáme z tlaku, teploty a vlhkosti za posledních 92 dní. Vypsaná nadmořská výška je výška bodu modelu Open-Meteo; u štítů je nižší než skutečný vrchol (Gerlachovský štít má 2655 m n. m.).
 
 Parametry, které student mění:
 

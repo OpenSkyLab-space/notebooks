@@ -50,7 +50,9 @@ q = requests.get("https://ags.cuzk.cz/arcgis/rest/services/BodovaPole/MapServer/
 p = pd.DataFrame([f["attributes"] for f in q["features"]])
 for k in ["Y", "X", "VYSKA", "B", "L", "HEL"]:
     p[k] = pd.to_numeric(p[k], errors="coerce")
-p = p.dropna(subset=["Y", "X", "VYSKA", "B", "L", "HEL"]).reset_index(drop=True)
+# služba vrací body v proměnlivém pořadí; seřazení zajistí,
+# že náhodné výběry níže vyjdou při každém běhu stejně
+p = p.dropna(subset=["Y", "X", "VYSKA", "B", "L", "HEL"]).sort_values(["CISLO_SMO5", "CISLO"]).reset_index(drop=True)
 # „mapa“: polohy z GNSS v ETRS89 převedené do UTM 33N; „skutečnost“: S-JTSK (osy EPSG:5514: x = −Y, y = −X)
 p["E"], p["N"] = Transformer.from_crs(4258, 32633, always_xy=True).transform(p.L.values, p.B.values)
 p["sx"], p["sy"] = -p.Y, -p.X
@@ -72,7 +74,9 @@ q = requests.get("https://ags.cuzk.cz/arcgis/rest/services/BodovaPole/MapServer/
 p = pd.DataFrame([f["attributes"] for f in q["features"]])
 for k in ["Y", "X", "VYSKA", "B", "L", "HEL"]:
     p[k] = pd.to_numeric(p[k], errors="coerce")
-p = p.dropna(subset=["Y", "X", "VYSKA", "B", "L", "HEL"]).reset_index(drop=True)
+# the service returns the points in varying order;
+# sorting makes the random draws below the same on every run
+p = p.dropna(subset=["Y", "X", "VYSKA", "B", "L", "HEL"]).sort_values(["CISLO_SMO5", "CISLO"]).reset_index(drop=True)
 # "map": GNSS positions in ETRS89 converted to UTM 33N; "truth": S-JTSK (EPSG:5514 axes: x = −Y, y = −X)
 p["E"], p["N"] = Transformer.from_crs(4258, 32633, always_xy=True).transform(p.L.values, p.B.values)
 p["sx"], p["sy"] = -p.Y, -p.X
