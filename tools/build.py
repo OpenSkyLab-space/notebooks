@@ -141,7 +141,8 @@ VIZ_PRO = {"eu_rules_pro"}
 def viz_cell(stem, lang):
     t = (lambda cs, en: cs if lang == "cs" else en)
     return "\n".join([
-        t("#@title Nastavení z laboratoře (nepovinné)", "#@title Settings from the lab (optional)"),
+        t('#@title Nastavení z laboratoře (spusť; vložení je nepovinné) {display-mode: "form"}',
+          '#@title Settings from the lab (run it; pasting is optional) {display-mode: "form"}'),
         t("#@markdown V laboratoři klikni na odkaz Notebook. Nastavení se zkopíruje; vlož ho sem místo `{}` (Ctrl+V) a buňku spusť.",
           "#@markdown In the lab, click the Notebook link. The settings are copied; paste them here in place of `{}` (Ctrl+V) and run the cell."),
         'Z_VIZUALU = {}  #@param {type:"raw"}',
@@ -234,8 +235,8 @@ def footer(meta, lang):
     ])
 
 
-VIZ_NOTE = ("> **💻 Co dělá kód:** Nepovinná buňka. Když do ní vložíš nastavení zkopírované z laboratoře a spustíš ji, převezmou buňky níže stejné hodnoty parametrů a u každé to vypíšou. Když ji necháš prázdnou, použijí se výchozí hodnoty. Nic nestahuje.",
-            "> **💻 What the code does:** Optional cell. If you paste the settings copied from the lab and run it, the cells below take the same parameter values and say so for each one. If you leave it empty, the default values are used. It downloads nothing.")
+VIZ_NOTE = ("**Povinná buňka, spusť ji hned po přípravě.** Vložení nastavení je nepovinné: když do pole `Z_VIZUALU` vložíš nastavení zkopírované z laboratoře, převezmou buňky níže stejné hodnoty parametrů a u každé to vypíšou. Když pole necháš prázdné (`{}`), použijí se výchozí hodnoty. Buňku spusť v obou případech, protože definuje funkci `z_viz`, kterou používají další buňky. Nic nestahuje. Kód je sbalený; zobrazíš ho pomocí **Show code**.",
+            "**Required cell, run it right after the setup.** Pasting the settings is optional: if you paste the settings copied from the lab into the `Z_VIZUALU` field, the cells below take the same parameter values and say so for each one. If you leave the field empty (`{}`), the default values are used. Run the cell in either case, because it defines the function `z_viz` that later cells use. It downloads nothing. The code is collapsed; reveal it with **Show code**.")
 
 
 def code_notes(stem, meta):
@@ -244,6 +245,76 @@ def code_notes(stem, meta):
     from _code_notes import NOTES
     src = meta["src"]
     return NOTES[src]
+
+
+def setup_note(meta):
+    """Popis sbalené přípravné buňky pro zdroje, které ji nemají zapsanou výslovně (kind "setup")."""
+    sys.path.insert(0, str(ROOT / "src"))
+    from _code_notes import SETUP
+    return SETUP.get(meta["src"])
+
+
+def _split_head(code):
+    """Split code into (head, rest, helper names): the head holds the leading %pip lines, imports, warning filters,
+    string constants (URLs) and helper function definitions, i.e. required setup that is not part of the lesson."""
+    import ast
+    lines = code.strip("\n").split("\n")
+    tree = ast.parse("\n".join("pass" if line.lstrip().startswith(("%", "!")) else line for line in lines))
+    end, names = 0, []
+    for node in tree.body:
+        if isinstance(node, (ast.Import, ast.ImportFrom, ast.Pass)):
+            pass
+        elif isinstance(node, ast.FunctionDef) and node.name not in SCIENTIFIC_FUNCTIONS:
+            names.append(node.name)
+        elif isinstance(node, ast.Expr) and isinstance(node.value, ast.Call) and ast.unparse(node.value.func) == "warnings.filterwarnings":
+            pass
+        elif (isinstance(node, ast.Assign) and "◀" not in lines[node.lineno - 1]
+              and all(isinstance(c, ast.Constant) and isinstance(c.value, str)
+                      for c in ([node.value] if isinstance(node.value, ast.Constant) else getattr(node.value, "elts", [None])))):
+            continue  # a base URL moves only together with a helper defined after it
+        else:
+            break
+        end = node.end_lineno
+    return "\n".join(lines[:end]).strip("\n"), "\n".join(lines[end:]).strip("\n"), names
+
+
+# Functions that implement the lesson's science stay visible even when defined among the setup code (rule 3).
+SCIENTIFIC_FUNCTIONS = {"planck", "planck_inv", "radiance", "vig_factor"}
+
+
+def with_setup(items, notes, setup_note):
+    """Turn the leading %pip cell and the leading imports and helpers of the first code cell into one required,
+    collapsed setup cell. setup_note (cs, en) describes it; notes of the consumed cells are dropped."""
+    if any(kind == "setup" for kind, _ in items):
+        return items, notes
+    assert setup_note is not None, "missing SETUP note in src/_code_notes.py"
+    code_pos = [i for i, (kind, _) in enumerate(items) if kind == "code"]
+    notes = list(notes)
+    first = code_pos[0]
+    head_parts = []
+    drop = set()
+    text = items[first][1].strip("\n")
+    if all(line.startswith("%pip") for line in text.split("\n")):
+        head_parts.append(text)
+        drop.add(first)
+        notes.pop(0)
+        first = code_pos[1]
+    head, rest, _ = _split_head(items[first][1])
+    head_parts.append(head)
+    out = []
+    for i, (kind, txt) in enumerate(items):
+        if i in drop:
+            continue
+        if i == first:
+            out.append(("setup", "\n\n".join(head_parts)))
+            if rest:
+                out.append(("code", rest))
+            else:
+                notes.pop(0)
+            continue
+        out.append((kind, txt))
+    notes.insert(0, setup_note)
+    return out, notes
 
 
 def build(stem):
@@ -263,15 +334,17 @@ def build_one(stem, meta, cells_fn):
         n_all = sum(1 for kind, text in cells_fn(t) if kind == "task" and not text.startswith("+"))
         meta["tasks"] = {"cs": ["", "", "", "", "čtyři", "pět", "šest"][n_all], "en": ["", "", "", "", "four", "five", "six"][n_all]}
         cells = [nbf.v4.new_markdown_cell(header(meta, lang))]
+        lab_cells = []
         if LAB_SETTINGS and meta["visual_stem"] in VIZ_STEMS and (not stem.endswith("_pro") or stem in VIZ_PRO):
-            cells.append(nbf.v4.new_markdown_cell(t(*VIZ_NOTE)))
+            # required (defines z_viz), placed right after the setup cell; pasting the settings is optional
             cell = nbf.v4.new_code_cell(viz_cell(meta["visual_stem"], lang))
             cell.metadata["cellView"] = "form"
-            cells.append(cell)
+            lab_cells = [nbf.v4.new_markdown_cell(t(*VIZ_NOTE)), cell]
         n_task = 0
         notes = code_notes(stem, meta)
+        items, notes = with_setup([(kind, text) for kind, text in cells_fn(t)], notes, setup_note(meta))
         n_code = 0
-        for kind, text in cells_fn(t):
+        for kind, text in items:
             text = text.strip("\n")
             if not LAB_SETTINGS:
                 text = strip_z_viz(text)
@@ -291,6 +364,8 @@ def build_one(stem, meta, cells_fn):
                 cell = nbf.v4.new_code_cell(f'# @title {title} {{display-mode: "form"}}\n' + text)
                 cell.metadata["cellView"] = "form"
                 cells.append(cell)
+                cells += lab_cells
+                lab_cells = []
                 n_code += 1
             elif kind == "code":
                 if notes[n_code] is not None:  # None: the markdown cell above already explains the code
@@ -304,6 +379,7 @@ def build_one(stem, meta, cells_fn):
                 cells.append(nbf.v4.new_markdown_cell(t("*Tvoje odpověď:* ", "*Your answer:* ")))
             else:
                 raise ValueError(kind)
+        assert not lab_cells, (stem, "lab settings cell needs a setup cell to follow")
         cells.append(nbf.v4.new_markdown_cell(footer(meta, lang)))
         assert 4 <= n_task <= 6, (stem, n_task)
         assert n_code == len(notes), (stem, n_code, len(notes))

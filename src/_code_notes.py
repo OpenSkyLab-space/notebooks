@@ -112,8 +112,8 @@ NOTES["drone_weather_pro"] = [
 NOTES["eu_rules"] = [
     ("Doinstaluje knihovny shapely (geometrie), pyproj (převody souřadnic) a rasterio (rastry).",
      "Installs the libraries shapely (geometry), pyproj (coordinate transformations) and rasterio (rasters)."),
-    ("Načte knihovny a definuje funkci `get`, která při chybě stahování zkusí soubor znovu. Stáhne stránku zeměpisných zón UAS z AIM ŘLP, vytáhne z ní seznam souborů GeoJSON s popisem, velikostí a vydáním a ukáže aktuálně platné zóny.",
-     "Loads the libraries and defines the function `get`, which retries a download after an error. It downloads the UAS geographical zones page from the ŘLP AIM, extracts the list of GeoJSON files with description, size and edition, and shows the zones currently in force."),
+    ("Stáhne stránku zeměpisných zón UAS z AIM ŘLP, vytáhne z ní seznam souborů GeoJSON s popisem, velikostí a vydáním a ukáže aktuálně platné zóny.",
+     "Downloads the UAS geographical zones page from the ŘLP AIM, extracts the list of GeoJSON files with description, size and edition, and shows the zones currently in force."),
     ("Stáhne všechny aktuální vrstvy zón do velikosti `MAX_MB` (kromě gridových sítí) a pro každé místo ze `SITES` zjistí, do kterých polygonů padá. Ukáže tabulku zón se svislými hranicemi a vypíše, které velké vrstvy se nestáhly.",
      "Downloads all current zone layers up to `MAX_MB` in size (except the grids) and for each place in `SITES` finds which polygons it falls into. It shows a table of zones with their vertical limits and prints which large layers were not downloaded."),
     ("Definuje `cuzk_raster`, který stáhne výřez modelu terénu ČÚZK DMR 5G, a z něj zjistí nadmořskou výšku terénu v každém místě letu. Svislé hranice zón (GND, ft/m AMSL, AGL, FL) převede na metry nad terénem a pro výšku letu `FLIGHT_AGL` (může přijít z laboratoře) vypíše, zda let do zóny zasahuje. Nakonec ukáže, jaké svislé hranice mají letecké prostory LKR320A.",
@@ -149,8 +149,8 @@ CUZK_OM_HELPERS_EN = "defines `cuzk_raster`, which downloads a window of a ČÚZ
 
 NOTES["flight_planner"] = [
     PIP_RASTERIO,
-    ("Načte knihovny, " + CUZK_OM_HELPERS_CS + ". Uloží parametry čtyř kamer: rozměry čipu, počet pixelů, ohniskovou vzdálenost a nejkratší interval mezi snímky.",
-     "Loads the libraries, " + CUZK_OM_HELPERS_EN + ". It stores the parameters of four cameras: sensor size, pixel count, focal length and the shortest interval between photos."),
+    ("Uloží parametry čtyř kamer: rozměry čipu, počet pixelů, ohniskovou vzdálenost a nejkratší interval mezi snímky.",
+     "Stores the parameters of four cameras: sensor size, pixel count, focal length and the shortest interval between photos."),
     ("Pro cílové GSD `gsd_target` spočítá u každé kamery velikost pixelu na čipu, potřebnou výšku letu a velikost záběru na zemi. Ukáže tabulku.",
      "For the target GSD `gsd_target` it computes, for each camera, the pixel size on the sensor, the required flight height and the image footprint on the ground. It shows a table."),
     ("Stáhne z ČÚZK model terénu DMR 5G v buňce 2 m pro území 1200 × 800 m, určí výšku místa vzletu na západním okraji a vykreslí terén s vrstevnicemi po 10 m.",
@@ -202,8 +202,8 @@ NOTES["gcp_accuracy"] = [
 
 NOTES["gnss_sky"] = [
     PIP_RASTERIO,
-    ("Načte knihovny a definuje `cuzk_raster` pro výřez modelu terénu ČÚZK. Stáhne z archivu IGS (BKG) denní soubor vysílaných efemerid RINEX za den `DAY` a ručně ho rozparsuje. Ponechá jen zprávy GPS, Galilea, GLONASS a BeiDou, podle kterých je družice zdravá, a vypíše počet družic a zpráv každého systému.",
-     "Loads the libraries and defines `cuzk_raster` for a window of the ČÚZK terrain model. It downloads the daily RINEX broadcast ephemeris file for day `DAY` from the IGS archive (BKG) and parses it by hand. It keeps only GPS, Galileo, GLONASS and BeiDou messages that mark the satellite as healthy and prints the number of satellites and messages per system."),
+    ("Stáhne z archivu IGS (BKG) denní soubor vysílaných efemerid RINEX za den `DAY` a ručně ho rozparsuje. Ponechá jen zprávy GPS, Galilea, GLONASS a BeiDou, podle kterých je družice zdravá, a vypíše počet družic a zpráv každého systému.",
+     "Downloads the daily RINEX broadcast ephemeris file for day `DAY` from the IGS archive (BKG) and parses it by hand. It keeps only GPS, Galileo, GLONASS and BeiDou messages that mark the satellite as healthy and prints the number of satellites and messages per system."),
     ("Definuje výpočet polohy družice z efemeridy: pro GPS, Galileo a BeiDou z keplerovských prvků s opravami (včetně geostacionárních družic BeiDou), pro GLONASS numerickou integrací pohybu metodou Runge–Kutta. Funkce `sat_pos` vybere nejbližší platnou efemeridu. Pro hodinu `HOUR` spočítá polohu každé družice ze dvou efemerid vzdálených o `RANK` a ukáže pro každý systém výšku drah a rozdíl poloh.",
      "Defines the computation of a satellite position from the ephemeris: for GPS, Galileo and BeiDou from Keplerian elements with corrections (including BeiDou geostationary satellites), for GLONASS by numerical integration of the motion with the Runge–Kutta method. The function `sat_pos` picks the nearest valid ephemeris. For hour `HOUR` it computes each satellite's position from two ephemerides `RANK` apart and shows, per system, the orbit radius and the difference between the positions."),
     ("Převede polohy družic do azimutu a elevace nad místem `LAT, LON` a v čase `T_SKY` vybere družice nad elevační maskou `mask` (může přijít z laboratoře). Vypíše jejich počet podle systému a vykreslí polární graf oblohy, kde střed je zenit.",
@@ -263,8 +263,8 @@ NOTES["image_classification_pro"] = [
 NOTES["lidar_canopy"] = [
     ("Doinstaluje knihovnu laspy s dekomprimací LAZ pro čtení mračen bodů a rasterio pro rastry.",
      "Installs the laspy library with LAZ decompression for reading point clouds and rasterio for rasters."),
-    ("Definuje `cuzk_raster` pro rastry ČÚZK. Stáhne z otevřených dat ČÚZK mračna bodů DMR 5G (terén) a DMP 1G (povrch) pro mapový list `SHEET` a ponechá body ve výřezu. Vypíše, kdy se skenovalo, a počet a hustotu bodů podle tříd a vykreslí obě mračna.",
-     "Defines `cuzk_raster` for ČÚZK rasters. It downloads the DMR 5G (terrain) and DMP 1G (surface) point clouds for map sheet `SHEET` from the ČÚZK open data and keeps the points inside the window. It prints when the scan was made and the number and density of points by class and plots both point clouds."),
+    ("Stáhne z otevřených dat ČÚZK mračna bodů DMR 5G (terén) a DMP 1G (povrch) pro mapový list `SHEET` a ponechá body ve výřezu. Vypíše, kdy se skenovalo, a počet a hustotu bodů podle tříd a vykreslí obě mračna.",
+     "Downloads the DMR 5G (terrain) and DMP 1G (surface) point clouds for map sheet `SHEET` from the ČÚZK open data and keeps the points inside the window. It prints when the scan was made and the number and density of points by class and plots both point clouds."),
     ("Stáhne rastry DMR 5G a DMP 1G s pixelem `RES` a jejich rozdílem získá výšku porostu (CHM). Body terénu rozdělí na les (porost vyšší než `FOREST_H`) a volnou plochu a pro obě skupiny vypíše hustotu bodů a podíl podle čísla odrazu. Výsledek vykreslí jako sloupcový graf.",
      "Downloads the DMR 5G and DMP 1G rasters with pixel `RES` and takes their difference as the canopy height model (CHM). It splits the terrain points into forest (canopy higher than `FOREST_H`) and open ground and for both groups prints the point density and the share by return number. It plots the result as a bar chart."),
     ("Stáhne fotogrammetrický model povrchu z obrazové korelace (DMP OK) a spočítá druhý CHM. Vykreslí oba CHM a histogram výšky porostu v lese a vypíše průměr, medián, 95. percentil a maximum.",
@@ -278,8 +278,8 @@ NOTES["lidar_canopy"] = [
 ]
 
 NOTES["multispectral_calibration"] = [
-    ("Definuje stahování vzorových snímků MicaSense z GitHubu a čtení jejich metadat z EXIF a XMP (expozice, zisk, černá úroveň, kalibrační koeficienty, vinětace, oblast a odrazivost panelu, údaje senzoru osvětlení DLS). Stáhne pět pásem snímku kalibračního panelu a snímku z letu, a kde metadata panelu chybí, dopočítá je. Vypíše vlnové délky, expozice, odrazivost panelu a časy snímků.",
-     "Defines downloading of MicaSense sample images from GitHub and reading their EXIF and XMP metadata (exposure, gain, black level, calibration coefficients, vignetting, panel region and reflectance, readings of the DLS light sensor). It downloads five bands of the calibration panel image and of the flight image and fills in panel metadata where it is missing. It prints the wavelengths, exposures, panel reflectance and image times."),
+    ("Definuje `vig_factor`, který z polynomu v metadatech spočítá korekci vinětace (ztmavení k okrajům snímku) pro každý pixel, a `panel_shift`, který fázovou korelací najde celopixelový posun dvou snímků. Stáhne pět pásem snímku kalibračního panelu a snímku z letu, a kde metadata panelu chybí, dopočítá je. Vypíše vlnové délky, expozice, odrazivost panelu a časy snímků.",
+     "Defines `vig_factor`, which computes the vignetting correction (darkening towards the image edges) for each pixel from the polynomial in the metadata, and `panel_shift`, which finds the whole-pixel shift between two images by phase correlation. It downloads five bands of the calibration panel image and of the flight image and fills in panel metadata where it is missing. It prints the wavelengths, exposures, panel reflectance and image times."),
     ("Definuje funkci `radiance`, která převede DN na radianci modelem MicaSense (černá úroveň, vinětace, oprava po řádcích, zisk, expozice, kalibrační koeficient). Pro pásmo `BAND` vykreslí DN, násobek vinětace a radianci a vypíše černou úroveň, expozici, zisk, zesílení vinětace a podíl saturovaných pixelů.",
      "Defines the function `radiance`, which converts DN to radiance with the MicaSense model (black level, vignetting, row correction, gain, exposure, calibration coefficient). For band `BAND` it plots the DN, the vignetting factor and the radiance and prints the black level, exposure, gain, vignetting gain and share of saturated pixels."),
     ("V každém pásmu vybere pixely panelu podle oblasti z metadat (lze ji zmenšit `SHRINK` nebo zvětšit `GROW_PX`), spočítá průměrnou radianci panelu, její variabilitu a koeficient k = ρ_panel / L_p. Vypíše tabulku a vykreslí oblast panelu na snímku.",
@@ -347,8 +347,8 @@ NOTES["radiation_balance_pro"] = [
 ]
 
 NOTES["rope_and_photons"] = [
-    ("Načte knihovny a fyzikální konstanty a stáhne soubor metadat jedné skutečné scény Sentinelu-2 L1C (XML).",
-     "Loads the libraries and physical constants and downloads the metadata file (XML) of one real Sentinel-2 L1C scene."),
+    ("Stáhne soubor metadat (XML) jedné skutečné scény Sentinelu-2 L1C.",
+     "Downloads the metadata file (XML) of one real Sentinel-2 L1C scene."),
     ("Z XML vytáhne pro každé pásmo název, střední vlnovou délku, spektrální citlivost po 1 nm a sluneční ozáření nad atmosférou E0. Ukáže tabulku.",
      "Extracts from the XML, for each band, the name, central wavelength, spectral response in 1 nm steps and the top-of-atmosphere solar irradiance E0. It shows a table."),
     ("Vykreslí spektrální citlivost všech pásem podle vlnové délky. Nic nepočítá.",
@@ -421,8 +421,8 @@ NOTES["spectral_signatures_pro"] = [
 ]
 
 NOTES["thermal_timing"] = [
-    ("Načte knihovny a definuje `open_meteo` pro dotazy na počasí s opakováním při chybě. Stáhne z Open-Meteo hodinové počasí za posledních 92 dní pro místo `LAT, LON` včetně ozáření skloněné plochy fotovoltaiky (`TILT`, `AZ`). Najde nejslunečnější a nejzataženější den a vykreslí teplotu, záření, oblačnost a vítr.",
-     "Loads the libraries and defines `open_meteo` for weather queries with retries after an error. It downloads 92 days of hourly weather from Open-Meteo for the site `LAT, LON`, including the irradiance on the tilted PV surface (`TILT`, `AZ`). It finds the sunniest and the most overcast day and plots temperature, radiation, cloud cover and wind."),
+    ("Stáhne z Open-Meteo hodinové počasí za posledních 92 dní pro místo `LAT, LON` včetně ozáření skloněné plochy fotovoltaiky (`TILT`, `AZ`). Najde nejslunečnější a nejzataženější den a vykreslí teplotu, záření, oblačnost a vítr.",
+     "Downloads 92 days of hourly weather from Open-Meteo for the site `LAT, LON`, including the irradiance on the tilted PV surface (`TILT`, `AZ`). It finds the sunniest and the most overcast day and plots temperature, radiation, cloud cover and wind."),
     ("Definuje vlastnosti pěti povrchů a model, který po minutách řeší energetickou bilanci každého povrchu se skutečným počasím: záření Slunce a oblohy, vyzařování, citelné teplo, výpar a vedení tepla do hloubky ve 12 vrstvách. Spustí ho pro celé období. Pro den `DAY` vykreslí teploty povrchů s teplotou vzduchu a teplotou půdy z Open-Meteo, vypíše časy, kdy se povrchy `A` a `B` (mohou přijít z laboratoře) teplotně překříží, a ukáže teploty ve vybraných hodinách.",
      "Defines the properties of five surfaces and a model that solves the energy balance of each surface minute by minute with the real weather: solar and sky radiation, emission, sensible heat, evaporation and heat conduction into 12 ground layers. It runs it for the whole period. For day `DAY` it plots the surface temperatures with the air temperature and the Open-Meteo soil temperature, prints the times when surfaces `A` and `B` (they can come from the lab) cross over in temperature, and shows the temperatures at selected hours."),
     ("Pro dny z `DAYS` vypíše záření, oblačnost a vítr, denní amplitudu teploty každého povrchu a rozdíl voda − louka ve 3:00. Vykreslí průběh teplot v obou dnech vedle sebe.",
@@ -452,8 +452,8 @@ NOTES["thermal_timing_pro"] = [
 ]
 
 NOTES["why_drones_fly"] = [
-    (OM_HELPER[0].replace(" Nic zatím nestahuje.", "") + " Uloží parametry dvou dronů z technických listů DJI: hmotnost, počet rotorů, průměr vrtule, energii baterií a dobu visení. Nic zatím nestahuje.",
-     OM_HELPER[1].replace(" Nothing is downloaded yet.", "") + " It stores the parameters of two drones from DJI data sheets: mass, number of rotors, propeller diameter, battery energy and hover time. Nothing is downloaded yet."),
+    ("Uloží parametry dvou dronů z technických listů DJI: hmotnost, počet rotorů, průměr vrtule, energii baterií a dobu visení. Nic zatím nestahuje.",
+     "Stores the parameters of two drones from DJI data sheets: mass, number of rotors, propeller diameter, battery energy and hover time. Nothing is downloaded yet."),
     ("Spočítá součinitel vztlaku profilu s prohnutím `camber` (může přijít z laboratoře) podle teorie tenkého profilu a schematicky i s odtržením proudění za pádovým úhlem `alpha_stall`. Vykreslí obě křivky a vypíše vztlak a unesenou hmotnost malého křídla při 0°, 5° a 10°.",
      "Computes the lift coefficient of an airfoil with camber `camber` (it can come from the lab) from thin-airfoil theory and, schematically, with flow separation beyond the stall angle `alpha_stall`. It plots both curves and prints the lift and the mass a small wing carries at 0°, 5° and 10°."),
     ("Definuje funkci `hover`, která podle teorie hybnosti spočítá pro visení tah jednoho rotoru, plochu disku, indukovanou rychlost, hmotnostní tok, zatížení disku a ideální výkon. Ukáže tabulku pro oba drony.",
@@ -498,3 +498,61 @@ NOTES["drone_hardware"] = [
     ("Spočte rozdíl výšky z GNSS a z barometru, jeho průměr, rozptyl, rozsah a trend v čase a rozptyl rozdílu proti výšce ze SfM. Vykreslí všechny tři výšky v čase.",
      "Computes the difference between the GNSS and barometric heights, its mean, spread, range and trend over time, and the spread of the difference to the SfM height. It plots all three heights over time."),
 ]
+
+
+# Popisy sbalené povinné přípravné buňky, kterou tools/build.py skládá z úvodních %pip, importů a pomocných
+# funkcí (stahování, převzorkování, dotazy na počasí). Vědecký kód zůstává ve viditelných buňkách.
+_LIBS = ("Načte knihovny.", "Loads the libraries.")
+_PIP_RIO = ("Doinstaluje knihovnu rasterio, která čte rastrová data (GeoTIFF) přímo z internetu, a načte knihovny.",
+            "Installs the rasterio library, which reads raster data (GeoTIFF) directly from the internet, and loads the libraries.")
+_METEO = (" Definuje `open_meteo`, která se ptá služby Open-Meteo na počasí a při chybě nebo přetížení to zkusí znovu s rostoucí pauzou.",
+          " Defines `open_meteo`, which queries the Open-Meteo weather service and retries with a growing pause after an error or overload.")
+_CUZK = (" Definuje `cuzk_raster`, která stáhne výřez rastru ČÚZK (model terénu DMR 5G nebo povrchu DMP 1G) jako pole výšek.",
+         " Defines `cuzk_raster`, which downloads a window of a ČÚZK raster (DMR 5G terrain or DMP 1G surface model) as an array of elevations.")
+_S2 = (" Definuje `read_on_grid`, která přečte rastr z cloudu a převzorkuje ho na zvolenou mřížku, a `s2_window`, která z katalogu Earth Search stáhne odrazivost všech pásem a mapu tříd SCL Sentinelu-2 L2A ve čtverci kolem bodu (pixel 10 m).",
+       " Defines `read_on_grid`, which reads a raster from the cloud and resamples it onto a chosen grid, and `s2_window`, which downloads the reflectance of all bands and the SCL class map of Sentinel-2 L2A from the Earth Search catalogue in a square around a point (10 m pixel).")
+_NOTHING = (" Nic zatím nestahuje.", " Nothing is downloaded yet.")
+_GEO = ("Doinstaluje knihovny shapely (geometrie), pyproj (převody souřadnic) a rasterio (rastry) a načte knihovny.",
+        "Installs the libraries shapely (geometry), pyproj (coordinate transformations) and rasterio (rasters) and loads the libraries.")
+
+
+def _join(*parts):
+    return ("".join(p[0] for p in parts), "".join(p[1] for p in parts))
+
+
+SETUP = {
+    "blackbody_radiation_pro": _PIP_RIO,
+    "dn_to_reflectance": _PIP_RIO,
+    "dn_to_reflectance_pro": _PIP_RIO,
+    "drone_hardware": _LIBS,
+    "drone_weather": _join(_LIBS, _METEO, _NOTHING),
+    "drone_weather_pro": _join(_LIBS, _METEO, _NOTHING),
+    "eu_rules": _join(_GEO, (" Definuje `get`, která při chybě stahování zkusí soubor znovu.", " Defines `get`, which retries a download after an error."), _NOTHING),
+    "eu_rules_pro": _join(_GEO, _CUZK, _NOTHING),
+    "flight_planner": _join(_PIP_RIO, _CUZK, _METEO, _NOTHING),
+    "flight_planner_pro": _join(_PIP_RIO, _CUZK, _METEO, _NOTHING),
+    "gcp_accuracy": ("Doinstaluje knihovnu pyproj pro převody mezi souřadnicovými systémy a načte knihovny.",
+                     "Installs the pyproj library for transformations between coordinate systems and loads the libraries."),
+    "gnss_sky": _join(_PIP_RIO, _CUZK, _NOTHING),
+    "image_classification": _join(("Doinstaluje knihovnu rasterio, která čte rastrová data (GeoTIFF) přímo z internetu, a načte knihovny včetně klasifikátorů ze scikit-learn.",
+                                   "Installs the rasterio library, which reads raster data (GeoTIFF) directly from the internet, and loads the libraries, including the classifiers from scikit-learn."), _S2, _NOTHING),
+    "image_classification_pro": _join(("Doinstaluje knihovnu rasterio, která čte rastrová data (GeoTIFF) přímo z internetu, a načte knihovny včetně klasifikátorů a validace ze scikit-learn.",
+                                       "Installs the rasterio library, which reads raster data (GeoTIFF) directly from the internet, and loads the libraries, including classifiers and validation from scikit-learn."), _S2, _NOTHING),
+    "lidar_canopy": _join(("Doinstaluje knihovnu laspy s dekomprimací LAZ pro čtení mračen bodů a rasterio pro rastry a načte knihovny.",
+                           "Installs the laspy library with LAZ decompression for reading point clouds and rasterio for rasters, and loads the libraries."), _CUZK, _NOTHING),
+    "multispectral_calibration": _join(_LIBS, (" Definuje stahování vzorových snímků MicaSense z GitHubu (`fetch`) a čtení jejich metadat z EXIF a XMP (`xmp_reader`, `load`): expozice, zisk, černá úroveň, kalibrační koeficienty, vinětace, oblast a odrazivost kalibračního panelu a údaje senzoru osvětlení DLS.",
+                                                " Defines downloading of the MicaSense sample images from GitHub (`fetch`) and reading of their EXIF and XMP metadata (`xmp_reader`, `load`): exposure, gain, black level, calibration coefficients, vignetting, calibration panel region and reflectance, and readings of the DLS light sensor."), _NOTHING),
+    "multispectral_calibration_pro": _LIBS,
+    "radiation_balance": _join(_PIP_RIO, _S2, _METEO, _NOTHING),
+    "radiation_balance_pro": _join(_PIP_RIO, _S2, _METEO, _NOTHING),
+    "rope_and_photons": ("Načte knihovny a fyzikální konstanty.", "Loads the libraries and physical constants."),
+    "rope_and_photons_pro": ("Doinstaluje knihovnu rasterio, která čte rastrová data (GeoTIFF) přímo z internetu, a načte knihovny a fyzikální konstanty.",
+                             "Installs the rasterio library, which reads raster data (GeoTIFF) directly from the internet, and loads the libraries and physical constants."),
+    "spectral_signatures": _join(_PIP_RIO, _S2, _NOTHING),
+    "spectral_signatures_pro": _join(("Doinstaluje knihovnu rasterio pro čtení rastrů a prosail, model odrazivosti porostu PROSPECT + SAIL, a načte knihovny.",
+                                      "Installs the rasterio library for reading rasters and prosail, the PROSPECT + SAIL canopy reflectance model, and loads the libraries."), _S2, _NOTHING),
+    "thermal_timing": _join(_LIBS, _METEO, _NOTHING),
+    "thermal_timing_pro": _join(_PIP_RIO, _CUZK, _METEO, _NOTHING),
+    "why_drones_fly": _join(_LIBS, _METEO, _NOTHING),
+    "why_drones_fly_pro": _join(_LIBS, _METEO, _NOTHING),
+}
