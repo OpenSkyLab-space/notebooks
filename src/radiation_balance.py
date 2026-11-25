@@ -143,12 +143,14 @@ plt.show()
             "## 4. Albedo: kolik slunečního záření povrch odrazí celkem\n\nAlbedo je odrazivost vážená spektrem Slunce. Liang (2001) ho pro pásma Landsatu odvodil jako lineární kombinaci; použijeme odpovídající pásma Sentinelu-2 (B2, B4, B8, B11, B12), takže výsledek je přibližný.",
             "## 4. Albedo: how much sunlight a surface reflects in total\n\nAlbedo is reflectance weighted by the solar spectrum. Liang (2001) derived it for Landsat bands as a linear combination; we use the corresponding Sentinel-2 bands (B2, B4, B8, B11, B12), so the result is approximate.")),
         ("code", t('''
-pick = lambda name, b: R[name].iloc[BANDS.index(b)]
+def pick(name, b):
+    return R[name].iloc[BANDS.index(b)]
 albedo = pd.Series({name: 0.356 * pick(name, "blue") + 0.130 * pick(name, "red") + 0.373 * pick(name, "nir")
                          + 0.085 * pick(name, "swir16") + 0.072 * pick(name, "swir22") - 0.0018 for name in R.columns})
 print(albedo.round(3).to_string())
 ''', '''
-pick = lambda name, b: R[name].iloc[BANDS.index(b)]
+def pick(name, b):
+    return R[name].iloc[BANDS.index(b)]
 albedo = pd.Series({name: 0.356 * pick(name, "blue") + 0.130 * pick(name, "red") + 0.373 * pick(name, "nir")
                          + 0.085 * pick(name, "swir16") + 0.072 * pick(name, "swir22") - 0.0018 for name in R.columns})
 print(albedo.round(3).to_string())
@@ -178,7 +180,8 @@ L_sky = 1.24 * (e_a / Ta) ** (1 / 7) * SIGMA * Ta**4               # Brutsaert, 
 h_c = 5.7 + 3.8 * u
 
 def t_equilibrium(albedo, eps, S=S, Ta=Ta, L_sky=L_sky, h_c=h_c):
-    f = lambda T: (1 - albedo) * S + eps * L_sky - eps * SIGMA * T**4 - h_c * (T - Ta)
+    def f(T):
+        return (1 - albedo) * S + eps * L_sky - eps * SIGMA * T**4 - h_c * (T - Ta)
     return brentq(f, 200, 400) - 273.15
 
 eps_surface = {"les": 0.99, "louka": 0.98, "pole": 0.97, "zástavba": 0.93, "voda": 0.99, "sníh": 0.99}
@@ -196,7 +199,8 @@ L_sky = 1.24 * (e_a / Ta) ** (1 / 7) * SIGMA * Ta**4               # Brutsaert, 
 h_c = 5.7 + 3.8 * u
 
 def t_equilibrium(albedo, eps, S=S, Ta=Ta, L_sky=L_sky, h_c=h_c):
-    f = lambda T: (1 - albedo) * S + eps * L_sky - eps * SIGMA * T**4 - h_c * (T - Ta)
+    def f(T):
+        return (1 - albedo) * S + eps * L_sky - eps * SIGMA * T**4 - h_c * (T - Ta)
     return brentq(f, 200, 400) - 273.15
 
 eps_surface = {"forest": 0.99, "meadow": 0.98, "field": 0.97, "built-up": 0.93, "water": 0.99, "snow": 0.99}

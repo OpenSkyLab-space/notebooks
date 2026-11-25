@@ -10,6 +10,7 @@ The notebooks are written without outputs; tools/run.py executes them.
 """
 import importlib.util
 import pathlib
+import re
 import sys
 
 import nbformat as nbf
@@ -43,6 +44,93 @@ def units(stem):
         return [(f"{stem}_{k}" if k else stem, dict(mod.meta(v), visual_stem=mod.meta(v).get("visual_stem", stem)),
                  lambda t, _v=v: mod.cells(t, _v)) for k, v in mod.VARIANTS.items()]
     return [(stem, dict(mod.META, visual_stem=mod.META.get("visual_stem", stem)), mod.cells)]
+
+# The "Settings from the lab" cell: False builds every notebook with plain parameter values instead
+# (z_viz("NAME", default) becomes default) and without the cell.
+LAB_SETTINGS = True
+
+Z_VIZ = re.compile(r'z_viz\(\s*"[^"]+"\s*,\s*')
+
+
+LINE_LENGTH = 88
+PARAM_TAG = re.compile(r"^#\s*◀\s*(?P<kw>parametr|parameter)(?::\s*(?P<text>.*))?$")
+
+
+def _sentence(text):
+    text = text.strip()
+    return text[:1].upper() + text[1:] + ("" if text.endswith((".", "!", "?", ":")) else ".")
+
+
+def lift_comments(code):
+    """Move an inline comment onto its own line above when the line would exceed LINE_LENGTH.
+
+    A parameter tag stays inline: "# ◀ parametr: label (detail)" keeps the label inline and lifts the
+    detail; if even that is too long, the whole description is lifted and only "# ◀ parametr" stays.
+    """
+    import io
+    import tokenize
+    lines = code.split("\n")
+    masked = "\n".join("#" * len(line) if line.lstrip().startswith(("%", "!")) else line for line in lines)
+    try:
+        toks = list(tokenize.generate_tokens(io.StringIO(masked + "\n").readline))
+    except (tokenize.TokenError, IndentationError, SyntaxError):
+        return code
+    for tok in reversed(toks):
+        if tok.type != tokenize.COMMENT:
+            continue
+        row, col = tok.start[0] - 1, tok.start[1]
+        line = lines[row]
+        head = line[:col].rstrip()
+        if not head.strip() or len(f"{head}  {tok.string}") <= LINE_LENGTH:
+            continue
+        indent = line[: len(line) - len(line.lstrip())]
+        m = PARAM_TAG.match(tok.string)
+        if m and m["text"]:
+            text, tag = m["text"], f"# ◀ {m['kw']}"
+            pm = re.match(r"^(?P<main>[^()]+) \((?P<detail>[^()]+)\)$", text)
+            if pm and len(f"{head}  {tag}: {pm['main']}") <= LINE_LENGTH:
+                above, inline = pm["detail"], f"{head}  {tag}: {pm['main']}"
+            else:
+                above, inline = text, f"{head}  {tag}"
+        elif m:
+            continue
+        else:
+            above, inline = tok.string.lstrip("# "), head
+        import textwrap
+        wrapped = textwrap.wrap(_sentence(above), LINE_LENGTH - len(indent) - 2, break_long_words=False)
+        lines[row:row + 1] = [f"{indent}# {w}" for w in wrapped] + [inline]
+    return "\n".join(lines)
+
+
+def strip_z_viz(text):
+    """Replace z_viz("NAME", default[, mapping]) by default."""
+    out, pos = [], 0
+    for m in Z_VIZ.finditer(text):
+        out.append(text[pos:m.start()])
+        i, depth, start = m.end(), 0, m.end()
+        while True:  # the default ends at the first comma or closing parenthesis at depth 0
+            ch = text[i]
+            if ch in "([{":
+                depth += 1
+            elif ch in ")]}":
+                if depth == 0:
+                    break
+                depth -= 1
+            elif ch == "," and depth == 0:
+                break
+            i += 1
+        out.append(text[start:i].strip())
+        depth = 0
+        while not (text[i] == ")" and depth == 0):  # skip an optional mapping argument
+            if text[i] in "([{":
+                depth += 1
+            elif text[i] in ")]}":
+                depth -= 1
+            i += 1
+        pos = i + 1
+    out.append(text[pos:])
+    return "".join(out)
+
 
 # notebooks that take settings from their lab (the cell "Settings from the lab"); advanced versions only where listed
 VIZ_STEMS = {"flight_planner", "drone_hardware", "thermal_timing", "blackbody_radiation", "why_drones_fly", "drone_weather", "eu_rules", "gnss_sky",
@@ -175,18 +263,38 @@ def build_one(stem, meta, cells_fn):
         n_all = sum(1 for kind, text in cells_fn(t) if kind == "task" and not text.startswith("+"))
         meta["tasks"] = {"cs": ["", "", "", "", "čtyři", "pět", "šest"][n_all], "en": ["", "", "", "", "four", "five", "six"][n_all]}
         cells = [nbf.v4.new_markdown_cell(header(meta, lang))]
-        if meta["visual_stem"] in VIZ_STEMS and (not stem.endswith("_pro") or stem in VIZ_PRO):
+        if LAB_SETTINGS and meta["visual_stem"] in VIZ_STEMS and (not stem.endswith("_pro") or stem in VIZ_PRO):
             cells.append(nbf.v4.new_markdown_cell(t(*VIZ_NOTE)))
-            cells.append(nbf.v4.new_code_cell(viz_cell(meta["visual_stem"], lang)))
+            cell = nbf.v4.new_code_cell(viz_cell(meta["visual_stem"], lang))
+            cell.metadata["cellView"] = "form"
+            cells.append(cell)
         n_task = 0
         notes = code_notes(stem, meta)
         n_code = 0
         for kind, text in cells_fn(t):
             text = text.strip("\n")
+            if not LAB_SETTINGS:
+                text = strip_z_viz(text)
+            if kind in ("code", "setup"):
+                text = lift_comments(text)
             if kind == "md":
                 cells.append(nbf.v4.new_markdown_cell(text))
+            elif kind == "setup":
+                # required setup code (libraries, data access): collapsed in Colab, explained above
+                cells.append(nbf.v4.new_markdown_cell(
+                    t("**Povinná buňka, spusť ji jako první.** ", "**Required cell, run it first.** ") + t(*notes[n_code])
+                    + t(" Kód je sbalený; zobrazíš ho pomocí **Show code**.", " The code is collapsed; reveal it with **Show code**.")))
+                title = t("Příprava (spusť jako první)", "Setup (run first)")
+                if text.startswith("# @title "):
+                    title, _, text = text.partition("\n")
+                    title = title[len("# @title "):]
+                cell = nbf.v4.new_code_cell(f'# @title {title} {{display-mode: "form"}}\n' + text)
+                cell.metadata["cellView"] = "form"
+                cells.append(cell)
+                n_code += 1
             elif kind == "code":
-                cells.append(nbf.v4.new_markdown_cell(t("> **💻 Co dělá kód:** ", "> **💻 What the code does:** ") + t(*notes[n_code])))
+                if notes[n_code] is not None:  # None: the markdown cell above already explains the code
+                    cells.append(nbf.v4.new_markdown_cell(t("> **💻 Co dělá kód:** ", "> **💻 What the code does:** ") + t(*notes[n_code])))
                 cells.append(nbf.v4.new_code_cell(text))
                 n_code += 1
             elif kind == "task":
@@ -203,10 +311,38 @@ def build_one(stem, meta, cells_fn):
         for i, c in enumerate(nb.cells):
             c["id"] = f"{stem[:20]}-{i:02d}"
         nbf.write(nb, ROOT / f"{stem}_{lang}.ipynb")
+        ruff(ROOT / f"{stem}_{lang}.ipynb")
     print("built", stem)
+
+
+RUFF_VERSION = "0.16.2"
+# Agreed style (notebook-authoring guide): 4 spaces, 88 characters, double quotes; lint rules E4, E7, E9, F, I.
+RUFF_ARGS = ["--line-length", "88", "--config", "indent-width = 4", "--config", 'format.quote-style = "double"',
+             "--config", 'format.indent-style = "space"']
+
+
+def ruff(path):
+    """Format the code cells of a built notebook and apply the safe lint fixes; fail on any remaining finding."""
+    import subprocess
+    run = lambda *a: subprocess.run([sys.executable, "-m", "ruff", *a], capture_output=True, text=True)
+    v = run("--version").stdout.split()[-1]
+    assert v == RUFF_VERSION, f"ruff {RUFF_VERSION} required, found {v} (pip install ruff=={RUFF_VERSION})"
+    r = run("format", "--isolated", *RUFF_ARGS, str(path))
+    assert r.returncode == 0, r.stderr
+    r = run("check", "--isolated", "--fix", "--select", "E4,E7,E9,F,I", *RUFF_ARGS[:2], str(path))
+    if r.returncode != 0:
+        RUFF_FINDINGS.append(f"{path.name}:\n{r.stdout}")
+    r = run("format", "--isolated", *RUFF_ARGS, str(path))
+    assert r.returncode == 0, r.stderr
+
+
+RUFF_FINDINGS = []
 
 
 if __name__ == "__main__":
     stems = sys.argv[1:] or sorted(p.stem for p in (ROOT / "src").glob("*.py") if not p.stem.startswith("_"))
     for s in stems:
         build(s)
+    if RUFF_FINDINGS:
+        print("\n".join(RUFF_FINDINGS))
+        sys.exit("ruff: findings above need a fix in src/")

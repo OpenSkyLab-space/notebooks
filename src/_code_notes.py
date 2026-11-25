@@ -6,10 +6,13 @@ NOTES = {}
 PIP_RASTERIO = ("Doinstaluje knihovnu rasterio, která čte rastrová data (GeoTIFF) přímo z internetu. Ostatní knihovny už v Colabu jsou.",
                 "Installs the rasterio library, which reads raster data (GeoTIFF) directly from the internet. The other libraries are already in Colab.")
 
+SETUP_RASTERIO = ("Doinstaluje knihovnu rasterio, která čte rastrová data (GeoTIFF) přímo z internetu, a načte knihovny a fyzikální konstanty.",
+                  "Installs the rasterio library, which reads raster data (GeoTIFF) directly from the internet, and loads the libraries and physical constants.")
+
 NOTES["blackbody_radiation"] = [
-    PIP_RASTERIO,
-    ("Načte knihovny a definuje dvě funkce: `planck` počítá Planckovým zákonem spektrální zář černého tělesa pro danou vlnovou délku a teplotu, `planck_inv` dělá opak, ze záře vrátí jasovou teplotu. Nic nestahuje ani nekreslí.",
-     "Loads the libraries and defines two functions: `planck` computes the spectral radiance of a black body from Planck's law for a given wavelength and temperature, and `planck_inv` does the reverse, returning the brightness temperature from a radiance. It downloads and plots nothing."),
+    SETUP_RASTERIO,
+    None,  # planck: vysvětleno vzorcem v buňce Markdown nad kódem
+    None,  # planck_inv: dtto
     ("Pro každou teplotu ze seznamu `T_list` vykreslí Planckovu křivku od 0,1 do 100 µm a vypíše vlnovou délku maxima (Wienův zákon), celkový tok spočítaný integrací křivky spolu s kontrolou σT⁴ a zář na 10,9 µm. Šedě je vyznačené termální okno 8–14 µm.",
      "For each temperature in `T_list` it plots the Planck curve from 0.1 to 100 µm and prints the wavelength of the maximum (Wien's law), the total flux from integrating the curve together with the σT⁴ check, and the radiance at 10.9 µm. The thermal window 8–14 µm is shaded."),
     ("Stáhne metadata (soubor MTL) skutečné scény Landsatu 8 a z termálního pásma B10 načte jen výřez kolem zvoleného středu. Digitální čísla převede podle koeficientů z MTL na zář a pak na jasovou teplotu a vypíše jejich rozsah. Nakonec výsledek porovná s vlastní funkcí `planck_inv`.",
@@ -20,8 +23,8 @@ NOTES["blackbody_radiation"] = [
      "Reads the red and near-infrared bands of the same scene, computes reflectance and NDVI, and estimates the emissivity of each pixel from NDVI (Sobrino et al. thresholds). It then computes the land surface temperature LST and prints how much it differs from the brightness temperature. It plots maps of NDVI and of this correction."),
     ("Pro povrch o známé teplotě `T_true` spočítá, jakou jasovou teplotu by naměřil senzor při emisivitě 0,98 až 0,85, a vypíše chybu v kelvinech. Odraz okolí zde zanedbává.",
      "For a surface of known temperature `T_true` it computes the brightness temperature a sensor would measure at emissivities from 0.98 to 0.85 and prints the error in kelvin. Reflection from the surroundings is ignored here."),
-    ("Pro čtyři materiály s různou emisivitou spočítá jasovou teplotu, kterou uvidí termokamera, když povrch odráží oblohu o −40, −10, +10 a +27 °C. Teplotu povrchu nastavuje `T_surf` (může přijít z laboratoře).",
-     "For four materials with different emissivity it computes the brightness temperature a thermal camera sees when the surface reflects a sky at −40, −10, +10 and +27 °C. The surface temperature is set by `T_surf` (it can come from the lab)."),
+    ("Pro čtyři materiály s různou emisivitou spočítá jasovou teplotu, kterou uvidí termokamera, když povrch odráží oblohu o −40, −10, +10 a +27 °C. Teplotu povrchu nastavuje parametr `T_surf` v buňce níže (může ji převzít z nastavení laboratoře).",
+     "For four materials with different emissivity it computes the brightness temperature a thermal camera sees when the surface reflects a sky at −40, −10, +10 and +27 °C. The surface temperature is set by the parameter `T_surf` in the cell below (it can be taken from the lab settings)."),
     ("Modeluje pixel, ve kterém hoří jen malý podíl plochy: zář je vážený průměr požáru o teplotě `T_fire` a pozadí (medián skutečné jasové teploty výřezu). Vykreslí, o kolik se pixel ohřeje ve 3,9 a 10,9 µm, a vypíše, při jak malém podílu je pixel teplejší o 10 K.",
      "Models a pixel in which only a small fraction is burning: the radiance is a weighted mean of a fire at `T_fire` and the background (median of the real brightness temperature of the window). It plots how much the pixel warms at 3.9 and 10.9 µm and prints at how small a fraction the pixel becomes 10 K warmer."),
 ]
@@ -52,8 +55,9 @@ NOTES["dn_to_reflectance"] = [
      "Finds water from the Sentinel-2 NDWI index and the water class in SCL. For each band it shows the median TOA and BOA reflectance over water and their difference, i.e. the contribution of the atmosphere."),
     ("Metoda tmavého objektu: v každém pásmu vezme odrazivost TOA na percentilu `pct` jako tmavý objekt a od celé scény odečte její rozdíl proti předpokládané odrazivosti `rho_dark`. Ukáže chybu (RMSE) původních dat a opravených dat proti Sentinelu-2 a průměrnou odchylku (bias).",
      "Dark object subtraction: in each band it takes the TOA reflectance at percentile `pct` as the dark object and subtracts its difference from the assumed reflectance `rho_dark` from the whole scene. It shows the error (RMSE) of the original and corrected data against Sentinel-2 and the mean deviation (bias)."),
-    ("Empirická přímka: v každém pásmu vybere `n_panel` nejtmavších a nejsvětlejších pixelů podle Sentinelu-2 jako „panely“ a proloží přímku mezi odrazivostí TOA a BOA. Přímku použije na celou scénu, vypíše sklon, posun a RMSE všech tří postupů a vykreslí jejich srovnání se Sentinelem-2.",
-     "Empirical line: in each band it picks the `n_panel` darkest and brightest pixels according to Sentinel-2 as “panels” and fits a line between TOA and BOA reflectance. It applies the line to the whole scene, prints the slope, offset and RMSE of all three approaches and plots their comparison with Sentinel-2."),
+    None,  # 6.1: vysvětleno v buňce Markdown nad kódem
+    None,  # 6.2
+    None,  # 6.3
 ]
 
 NOTES["dn_to_reflectance_pro"] = [
@@ -227,16 +231,15 @@ NOTES["image_classification"] = [
      "Downloads a 4 × 4 km window of a Sentinel-2 image and the ESA WorldCover 2021 map on the same grid, which serves as the reference for five classes. It takes six bands as features and keeps cloud-free pixels in these classes. It prints the number of pixels per class and plots the image and the reference."),
     ("Spočítá NDVI a SAVI s faktorem půdy `L`. Pro prahy od −0,2 do 0,9 spočítá, kolik vegetace podle WorldCoveru by práh přehlédl, kolik ostatních pixelů by označil za vegetaci a celkovou přesnost, a vykreslí to pro oba indexy s nejlepším prahem.",
      "Computes NDVI and SAVI with the soil factor `L`. For thresholds from −0.2 to 0.9 it computes how much WorldCover vegetation the threshold would miss, how many other pixels it would label as vegetation, and the overall accuracy, and plots this for both indices with the best threshold."),
-    ("Náhodně vybere `n_train` trénovacích pixelů na třídu ze severní poloviny výřezu a 2000 testovacích na třídu z jižní poloviny. Definuje funkci `report`, která pro model sestaví chybovou matici s přesností zpracovatele (PA) a uživatele (UA) a vypíše celkovou přesnost a kappa.",
-     "Randomly picks `n_train` training pixels per class from the northern half of the window and 2000 test pixels per class from the southern half. It defines the function `report`, which builds the confusion matrix of a model with producer's (PA) and user's (UA) accuracy and prints the overall accuracy and kappa."),
+    None,  # výběr pixelů: vysvětleno v buňce Markdown nad kódem
+    None,  # report: dtto
     ("Natrénuje klasifikátor minimální vzdálenosti a gaussovskou maximální věrohodnost (QDA) a pro oba ukáže chybovou matici na testovacích pixelech.",
      "Trains a minimum-distance classifier and Gaussian maximum likelihood (QDA) and shows the confusion matrix on the test pixels for both."),
     ("Natrénuje k-NN pro počty sousedů od 1 do 100 a náhodný les z 200 stromů pro hloubky od 1 po neomezenou a vykreslí přesnost na trénovacích a testovacích pixelech.",
      "Trains k-NN for 1 to 100 neighbours and a random forest of 200 trees for depths from 1 to unlimited and plots the accuracy on the training and test pixels."),
-    ("Na malém vzorku `n_small` pixelů na třídu učí neuronovou síť s jednou skrytou vrstvou o `hidden` neuronech 400 epoch a po každé epoše zaznamená přesnost na tréninku a testu. Vykreslí obě křivky a vypíše konečnou a nejlepší testovací přesnost.",
-     "On a small sample of `n_small` pixels per class it trains a neural network with one hidden layer of `hidden` neurons for 400 epochs and records the training and test accuracy after each epoch. It plots both curves and prints the final and best test accuracy."),
-    ("Natrénuje náhodný les s hloubkou 12, ukáže jeho chybovou matici, klasifikuje celý výřez (mraky vynechá) a vykreslí výsledek vedle WorldCoveru. Bílá čára odděluje trénovací sever od testovacího jihu.",
-     "Trains a random forest with depth 12, shows its confusion matrix, classifies the whole window (leaving out clouds) and plots the result next to WorldCover. The white line separates the training north from the test south."),
+    ("Na malém vzorku až `n_small` pixelů na třídu učí neuronovou síť s jednou skrytou vrstvou o `hidden` neuronech 400 epoch a po každé epoše zaznamená přesnost na tréninku a testu. Vykreslí obě křivky a vypíše konečnou a nejlepší testovací přesnost. `sample(north, n_small)` provede nový výběr ze severní poloviny; nemusí jít o podmnožinu `Xtr`. Opakované spuštění této buňky posune generátor a vybere jiné pixely; pro opakování stejného běhu začni znovu buňkou s výběrem trénovacích a testovacích pixelů.",
+     "On a small sample of up to `n_small` pixels per class it trains a neural network with one hidden layer of `hidden` neurons for 400 epochs and records the training and test accuracy after each epoch. It plots both curves and prints the final and best test accuracy. `sample(north, n_small)` draws a new selection from the northern half; it need not be a subset of `Xtr`. Running this cell again advances the generator and selects different pixels; to repeat the same run, start again from the cell that selects the training and test pixels."),
+    None,  # mapa: vysvětleno v buňce Markdown nad kódem
 ]
 
 NOTES["image_classification_pro"] = [
@@ -352,10 +355,10 @@ NOTES["rope_and_photons"] = [
      "Plots the spectral response of all bands against wavelength. It computes nothing."),
     ("Ze střední vlnové délky každého pásma spočítá frekvenci f = c/λ a pro kontrolu součin λ · f. Ukáže tabulku.",
      "From the central wavelength of each band it computes the frequency f = c/λ and, as a check, the product λ · f. It shows a table."),
-    ("Spočítá energii jednoho fotonu E = h · c / λ v elektronvoltech, vykreslí ji jako sloupcový graf a vypíše poměr energie modrého a červeného fotonu.",
-     "Computes the energy of one photon E = h · c / λ in electronvolts, plots it as a bar chart and prints the ratio of the blue and red photon energies."),
-    ("Vydělí sluneční ozáření E0 energií fotonu, takže dostane počet fotonů za sekundu na m² a µm spektra. Vykreslí E0 a počet fotonů na dvou osách a ukáže tabulku.",
-     "Divides the solar irradiance E0 by the photon energy to get the number of photons per second per m² and µm of spectrum. It plots E0 and the photon count on two axes and shows a table."),
+    ("Spočítá energii fotonu ve středu každého pásma v eV, vykreslí ji jako sloupcový graf a vypíše poměr energie modrého a červeného fotonu.",
+     "Computes the photon energy at the centre of each band in eV, plots it as a bar chart and prints the ratio of the blue and red photon energies."),
+    ("Převede energii fotonu z eV zpět na jouly násobením `e` a vydělí jí spektrální sluneční ozářenost `E0`. Vykreslí `E0` spolu se spektrální hustotou toku fotonů (za sekundu na m² a µm spektra) a ukáže tabulku.",
+     "Converts the photon energy from eV back to joules by multiplying by `e` and divides the solar spectral irradiance `E0` by it. It plots `E0` together with the spectral photon flux density (per second, per m² and per µm of spectrum) and shows a table."),
     ("Ze šířky zakázaného pásu `Eg` spočítá mezní vlnovou délku detektoru a pro každé pásmo podíl jeho spektrální citlivosti pod touto mezí. Ukáže tabulku.",
      "From the band gap `Eg` it computes the cut-off wavelength of the detector and, for each band, the share of its spectral response below this limit. It shows a table."),
     ("Spočítá energii fotonu pro ionizaci, modré a SWIR pásmo, termální pásmo a radar C a porovná ji s tepelnou energií k · T při teplotě detektoru `T`. Ukáže tabulku.",

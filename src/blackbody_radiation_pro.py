@@ -52,8 +52,10 @@ from rasterio.windows import from_bounds
 from pyproj import Transformer
 warnings.filterwarnings("ignore")
 C1, C2 = 1.191042e8, 1.4387752e4         # Planckovy konstanty pro λ v µm a zář ve W·m⁻²·sr⁻¹·µm⁻¹
-planck = lambda lam, T: C1 / lam**5 / (np.exp(C2 / (lam * T)) - 1)
-planck_inv = lambda lam, L: C2 / (lam * np.log(C1 / (lam**5 * L) + 1))
+def planck(lam, T):
+    return C1 / lam**5 / (np.exp(C2 / (lam * T)) - 1)
+def planck_inv(lam, L):
+    return C2 / (lam * np.log(C1 / (lam**5 * L) + 1))
 ''', '''
 import requests, warnings
 import numpy as np, pandas as pd
@@ -64,8 +66,10 @@ from rasterio.windows import from_bounds
 from pyproj import Transformer
 warnings.filterwarnings("ignore")
 C1, C2 = 1.191042e8, 1.4387752e4         # Planck constants for λ in µm and radiance in W·m⁻²·sr⁻¹·µm⁻¹
-planck = lambda lam, T: C1 / lam**5 / (np.exp(C2 / (lam * T)) - 1)
-planck_inv = lambda lam, L: C2 / (lam * np.log(C1 / (lam**5 * L) + 1))
+def planck(lam, T):
+    return C1 / lam**5 / (np.exp(C2 / (lam * T)) - 1)
+def planck_inv(lam, L):
+    return C2 / (lam * np.log(C1 / (lam**5 * L) + 1))
 ''')),
         ("code", t('''
 SCENES = {"2019-06-26": "LC08_L1TP_191025_20190626_20190705_01_T1", "2017-05-19": "LC08_L1TP_191025_20170519_20170525_01_T1"}   # ◀ parametr: dvě scény (vlna veder, jaro)
@@ -77,7 +81,7 @@ x0, y0 = round(x0 / 30) * 30, round(y0 / 30) * 30
 
 def scene_data(scene):
     base = f"https://storage.googleapis.com/gcp-public-data-landsat/LC08/01/191/025/{scene}/{scene}"
-    mtl = {k.strip(): v.strip().strip('"') for k, v in (l.split(" = ") for l in requests.get(base + "_MTL.txt", timeout=60).text.splitlines() if " = " in l)}
+    mtl = {k.strip(): v.strip().strip('"') for k, v in (line.split(" = ") for line in requests.get(base + "_MTL.txt", timeout=60).text.splitlines() if " = " in line)}
     out = {"mtl": mtl}
     for b in ["4", "5", "10", "QA"]:
         with rasterio.Env(**ENV), rasterio.open(f"/vsicurl/{base}_B{b}.TIF") as r:
@@ -111,7 +115,7 @@ x0, y0 = round(x0 / 30) * 30, round(y0 / 30) * 30
 
 def scene_data(scene):
     base = f"https://storage.googleapis.com/gcp-public-data-landsat/LC08/01/191/025/{scene}/{scene}"
-    mtl = {k.strip(): v.strip().strip('"') for k, v in (l.split(" = ") for l in requests.get(base + "_MTL.txt", timeout=60).text.splitlines() if " = " in l)}
+    mtl = {k.strip(): v.strip().strip('"') for k, v in (line.split(" = ") for line in requests.get(base + "_MTL.txt", timeout=60).text.splitlines() if " = " in line)}
     out = {"mtl": mtl}
     for b in ["4", "5", "10", "QA"]:
         with rasterio.Env(**ENV), rasterio.open(f"/vsicurl/{base}_B{b}.TIF") as r:

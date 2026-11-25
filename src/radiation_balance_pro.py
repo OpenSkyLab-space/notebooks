@@ -278,7 +278,8 @@ r = F.loc[noon]
 h = 5.7 + 3.8 * r.wind_speed_10m * WIND
 cmp = {}
 for name, s in SURF.iterrows():
-    f = lambda T: (1 - s.albedo) * r.shortwave_radiation + s["ε"] * r.L_sky - s["ε"] * SIGMA * T ** 4 - h * (T - r.Ta)
+    def f(T):
+        return (1 - s.albedo) * r.shortwave_radiation + s["ε"] * r.L_sky - s["ε"] * SIGMA * T ** 4 - h * (T - r.Ta)
     cmp[name] = {"rovnováha bez výparu a země (°C)": brentq(f, 200, 400) - 273.15, "model force-restore (°C)": runs[name].Ts[noon]}
 print(f"hodina {noon} UTC, S = {r.shortwave_radiation:.0f} W/m², vzduch {r.temperature_2m:.1f} °C")
 pd.DataFrame(cmp).T.round(1)
@@ -289,7 +290,8 @@ r = F.loc[noon]
 h = 5.7 + 3.8 * r.wind_speed_10m * WIND
 cmp = {}
 for name, s in SURF.iterrows():
-    f = lambda T: (1 - s.albedo) * r.shortwave_radiation + s["ε"] * r.L_sky - s["ε"] * SIGMA * T ** 4 - h * (T - r.Ta)
+    def f(T):
+        return (1 - s.albedo) * r.shortwave_radiation + s["ε"] * r.L_sky - s["ε"] * SIGMA * T ** 4 - h * (T - r.Ta)
     cmp[name] = {"equilibrium without evaporation and ground (°C)": brentq(f, 200, 400) - 273.15, "force-restore model (°C)": runs[name].Ts[noon]}
 print(f"hour {noon} UTC, S = {r.shortwave_radiation:.0f} W/m², air {r.temperature_2m:.1f} °C")
 pd.DataFrame(cmp).T.round(1)

@@ -59,49 +59,151 @@ def meta(P):
 def cells(t, P):
     out = [
         ("md", t("## 1. Příprava", "## 1. Setup")),
-        ("code", t('''
+        ("setup", t('''
 %pip install -q rasterio
-''', '''
-%pip install -q rasterio
-''')),
-        ("code", t('''
+
 import numpy as np, requests
 import matplotlib.pyplot as plt
 import rasterio
 from rasterio.windows import from_bounds
 from pyproj import Transformer
 from scipy.constants import h, c, k, sigma
+''', '''
+%pip install -q rasterio
 
+import numpy as np, requests
+import matplotlib.pyplot as plt
+import rasterio
+from rasterio.windows import from_bounds
+from pyproj import Transformer
+from scipy.constants import h, c, k, sigma
+''')),
+        ("md", t(
+            "## 2. Planckův zákon, Wien a čtvrtá mocnina",
+            "## 2. Planck's law, Wien and the fourth power")),
+        ("md", t(r'''### Z teploty na spektrální zář: Planckův zákon
+
+Planckův zákon popisuje, jak záření černého tělesa závisí na vlnové délce a teplotě:
+
+$$
+L_\lambda(\lambda, T) =
+\frac{2 h c^2}{\lambda^5}
+\frac{1}{\exp\!\left(\frac{h c}{\lambda k T}\right)-1}.
+$$
+
+| Symbol | Význam | Jednotka ve vzorci |
+| --- | --- | --- |
+| $\lambda$ | vlnová délka | $\mathrm{m}$ |
+| $T$ | teplota černého tělesa | $\mathrm{K}$ |
+| $h$ | Planckova konstanta | $\mathrm{J\,s}$ |
+| $c$ | rychlost světla ve vakuu | $\mathrm{m\,s^{-1}}$ |
+| $k$ | Boltzmannova konstanta | $\mathrm{J\,K^{-1}}$ |
+
+Spektrální zář $L_\lambda$ v tomto vzorci má jednotku
+$\mathrm{W\,m^{-2}\,sr^{-1}\,m^{-1}}$: je vyjádřena na metr vlnové délky.
+
+**Jak vzorec souvisí s kódem:** `planck(lam_um, T)` přijímá vlnovou délku v µm
+a teplotu v K. První `1e-6` převádí vlnovou délku z µm na m. Poslední `1e-6`
+převádí vypočtenou zář na $\mathrm{W\,m^{-2}\,sr^{-1}\,\mu m^{-1}}$, tedy na µm
+vlnové délky, které používáme v notebooku.
+
+`np.expm1(x)` počítá $e^x-1$; pro malé hodnoty $x$ je numericky přesnější
+než přímý zápis `np.exp(x) - 1`.''', r'''### From temperature to spectral radiance: Planck's law
+
+Planck's law describes how blackbody radiation depends on wavelength and temperature:
+
+$$
+L_\lambda(\lambda, T) =
+\frac{2 h c^2}{\lambda^5}
+\frac{1}{\exp\!\left(\frac{h c}{\lambda k T}\right)-1}.
+$$
+
+| Symbol | Meaning | Unit in the formula |
+| --- | --- | --- |
+| $\lambda$ | wavelength | $\mathrm{m}$ |
+| $T$ | blackbody temperature | $\mathrm{K}$ |
+| $h$ | Planck constant | $\mathrm{J\,s}$ |
+| $c$ | speed of light in vacuum | $\mathrm{m\,s^{-1}}$ |
+| $k$ | Boltzmann constant | $\mathrm{J\,K^{-1}}$ |
+
+The spectral radiance $L_\lambda$ in this formula has the unit
+$\mathrm{W\,m^{-2}\,sr^{-1}\,m^{-1}}$: it is expressed per metre of wavelength.
+
+**How the formula maps to the code:** `planck(lam_um, T)` takes the wavelength in µm
+and the temperature in K. The first `1e-6` converts the wavelength from µm to m. The last
+`1e-6` converts the computed radiance to $\mathrm{W\,m^{-2}\,sr^{-1}\,\mu m^{-1}}$, that is,
+per µm of wavelength, the unit used in this notebook.
+
+`np.expm1(x)` computes $e^x-1$; for small $x$ it is numerically more accurate
+than writing `np.exp(x) - 1` directly.''')),
+        ("code", t('''
 def planck(lam_um, T):
     """Spektrální zář černého tělesa ve W·m⁻²·sr⁻¹·µm⁻¹ pro vlnovou délku v µm a teplotu v K."""
     lam = np.asarray(lam_um) * 1e-6
     return 2 * h * c**2 / lam**5 / np.expm1(h * c / (lam * k * T)) * 1e-6
+''', '''
+def planck(lam_um, T):
+    """Blackbody spectral radiance in W·m⁻²·sr⁻¹·µm⁻¹ for wavelength in µm and temperature in K."""
+    lam = np.asarray(lam_um) * 1e-6
+    return 2 * h * c**2 / lam**5 / np.expm1(h * c / (lam * k * T)) * 1e-6
+''')),
+        ("md", t(r'''### Ze spektrální záře na jasovou teplotu
 
+**Jasová teplota** $T_b$ je teplota černého tělesa, které by na dané vlnové délce
+mělo naměřenou spektrální zář. Vyjádřením teploty z Planckova zákona dostaneme:
+
+$$
+T_b(\lambda, L_\lambda) =
+\frac{h c}{\lambda k}
+\frac{1}{\ln\!\left(1+\frac{2 h c^2}{\lambda^5 L_\lambda}\right)}.
+$$
+
+Symboly a jednotky jsou stejné jako výše: $\lambda$ je v metrech a $L_\lambda$
+je zář na metr vlnové délky. Výsledná teplota $T_b$ je v kelvinech.
+U skutečného povrchu se jasová teplota může lišit od jeho teploty; vliv
+emisivity prozkoumáme v dalších částech notebooku.
+
+**Jak vzorec souvisí s kódem:** `planck_inv(lam_um, L)` přijímá vlnovou délku
+v µm a zář v $\mathrm{W\,m^{-2}\,sr^{-1}\,\mu m^{-1}}$. Vlnovou délku proto
+násobí `1e-6` a zář násobí `1e6`, aby ve vzorci byly jednotky na metr.
+Funkce vrací jasovou teplotu v K.
+
+`np.log1p(x)` počítá přirozený logaritmus $\ln(1+x)$; pro malé hodnoty $x$
+je numericky přesnější než přímý zápis `np.log(1 + x)`.''', r'''### From spectral radiance to brightness temperature
+
+The **brightness temperature** $T_b$ is the temperature of a blackbody that would
+have the measured spectral radiance at the given wavelength. Solving Planck's law for
+the temperature gives:
+
+$$
+T_b(\lambda, L_\lambda) =
+\frac{h c}{\lambda k}
+\frac{1}{\ln\!\left(1+\frac{2 h c^2}{\lambda^5 L_\lambda}\right)}.
+$$
+
+Symbols and units are the same as above: $\lambda$ is in metres and $L_\lambda$
+is the radiance per metre of wavelength. The resulting temperature $T_b$ is in kelvin.
+For a real surface the brightness temperature can differ from its actual temperature;
+the role of emissivity is explored later in this notebook.
+
+**How the formula maps to the code:** `planck_inv(lam_um, L)` takes the wavelength
+in µm and the radiance in $\mathrm{W\,m^{-2}\,sr^{-1}\,\mu m^{-1}}$. It therefore multiplies
+the wavelength by `1e-6` and the radiance by `1e6`, so that the formula works per metre.
+The function returns the brightness temperature in K.
+
+`np.log1p(x)` computes the natural logarithm $\ln(1+x)$; for small $x$
+it is numerically more accurate than writing `np.log(1 + x)` directly.''')),
+        ("code", t('''
 def planck_inv(lam_um, L):
     """Jasová teplota (K): teplota černého tělesa, které by mělo zář L na vlnové délce lam_um."""
     lam = lam_um * 1e-6
     return h * c / (lam * k) / np.log1p(2 * h * c**2 / lam**5 / (np.asarray(L) * 1e6))
 ''', '''
-import numpy as np, requests
-import matplotlib.pyplot as plt
-import rasterio
-from rasterio.windows import from_bounds
-from pyproj import Transformer
-from scipy.constants import h, c, k, sigma
-
-def planck(lam_um, T):
-    """Blackbody spectral radiance in W·m⁻²·sr⁻¹·µm⁻¹ for wavelength in µm and temperature in K."""
-    lam = np.asarray(lam_um) * 1e-6
-    return 2 * h * c**2 / lam**5 / np.expm1(h * c / (lam * k * T)) * 1e-6
-
 def planck_inv(lam_um, L):
     """Brightness temperature (K): the temperature of a blackbody with radiance L at wavelength lam_um."""
     lam = lam_um * 1e-6
     return h * c / (lam * k) / np.log1p(2 * h * c**2 / lam**5 / (np.asarray(L) * 1e6))
 ''')),
-        ("md", t(
-            "## 2. Planckův zákon, Wien a čtvrtá mocnina",
-            "## 2. Planck's law, Wien and the fourth power")),
         ("code", t('''
 T_list = [300, 600, 900, 5772]      # ◀ parametr: teploty v K (krajina, kamna, požár, povrch Slunce)
 lam = np.logspace(-1, 2, 2000)      # 0,1 až 100 µm
@@ -135,13 +237,14 @@ ax.legend(); plt.show()
             "Kolikrát vzroste celkový tok a kolikrát zář v 10,9 µm, když teplotu zdvojnásobíš z 300 na 600 K? Proč se obě čísla liší? Spočítej také, o kolik procent víc vyzáří asfalt o 45 °C než tráva o 25 °C.",
             "How many times do the total exitance and the radiance at 10.9 µm increase when you double the temperature from 300 to 600 K? Why do the two numbers differ? Also compute how many per cent more asphalt at 45 °C emits than grass at 25 °C.")),
         ("md", t(
-            "## 3. Skutečná scéna: z DN na jasovou teplotu\n\nPásmo B10 (10,6–11,2 µm) ukládá digitální čísla (DN). Soubor MTL obsahuje lineární převod na zář, L = M · DN + A, a konstanty K1, K2, kterými se zář převede na jasovou teplotu, T = K2 / ln(K1 / L + 1). Je to Planckův zákon zjednodušený na jedno pásmo.",
-            "## 3. A real scene: from DN to brightness temperature\n\nBand B10 (10.6–11.2 µm) stores digital numbers (DN). The MTL file holds the linear conversion to radiance, L = M · DN + A, and the constants K1, K2 that turn radiance into brightness temperature, T = K2 / ln(K1 / L + 1). It is Planck's law simplified for one band.")),
+            "## 3. Skutečná scéna: z DN na jasovou teplotu\n\nPásmo B10 (10,6–11,2 µm) ukládá digitální čísla (DN). Soubor MTL obsahuje koeficienty lineárního převodu na spektrální zář a konstanty $K_1$, $K_2$ pro převod záře na jasovou teplotu:\n\n$$\nL_\\lambda = M_L \\cdot DN + A_L, \\qquad T_b = \\frac{K_2}{\\ln\\!\\left(\\frac{K_1}{L_\\lambda} + 1\\right)}.\n$$\n\n$M_L$ a $A_L$ jsou `RADIANCE_MULT_BAND_10` a `RADIANCE_ADD_BAND_10`, $L_\\lambda$ vychází ve W·m⁻²·sr⁻¹·µm⁻¹ a $T_b$ v kelvinech. Druhý vzorec je Planckův zákon zjednodušený na jedno pásmo: $K_1$ a $K_2$ v sobě mají konstanty $h$, $c$, $k$ a efektivní vlnovou délku pásma.",
+            "## 3. A real scene: from DN to brightness temperature\n\nBand B10 (10.6–11.2 µm) stores digital numbers (DN). The MTL file holds the coefficients of the linear conversion to spectral radiance and the constants $K_1$, $K_2$ that turn radiance into brightness temperature:\n\n$$\nL_\\lambda = M_L \\cdot DN + A_L, \\qquad T_b = \\frac{K_2}{\\ln\\!\\left(\\frac{K_1}{L_\\lambda} + 1\\right)}.\n$$\n\n$M_L$ and $A_L$ are `RADIANCE_MULT_BAND_10` and `RADIANCE_ADD_BAND_10`, $L_\\lambda$ comes out in W·m⁻²·sr⁻¹·µm⁻¹ and $T_b$ in kelvin. The second formula is Planck's law simplified for one band: $K_1$ and $K_2$ contain the constants $h$, $c$, $k$ and the effective wavelength of the band.")),
         ("code", t('''
 SCENE = "@SCENE@"
 BASE = f"https://storage.googleapis.com/gcp-public-data-landsat/LC08/01/@PATH@/@ROW@/{SCENE}/{SCENE}"
-mtl = dict(l.strip().split(" = ") for l in requests.get(BASE + "_MTL.txt", timeout=60).text.splitlines() if " = " in l)
-num = lambda key: float(mtl[key])
+mtl = dict(line.strip().split(" = ") for line in requests.get(BASE + "_MTL.txt", timeout=60).text.splitlines() if " = " in line)
+def num(key):
+    return float(mtl[key])
 
 lon, lat, half = @LON@, @LAT@, 8000      # ◀ parametr: střed výřezu (°) a poloviční šířka (m)
 
@@ -161,8 +264,9 @@ print(f"kontrola Planckem pro 10,9 µm: {planck_inv(10.9, np.median(L10)) - 273.
 ''', '''
 SCENE = "@SCENE@"
 BASE = f"https://storage.googleapis.com/gcp-public-data-landsat/LC08/01/@PATH@/@ROW@/{SCENE}/{SCENE}"
-mtl = dict(l.strip().split(" = ") for l in requests.get(BASE + "_MTL.txt", timeout=60).text.splitlines() if " = " in l)
-num = lambda key: float(mtl[key])
+mtl = dict(line.strip().split(" = ") for line in requests.get(BASE + "_MTL.txt", timeout=60).text.splitlines() if " = " in line)
+def num(key):
+    return float(mtl[key])
 
 lon, lat, half = @LON@, @LAT@, 8000      # ◀ parameter: window centre (°) and half-width (m)
 
@@ -197,11 +301,12 @@ ax.axis("off"); plt.show()
             "Najdi na mapě @LANDMARKS_CS@. Jaké jasové teploty mají? Proč je rozdíl mezi vodou a střechami hal kolem poledne tak velký? Proč není jasová teplota totéž co teplota povrchu?",
             "Find @LANDMARKS_EN@ on the map. What brightness temperatures do they have? Why is the difference between the water and hall roofs so large around noon? Why is brightness temperature not the same as surface temperature?")),
         ("md", t(
-            "## 4. Emisivita\n\nReálné povrchy vyzařují méně než černé těleso: L = ε · B(T). Emisivitu odhadneme z NDVI zjednodušenou metodou prahů podle Sobrina a kol. (2004): holý povrch 0,97, plná vegetace 0,99, mezi tím podle podílu vegetace s opravou na vícenásobné odrazy mezi rostlinami a půdou. Vodě (NDVI < 0) dáme typickou hodnotu 0,991. Odraz oblohy a atmosféru zatím zanedbáme.",
-            "## 4. Emissivity\n\nReal surfaces emit less than a blackbody: L = ε · B(T). We estimate emissivity from NDVI with a simplified threshold method after Sobrino et al. (2004): bare surface 0.97, full vegetation 0.99, in between according to the vegetation fraction with a correction for multiple scattering between plants and soil. Water (NDVI < 0) gets a typical value of 0.991. Sky reflection and the atmosphere are ignored for now.")),
+            "## 4. Emisivita\n\nReálné povrchy vyzařují méně než černé těleso: $L_\\lambda = \\varepsilon \\, B_\\lambda(T)$, kde $B_\\lambda$ je Planckova funkce a $\\varepsilon$ emisivita (0 až 1). Emisivitu odhadneme z NDVI zjednodušenou metodou prahů podle Sobrina a kol. (2004): holý povrch 0,97, plná vegetace 0,99, mezi tím podle podílu vegetace s opravou na vícenásobné odrazy mezi rostlinami a půdou. Vodě (NDVI < 0) dáme typickou hodnotu 0,991. Odraz oblohy a atmosféru zatím zanedbáme.",
+            "## 4. Emissivity\n\nReal surfaces emit less than a blackbody: $L_\\lambda = \\varepsilon \\, B_\\lambda(T)$, where $B_\\lambda$ is the Planck function and $\\varepsilon$ the emissivity (0 to 1). We estimate emissivity from NDVI with a simplified threshold method after Sobrino et al. (2004): bare surface 0.97, full vegetation 0.99, in between according to the vegetation fraction with a correction for multiple scattering between plants and soil. Water (NDVI < 0) gets a typical value of 0.991. Sky reflection and the atmosphere are ignored for now.")),
         ("code", t('''
 sun = np.sin(np.radians(num("SUN_ELEVATION")))
-refl = lambda b: (num(f"REFLECTANCE_MULT_BAND_{b}") * read_band(b) + num(f"REFLECTANCE_ADD_BAND_{b}")) / sun
+def refl(b):
+    return (num(f"REFLECTANCE_MULT_BAND_{b}") * read_band(b) + num(f"REFLECTANCE_ADD_BAND_{b}")) / sun
 red, nir = refl(4), refl(5)
 ndvi = (nir - red) / (nir + red)
 
@@ -220,7 +325,8 @@ for x in ax: x.axis("off")
 plt.show()
 ''', '''
 sun = np.sin(np.radians(num("SUN_ELEVATION")))
-refl = lambda b: (num(f"REFLECTANCE_MULT_BAND_{b}") * read_band(b) + num(f"REFLECTANCE_ADD_BAND_{b}")) / sun
+def refl(b):
+    return (num(f"REFLECTANCE_MULT_BAND_{b}") * read_band(b) + num(f"REFLECTANCE_ADD_BAND_{b}")) / sun
 red, nir = refl(4), refl(5)
 ndvi = (nir - red) / (nir + red)
 
@@ -255,8 +361,8 @@ for eps_true in (0.98, 0.95, 0.92, 0.85):
             "Kde je oprava o emisivitu největší a proč? Zhruba o kolik kelvinů se senzor splete na každou setinu emisivity? Změň `eps_soil` na 0,95 (beton, asfalt) a sleduj, jak se změní oprava v zastavěných plochách.",
             "Where is the emissivity correction largest and why? Roughly how many kelvin is the sensor off for each hundredth of emissivity? Change `eps_soil` to 0.95 (concrete, asphalt) and watch how the correction changes in built-up areas.")),
         ("md", t(
-            "## 5. Odraz oblohy\n\nPovrch s emisivitou ε odráží 1 − ε dlouhovlnného záření, které na něj svítí z oblohy. Jasná obloha je v 10 µm velmi studená, zatažená má zhruba teplotu základny oblačnosti. Senzor dostane L = ε · B(T) + (1 − ε) · B(T_obloha).",
-            "## 5. Sky reflection\n\nA surface with emissivity ε reflects 1 − ε of the longwave radiation coming from the sky. A clear sky is very cold at 10 µm, an overcast sky has roughly the temperature of the cloud base. The sensor receives L = ε · B(T) + (1 − ε) · B(T_sky).")),
+            "## 5. Odraz oblohy\n\nPovrch s emisivitou ε odráží 1 − ε dlouhovlnného záření, které na něj svítí z oblohy. Jasná obloha je v 10 µm velmi studená, zatažená má zhruba teplotu základny oblačnosti. Senzor dostane\n\n$$\nL_\\lambda = \\varepsilon \\, B_\\lambda(T) + (1 - \\varepsilon) \\, B_\\lambda(T_\\mathrm{obloha}).\n$$",
+            "## 5. Sky reflection\n\nA surface with emissivity ε reflects 1 − ε of the longwave radiation coming from the sky. A clear sky is very cold at 10 µm, an overcast sky has roughly the temperature of the cloud base. The sensor receives\n\n$$\nL_\\lambda = \\varepsilon \\, B_\\lambda(T) + (1 - \\varepsilon) \\, B_\\lambda(T_\\mathrm{sky}).\n$$")),
         ("code", t('''
 T_surf = z_viz("T_surf", 273.15 + 27)   # ◀ parametr: teplota povrchu
 for name, eps_m in [("tráva", 0.98), ("beton", 0.92), ("zoxidovaný plech", 0.6), ("lesklý hliník", 0.05)]:
@@ -278,8 +384,8 @@ for name, eps_m in [("grass", 0.98), ("concrete", 0.92), ("oxidised sheet metal"
             "Proč lesklý plech pod jasnou oblohou vypadá v termokameře mrazivě studený, i když má 27 °C? Proč při obloze stejně teplé jako povrch nehraje emisivita žádnou roli? Za jakého počasí bys proto plánoval termální snímkování střech?",
             "Why does polished sheet metal under a clear sky look freezing cold in a thermal camera although it is at 27 °C? Why does emissivity not matter at all when the sky is as warm as the surface? In what weather would you therefore plan thermal imaging of roofs?")),
         ("md", t(
-            "## 6. Požár menší než pixel\n\nPixel je směs: podíl p hoří při teplotě požáru, zbytek má teplotu pozadí. Jako pozadí vezmeme medián skutečné jasové teploty z výřezu (@PLACE_CS@) a porovnáme pásmo 3,9 µm (požárová pásma MODIS a VIIRS leží mezi 3,7 a 4,1 µm) s pásmem 10,9 µm.",
-            "## 6. A fire smaller than a pixel\n\nA pixel is a mixture: a fraction p burns at the fire temperature, the rest has the background temperature. As background we take the median real brightness temperature of the window (@PLACE_EN@) and compare the 3.9 µm band (the fire bands of MODIS and VIIRS lie between 3.7 and 4.1 µm) with the 10.9 µm band.")),
+            "## 6. Požár menší než pixel\n\nPixel je směs: podíl $p$ hoří při teplotě požáru, zbytek má teplotu pozadí, takže $L_\\lambda = p \\, B_\\lambda(T_\\mathrm{požár}) + (1 - p) \\, B_\\lambda(T_\\mathrm{pozadí})$. Jako pozadí vezmeme medián skutečné jasové teploty z výřezu (@PLACE_CS@) a porovnáme pásmo 3,9 µm (požárová pásma MODIS a VIIRS leží mezi 3,7 a 4,1 µm) s pásmem 10,9 µm.",
+            "## 6. A fire smaller than a pixel\n\nA pixel is a mixture: a fraction $p$ burns at the fire temperature, the rest has the background temperature, so $L_\\lambda = p \\, B_\\lambda(T_\\mathrm{fire}) + (1 - p) \\, B_\\lambda(T_\\mathrm{bg})$. As background we take the median real brightness temperature of the window (@PLACE_EN@) and compare the 3.9 µm band (the fire bands of MODIS and VIIRS lie between 3.7 and 4.1 µm) with the 10.9 µm band.")),
         ("code", t('''
 T_fire = z_viz("T_fire", 900)    # ◀ parametr: teplota požáru v K
 T_bg = float(np.median(BT))

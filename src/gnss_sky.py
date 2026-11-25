@@ -80,18 +80,18 @@ def num(s):
     return float(s) if s else 0.0
 with gzip.open(NAV_FILE, "rt") as fh:
     lines = fh.read().splitlines()
-i = next(k for k, l in enumerate(lines) if "END OF HEADER" in l) + 1
+i = next(k for k, line in enumerate(lines) if "END OF HEADER" in line) + 1
 EPH = []
 while i < len(lines):
-    l = lines[i]
-    n = 4 if l[0] in "RS" else 8                     # záznam GLONASS a SBAS má 4 řádky, ostatní 8
+    head = lines[i]
+    n = 4 if head[0] in "RS" else 8                     # záznam GLONASS a SBAS má 4 řádky, ostatní 8
     rec = lines[i:i + n]; i += n
-    if l[0] not in SYSTEMS:
+    if head[0] not in SYSTEMS:
         continue
-    t = datetime(int(l[4:8]), int(l[9:11]), int(l[12:14]), int(l[15:17]), int(l[18:20]), int(l[21:23]), tzinfo=timezone.utc)
-    v = [num(l[23 + 19 * k:42 + 19 * k]) for k in range(3)] + [num(x[4 + 19 * k:23 + 19 * k]) for x in rec[1:] for k in range(4)]
-    if (v[6] if l[0] == "R" else v[24]) == 0:       # jen zprávy, podle kterých je družice zdravá
-        EPH.append((l[:3], l[0], t, v))
+    t = datetime(int(head[4:8]), int(head[9:11]), int(head[12:14]), int(head[15:17]), int(head[18:20]), int(head[21:23]), tzinfo=timezone.utc)
+    v = [num(head[23 + 19 * k:42 + 19 * k]) for k in range(3)] + [num(x[4 + 19 * k:23 + 19 * k]) for x in rec[1:] for k in range(4)]
+    if (v[6] if head[0] == "R" else v[24]) == 0:       # jen zprávy, podle kterých je družice zdravá
+        EPH.append((head[:3], head[0], t, v))
 eph = pd.DataFrame([(s, SYSTEMS[k], t) for s, k, t, v in EPH], columns=["družice", "systém", "čas"])
 print(f"{NAV_FILE}: {len(eph)} navigačních zpráv")
 print(eph.groupby("systém").agg(družic=("družice", "nunique"), zpráv=("družice", "size")).to_string())
@@ -119,18 +119,18 @@ def num(s):
     return float(s) if s else 0.0
 with gzip.open(NAV_FILE, "rt") as fh:
     lines = fh.read().splitlines()
-i = next(k for k, l in enumerate(lines) if "END OF HEADER" in l) + 1
+i = next(k for k, line in enumerate(lines) if "END OF HEADER" in line) + 1
 EPH = []
 while i < len(lines):
-    l = lines[i]
-    n = 4 if l[0] in "RS" else 8                     # GLONASS and SBAS records have 4 lines, the others 8
+    head = lines[i]
+    n = 4 if head[0] in "RS" else 8                     # GLONASS and SBAS records have 4 lines, the others 8
     rec = lines[i:i + n]; i += n
-    if l[0] not in SYSTEMS:
+    if head[0] not in SYSTEMS:
         continue
-    t = datetime(int(l[4:8]), int(l[9:11]), int(l[12:14]), int(l[15:17]), int(l[18:20]), int(l[21:23]), tzinfo=timezone.utc)
-    v = [num(l[23 + 19 * k:42 + 19 * k]) for k in range(3)] + [num(x[4 + 19 * k:23 + 19 * k]) for x in rec[1:] for k in range(4)]
-    if (v[6] if l[0] == "R" else v[24]) == 0:       # only messages that flag the satellite as healthy
-        EPH.append((l[:3], l[0], t, v))
+    t = datetime(int(head[4:8]), int(head[9:11]), int(head[12:14]), int(head[15:17]), int(head[18:20]), int(head[21:23]), tzinfo=timezone.utc)
+    v = [num(head[23 + 19 * k:42 + 19 * k]) for k in range(3)] + [num(x[4 + 19 * k:23 + 19 * k]) for x in rec[1:] for k in range(4)]
+    if (v[6] if head[0] == "R" else v[24]) == 0:       # only messages that flag the satellite as healthy
+        EPH.append((head[:3], head[0], t, v))
 eph = pd.DataFrame([(s, SYSTEMS[k], t) for s, k, t, v in EPH], columns=["satellite", "system", "time"])
 print(f"{NAV_FILE}: {len(eph)} navigation messages")
 print(eph.groupby("system").agg(satellites=("satellite", "nunique"), messages=("satellite", "size")).to_string())
@@ -441,14 +441,18 @@ print(open_sky.describe().loc[["min", "50%", "max"]].round(2))
             "## 4. Forest to the south or to the north?\n\nA forest edge blocks the sky up to about 35° on one side. The orbits of GPS (inclination 55°) and Galileo (56°) never go beyond 55–56° latitude, so in central Europe there is a region without satellites in the northern sky at medium elevations. Low above the northern horizon, however, we see satellites passing “beyond the pole”. Which side of the forest hurts more is therefore not obvious and depends on the height of the forest.")),
         ("code", t('''
 forest_el = 35                         # ◀ parametr: výška okraje lesa nad obzorem (°)
-south = lambda az: np.where((az > 90) & (az < 270), forest_el, mask)
-north = lambda az: np.where((az < 90) | (az > 270), forest_el, mask)
+def south(az):
+    return np.where((az > 90) & (az < 270), forest_el, mask)
+def north(az):
+    return np.where((az < 90) | (az > 270), forest_el, mask)
 res = pd.DataFrame({name: day_series(h, step=20).median() for name, h in [("volná obloha", lambda az: np.full_like(az, mask, float)), ("les na jihu", south), ("les na severu", north)]})
 res.round(2)
 ''', '''
 forest_el = 35                         # ◀ parameter: height of the forest edge above the horizon (°)
-south = lambda az: np.where((az > 90) & (az < 270), forest_el, mask)
-north = lambda az: np.where((az < 90) | (az > 270), forest_el, mask)
+def south(az):
+    return np.where((az > 90) & (az < 270), forest_el, mask)
+def north(az):
+    return np.where((az < 90) | (az > 270), forest_el, mask)
 res = pd.DataFrame({name: day_series(h, step=20).median() for name, h in [("open sky", lambda az: np.full_like(az, mask, float)), ("forest to the south", south), ("forest to the north", north)]})
 res.round(2)
 ''')),
@@ -472,7 +476,8 @@ for a in np.radians(azs):
     rr, cc = rasterio.transform.rowcol(tr, xs, ys)
     hor.append(np.degrees(np.arctan2(dem[np.array(rr), np.array(cc)] - z0, dist)).max())
 hor = np.maximum(np.array(hor), 0)
-valley = lambda az: np.maximum(np.interp(az, azs, hor, period=360), mask)
+def valley(az):
+    return np.maximum(np.interp(az, azs, hor, period=360), mask)
 print(f"terén v bodě {dem[row0, col0]:.1f} m n. m.; horizont {hor.min():.1f}–{hor.max():.1f}°")
 v_day = day_series(valley, lat=VLAT, lon=VLON, step=10)
 fig, ax = plt.subplots(1, 2, figsize=(13, 3.8))
@@ -495,7 +500,8 @@ for a in np.radians(azs):
     rr, cc = rasterio.transform.rowcol(tr, xs, ys)
     hor.append(np.degrees(np.arctan2(dem[np.array(rr), np.array(cc)] - z0, dist)).max())
 hor = np.maximum(np.array(hor), 0)
-valley = lambda az: np.maximum(np.interp(az, azs, hor, period=360), mask)
+def valley(az):
+    return np.maximum(np.interp(az, azs, hor, period=360), mask)
 print(f"terrain at the point {dem[row0, col0]:.1f} m a.s.l.; horizon {hor.min():.1f}–{hor.max():.1f}°")
 v_day = day_series(valley, lat=VLAT, lon=VLON, step=10)
 fig, ax = plt.subplots(1, 2, figsize=(13, 3.8))

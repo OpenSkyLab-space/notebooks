@@ -126,7 +126,8 @@ gcp = LAYOUTS[LAYOUT]; chk = np.setdiff1d(np.arange(len(p)), gcp)
 model = fit(SRC[gcp], DST[gcp], "helmert") if len(gcp) >= 2 else None
 pred = apply(model, SRC) if model else SRC - SRC[gcp].mean(axis=0) + DST[gcp].mean(axis=0)   # jeden bod: jen posun
 res = pred - DST
-rmse = lambda r: np.sqrt((r ** 2).sum(axis=1).mean())
+def rmse(r):
+    return np.sqrt((r ** 2).sum(axis=1).mean())
 print(f"{LAYOUT}: {len(gcp)} vlícovacích, {len(chk)} kontrolních bodů")
 print(f"RMSE_H na vlícovacích bodech {rmse(res[gcp]):.3f} m, na kontrolních {rmse(res[chk]):.3f} m, největší odchylka kontrolního bodu {np.hypot(*res[chk].T).max():.2f} m")
 fig, ax = plt.subplots(figsize=(7, 6.5))
@@ -169,7 +170,8 @@ gcp = LAYOUTS[LAYOUT]; chk = np.setdiff1d(np.arange(len(p)), gcp)
 model = fit(SRC[gcp], DST[gcp], "helmert") if len(gcp) >= 2 else None
 pred = apply(model, SRC) if model else SRC - SRC[gcp].mean(axis=0) + DST[gcp].mean(axis=0)   # one point: shift only
 res = pred - DST
-rmse = lambda r: np.sqrt((r ** 2).sum(axis=1).mean())
+def rmse(r):
+    return np.sqrt((r ** 2).sum(axis=1).mean())
 print(f"{LAYOUT}: {len(gcp)} control points, {len(chk)} check points")
 print(f"RMSE_H on control points {rmse(res[gcp]):.3f} m, on check points {rmse(res[chk]):.3f} m, largest check point residual {np.hypot(*res[chk].T).max():.2f} m")
 fig, ax = plt.subplots(figsize=(7, 6.5))

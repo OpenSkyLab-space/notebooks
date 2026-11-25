@@ -176,7 +176,7 @@ INDICES = {                                                            # ◀ par
 }
 LAIS = np.arange(0, 7.01, 0.25)
 CABS = [20, 40, 60]
-sim = {cab: [dict(zip(INV, prosail_s2(cab=cab, lai=l))) for l in LAIS] for cab in CABS}
+sim = {cab: [dict(zip(INV, prosail_s2(cab=cab, lai=lai))) for lai in LAIS] for cab in CABS}
 fig, ax = plt.subplots(1, len(INDICES), figsize=(4.2 * len(INDICES), 3.6))
 rows = {}
 for a, (name, f) in zip(ax, INDICES.items()):
@@ -198,7 +198,7 @@ INDICES = {                                                            # ◀ par
 }
 LAIS = np.arange(0, 7.01, 0.25)
 CABS = [20, 40, 60]
-sim = {cab: [dict(zip(INV, prosail_s2(cab=cab, lai=l))) for l in LAIS] for cab in CABS}
+sim = {cab: [dict(zip(INV, prosail_s2(cab=cab, lai=lai))) for lai in LAIS] for cab in CABS}
 fig, ax = plt.subplots(1, len(INDICES), figsize=(4.2 * len(INDICES), 3.6))
 rows = {}
 for a, (name, f) in zip(ax, INDICES.items()):

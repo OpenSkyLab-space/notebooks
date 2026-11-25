@@ -72,7 +72,7 @@ ENV = dict(GDAL_DISABLE_READDIR_ON_OPEN="EMPTY_DIR", GDAL_HTTP_MAX_RETRY=5, GDAL
 
 def mtl(scene):
     txt = requests.get(f"{GCS}{scene}/{scene}_MTL.txt", timeout=60).text
-    return {k.strip(): v.strip().strip('"') for k, v in (l.split(" = ") for l in txt.splitlines() if " = " in l)}
+    return {k.strip(): v.strip().strip('"') for k, v in (line.split(" = ") for line in txt.splitlines() if " = " in line)}
 
 def read(scene, band):
     with rasterio.Env(**ENV), rasterio.open(f"/vsicurl/{GCS}{scene}/{scene}_{band}.TIF") as r:
@@ -112,7 +112,7 @@ ENV = dict(GDAL_DISABLE_READDIR_ON_OPEN="EMPTY_DIR", GDAL_HTTP_MAX_RETRY=5, GDAL
 
 def mtl(scene):
     txt = requests.get(f"{GCS}{scene}/{scene}_MTL.txt", timeout=60).text
-    return {k.strip(): v.strip().strip('"') for k, v in (l.split(" = ") for l in txt.splitlines() if " = " in l)}
+    return {k.strip(): v.strip().strip('"') for k, v in (line.split(" = ") for line in txt.splitlines() if " = " in line)}
 
 def read(scene, band):
     with rasterio.Env(**ENV), rasterio.open(f"/vsicurl/{GCS}{scene}/{scene}_{band}.TIF") as r:

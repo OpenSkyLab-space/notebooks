@@ -79,7 +79,7 @@ BANDS = {1: "pobřežní 443", 2: "modrá 482", 3: "zelená 561", 4: "červená 
 
 def mtl(scene):
     txt = requests.get(f"{GCS}{scene}/{scene}_MTL.txt", timeout=60).text
-    return {k.strip(): v.strip().strip('"') for k, v in (l.split(" = ") for l in txt.splitlines() if " = " in l)}
+    return {k.strip(): v.strip().strip('"') for k, v in (line.split(" = ") for line in txt.splitlines() if " = " in line)}
 
 def read(scene, band):
     with rasterio.Env(GDAL_DISABLE_READDIR_ON_OPEN="EMPTY_DIR", GDAL_HTTP_MAX_RETRY=5, GDAL_HTTP_RETRY_DELAY=2):
@@ -111,7 +111,7 @@ BANDS = {1: "coastal 443", 2: "blue 482", 3: "green 561", 4: "red 655", 5: "NIR 
 
 def mtl(scene):
     txt = requests.get(f"{GCS}{scene}/{scene}_MTL.txt", timeout=60).text
-    return {k.strip(): v.strip().strip('"') for k, v in (l.split(" = ") for l in txt.splitlines() if " = " in l)}
+    return {k.strip(): v.strip().strip('"') for k, v in (line.split(" = ") for line in txt.splitlines() if " = " in line)}
 
 def read(scene, band):
     with rasterio.Env(GDAL_DISABLE_READDIR_ON_OPEN="EMPTY_DIR", GDAL_HTTP_MAX_RETRY=5, GDAL_HTTP_RETRY_DELAY=2):
@@ -199,7 +199,8 @@ summer = L8["léto"]
 valid = summer["ok"] & np.isin(scl, [4, 5, 6]) & (boa[1] > 0)
 print(f"pixelů pro srovnání: {valid.sum()}")
 fig, ax = plt.subplots(1, 2, figsize=(11, 5))
-rgb = lambda d: np.clip(np.dstack([d[4], d[3], d[2]]) / 0.25, 0, 1)
+def rgb(d):
+    return np.clip(np.dstack([d[4], d[3], d[2]]) / 0.25, 0, 1)
 ax[0].imshow(rgb(summer["toa"])); ax[0].set_title("Landsat 8, odrazivost TOA, @L8D_CS@")
 ax[1].imshow(rgb(boa)); ax[1].set_title("Sentinel-2 L2A, odrazivost BOA, @S2D_CS@")
 for a in ax: a.axis("off")
@@ -223,7 +224,8 @@ summer = L8["summer"]
 valid = summer["ok"] & np.isin(scl, [4, 5, 6]) & (boa[1] > 0)
 print(f"pixels for comparison: {valid.sum()}")
 fig, ax = plt.subplots(1, 2, figsize=(11, 5))
-rgb = lambda d: np.clip(np.dstack([d[4], d[3], d[2]]) / 0.25, 0, 1)
+def rgb(d):
+    return np.clip(np.dstack([d[4], d[3], d[2]]) / 0.25, 0, 1)
 ax[0].imshow(rgb(summer["toa"])); ax[0].set_title("Landsat 8, TOA reflectance, @L8D_EN@")
 ax[1].imshow(rgb(boa)); ax[1].set_title("Sentinel-2 L2A, BOA reflectance, @S2D_EN@")
 for a in ax: a.axis("off")
@@ -290,53 +292,270 @@ res.round(4)
         ("task", t(
             "Ve kterých pásmech DOS chybu proti BOA zmenší a ve kterých ji naopak zvětší? Proč je bias DOS ve všech pásmech záporný (co DOS dělá s násobnou složkou, propustností atmosféry)? Nastav `pct = 2` a pak `rho_dark = 0`: co se stane? Kdy DOS selže úplně (zimní scéna se sněhem bez tmavých objektů, opar jen nad částí scény)?",
             "In which bands does DOS reduce the error against BOA and in which does it make it larger? Why is the DOS bias negative in all bands (what does DOS do with the multiplicative part, the atmospheric transmittance)? Set `pct = 2` and then `rho_dark = 0`: what happens? When does DOS fail completely (a winter scene with snow and no dark objects, haze over only part of the scene)?")),
-        ("md", t(
-            "## 6. Empirická přímka\n\nV terénu se na snímek položí tmavý a světlý panel se změřenou odrazivostí. Tady jako panely poslouží tmavé a světlé pixely, jejichž odrazivost na povrchu známe ze Sentinelu-2. Pro každé pásmo proložíme přímku ρ_BOA = a · ρ_TOA + b: posun b souvisí se září dráhy a sklon s propustností atmosféry: pro ρ_TOA ≈ ρ_dráhy + T · ρ_BOA vychází a ≈ 1/T a b ≈ −ρ_dráhy/T.",
-            "## 6. Empirical line\n\nIn the field a dark and a bright panel with measured reflectance are placed in the image. Here the panels are dark and bright pixels whose surface reflectance we know from Sentinel-2. For each band we fit a line ρ_BOA = a · ρ_TOA + b: the offset b relates to path radiance and the slope a to atmospheric transmittance: for ρ_TOA ≈ ρ_path + T · ρ_BOA we get a ≈ 1/T and b ≈ −ρ_path/T.")),
-        ("code", t('''
-n_panel = 300        # ◀ parametr: kolik nejtmavších a nejsvětlejších pixelů použít jako panely
+        ("md", t(r"""## 6. Empirická přímka
+
+Empirická přímka opravuje odrazivost pomocí sklonu a posunu. V terénu mohou
+jako reference sloužit fyzické kalibrační panely se známou odrazivostí.
+V tomto cvičení použijeme **referenční pixely**: jejich referenční odrazivost
+převezmeme ze snímku Sentinel-2 L2A.
+
+Pro každé pásmo hledáme přímku mezi odrazivostí TOA Landsatu a referenční
+odrazivostí BOA. Touto přímkou potom opravíme celé pásmo:
+
+$$
+\widehat{\rho}_{\mathrm{BOA}} = a\,\rho_{\mathrm{TOA}} + b.
+$$
+
+- $\rho_{\mathrm{TOA}}$ je vstupní odrazivost na horní hranici atmosféry.
+- $\widehat{\rho}_{\mathrm{BOA}}$ je náš odhad odrazivosti na povrchu.
+- $a$ je **sklon** (`slope`): mění měřítko hodnot.
+- $b$ je **posun** (`offset`): ke každé hodnotě přičítá stejnou opravu.
+
+Odrazivost, sklon i posun jsou bezrozměrné. Pro zjednodušený model atmosféry
+
+$$
+\rho_{\mathrm{TOA}} \approx \rho_{\mathrm{dráhy}} + T\,\rho_{\mathrm{BOA}}
+\quad\Rightarrow\quad
+a \approx \frac{1}{T},\qquad b \approx -\frac{\rho_{\mathrm{dráhy}}}{T},
+$$
+
+kde $T$ je propustnost atmosféry a $\rho_{\mathrm{dráhy}}$ příspěvek rozptylu
+v atmosféře vyjádřený jako odrazivost. Tento fyzikální výklad je přibližný:
+zde srovnáváme dva různé senzory a referenční BOA je sama výsledkem zpracování.""", r"""## 6. Empirical line
+
+The empirical line corrects reflectance with a slope and an offset. In the field the
+reference can be physical calibration panels with known reflectance.
+In this exercise we use **reference pixels**: their reference reflectance
+is taken from a Sentinel-2 L2A image.
+
+For each band we look for a line between the Landsat TOA reflectance and the reference
+BOA reflectance. We then correct the whole band with this line:
+
+$$
+\widehat{\rho}_{\mathrm{BOA}} = a\,\rho_{\mathrm{TOA}} + b.
+$$
+
+- $\rho_{\mathrm{TOA}}$ is the input top-of-atmosphere reflectance.
+- $\widehat{\rho}_{\mathrm{BOA}}$ is our estimate of the surface reflectance.
+- $a$ is the **slope** (`slope`): it scales the values.
+- $b$ is the **offset** (`offset`): it adds the same correction to every value.
+
+Reflectance, slope and offset are dimensionless. For a simplified model of the atmosphere
+
+$$
+\rho_{\mathrm{TOA}} \approx \rho_{\mathrm{path}} + T\,\rho_{\mathrm{BOA}}
+\quad\Rightarrow\quad
+a \approx \frac{1}{T},\qquad b \approx -\frac{\rho_{\mathrm{path}}}{T},
+$$
+
+where $T$ is the atmospheric transmittance and $\rho_{\mathrm{path}}$ the contribution of
+atmospheric scattering expressed as reflectance. This physical reading is approximate:
+here we compare two different sensors, and the reference BOA is itself a product of processing.""")),
+        ("md", t(r"""### 6.1 Vyber referenční pixely a oprav snímek
+
+V každém pásmu vybereme podle Sentinelu-2 `n_reference` nejtmavších a stejný
+počet nejsvětlejších platných pixelů. Při `n_reference = 300` tedy přímku
+prokládáme **600 dvojicemi hodnot**, ne dvěma průměry skupin. Různá pásma
+mohou vybrat různé pixely.
+
+Zápis `[valid]` vybere hodnoty na společných platných místech obou snímků
+ve stejném pořadí. `np.argsort` vrátí jejich indexy od nejtmavších po
+nejsvětlejší. `np.polyfit(..., deg=1)` z vybraných dvojic vypočítá sklon
+a posun přímky. Tu pak použijeme na celé pásmo Landsatu.
+
+**Po změně `n_reference` spusť znovu všechny tři buňky této části (6.1–6.3).**""", r"""### 6.1 Select reference pixels and correct the image
+
+In each band we select, according to Sentinel-2, the `n_reference` darkest and the same
+number of brightest valid pixels. With `n_reference = 300` the line is therefore fitted
+to **600 pairs of values**, not to two group means. Different bands
+may select different pixels.
+
+Indexing with `[valid]` picks the values at the valid locations shared by both images,
+in the same order. `np.argsort` returns their indices from darkest to
+brightest. `np.polyfit(..., deg=1)` computes the slope and offset of the line
+from the selected pairs. We then apply the line to the whole Landsat band.
+
+**After changing `n_reference`, run all three cells of this part again (6.1–6.3).**""")),
+        ("code", t("""
+# Počet tmavých i světlých referenčních pixelů; celkem 2× tolik.
+n_reference = 300  # ◀ parametr: pixelů v každé skupině
+empirical = {}
+coefficients = {}
+
+for band in BANDS:
+    toa_image = summer["toa"][band]
+    toa_valid = toa_image[valid]
+    boa_valid = boa[band][valid]
+
+    sorted_indices = np.argsort(boa_valid)
+    dark_indices = sorted_indices[:n_reference]
+    bright_indices = sorted_indices[-n_reference:]
+    reference_indices = np.concatenate((dark_indices, bright_indices))
+
+    toa_reference = toa_valid[reference_indices]
+    boa_reference = boa_valid[reference_indices]
+    slope, offset = np.polyfit(toa_reference, boa_reference, deg=1)
+
+    empirical[band] = slope * toa_image + offset
+    coefficients[band] = (slope, offset)
+""", """
+# Number of dark and of bright reference pixels; twice as many in total.
+n_reference = 300  # ◀ parameter: pixels in each group
+empirical = {}
+coefficients = {}
+
+for band in BANDS:
+    toa_image = summer["toa"][band]
+    toa_valid = toa_image[valid]
+    boa_valid = boa[band][valid]
+
+    sorted_indices = np.argsort(boa_valid)
+    dark_indices = sorted_indices[:n_reference]
+    bright_indices = sorted_indices[-n_reference:]
+    reference_indices = np.concatenate((dark_indices, bright_indices))
+
+    toa_reference = toa_valid[reference_indices]
+    boa_reference = boa_valid[reference_indices]
+    slope, offset = np.polyfit(toa_reference, boa_reference, deg=1)
+
+    empirical[band] = slope * toa_image + offset
+    coefficients[band] = (slope, offset)
+""")),
+        ("md", t(r"""### 6.2 Porovnej chyby všech tří postupů
+
+Tabulka ukáže sklon a posun v každém pásmu a RMSE původní odrazivosti TOA,
+korekce DOS a empirické přímky proti referenci Sentinel-2 BOA:
+
+$$
+\mathrm{RMSE} = \sqrt{\frac{1}{N}\sum_{i=1}^{N}
+\left(\rho_i^{\mathrm{odhad}}-\rho_i^{\mathrm{reference}}\right)^2}.
+$$
+
+$N$ je počet všech platných pixelů a $i$ označuje jeden z nich. Menší RMSE
+znamená lepší shodu s referencí. Všechny metody hodnotíme na stejných pixelech,
+včetně těch použitých k proložení přímky; nejde tedy o nezávislé ověření přesnosti.""", r"""### 6.2 Compare the errors of all three approaches
+
+The table shows the slope and offset in each band and the RMSE of the original TOA reflectance,
+of the DOS correction and of the empirical line against the Sentinel-2 BOA reference:
+
+$$
+\mathrm{RMSE} = \sqrt{\frac{1}{N}\sum_{i=1}^{N}
+\left(\rho_i^{\mathrm{estimate}}-\rho_i^{\mathrm{reference}}\right)^2}.
+$$
+
+$N$ is the number of all valid pixels and $i$ denotes one of them. A smaller RMSE
+means better agreement with the reference. All methods are evaluated on the same pixels,
+including those used to fit the line, so this is not an independent accuracy assessment.""")),
+        ("code", t("""
+rows = []
+for band in BANDS:
+    slope, offset = coefficients[band]
+    rows.append(
+        {
+            "pásmo": f"B{band}",
+            "sklon a": slope,
+            "posun b": offset,
+            "RMSE TOA": rmse(summer["toa"][band], boa[band]),
+            "RMSE DOS": rmse(dos[band], boa[band]),
+            "RMSE emp. přímka": rmse(empirical[band], boa[band]),
+        }
+    )
+
+comparison = pd.DataFrame(rows).set_index("pásmo")
+print(comparison.round(4))
+""", """
+rows = []
+for band in BANDS:
+    slope, offset = coefficients[band]
+    rows.append(
+        {
+            "band": f"B{band}",
+            "slope a": slope,
+            "offset b": offset,
+            "RMSE TOA": rmse(summer["toa"][band], boa[band]),
+            "RMSE DOS": rmse(dos[band], boa[band]),
+            "RMSE emp. line": rmse(empirical[band], boa[band]),
+        }
+    )
+
+comparison = pd.DataFrame(rows).set_index("band")
+print(comparison.round(4))
+""")),
+        ("md", t(r"""### 6.3 Zobraz shodu se Sentinelem-2
+
+Na vodorovné ose je referenční BOA, na svislé ose odrazivost daného postupu.
+Černá přímka 1 : 1 označuje úplnou shodu. Barvy rozlišují modré pásmo B2,
+červené B4 a blízké infračervené B5.
+
+Pro přehlednost vykreslíme jen **4 000 náhodně vybraných platných pixelů**,
+stejných pro všechny grafy i pásma. Pevné semínko `0` zajistí opakovatelný
+výběr. Tento vzorek slouží pouze ke kreslení; kalibraci ani RMSE nemění.""", r"""### 6.3 Show the agreement with Sentinel-2
+
+The horizontal axis shows the reference BOA, the vertical axis the reflectance from the given approach.
+The black 1 : 1 line marks perfect agreement. Colours distinguish the blue band B2,
+the red B4 and the near-infrared B5.
+
+For clarity we plot only **4,000 randomly selected valid pixels**,
+the same for all plots and bands. The fixed seed `0` makes the selection
+repeatable. This sample is used only for plotting; it changes neither the calibration nor the RMSE.""")),
+        ("code", t("""
 rng = np.random.default_rng(0)
-el, rows = {}, []
-for b in BANDS:
-    v = np.flatnonzero(valid.ravel())
-    order = v[np.argsort(boa[b].ravel()[v])]
-    panels = np.r_[order[:n_panel], order[-n_panel:]]               # tmavé a světlé „panely“
-    a, c = np.polyfit(summer["toa"][b].ravel()[panels], boa[b].ravel()[panels], 1)
-    el[b] = a * summer["toa"][b] + c
-    rows.append({"pásmo": f"B{b}", "sklon a": a, "posun b": c, "RMSE TOA": rmse(summer["toa"][b], boa[b]),
-                 "RMSE DOS": rmse(dos[b], boa[b]), "RMSE emp. přímka": rmse(el[b], boa[b])})
-print(pd.DataFrame(rows).set_index("pásmo").round(4))
-fig, ax = plt.subplots(1, 3, figsize=(13, 4))
-sel = rng.choice(np.flatnonzero(valid.ravel()), 4000, replace=False)
-for a_, (name, est) in zip(ax, [("TOA", summer["toa"]), ("DOS", dos), ("empirická přímka", el)]):
-    for b, col in [(2, "tab:blue"), (4, "tab:red"), (5, "tab:purple")]:
-        a_.scatter(boa[b].ravel()[sel], est[b].ravel()[sel], s=2, alpha=0.4, c=col, label=f"B{b}")
-    a_.axline((0, 0), slope=1, color="k", lw=0.8); a_.set(xlim=(0, 0.5), ylim=(0, 0.5), xlabel="ρ BOA Sentinel-2", ylabel=name, title=name)
-ax[0].legend(); plt.tight_layout(); plt.show()
-''', '''
-n_panel = 300        # ◀ parameter: how many darkest and brightest pixels to use as panels
+n_valid = np.count_nonzero(valid)
+plot_indices = rng.choice(n_valid, size=4000, replace=False)
+
+methods = [("TOA", summer["toa"]), ("DOS", dos), ("empirická přímka", empirical)]
+band_colors = {2: "tab:blue", 4: "tab:red", 5: "tab:purple"}
+fig, axes = plt.subplots(1, 3, figsize=(13, 4))
+
+for axis, (name, estimates) in zip(axes, methods):
+    for band, color in band_colors.items():
+        reference_values = boa[band][valid]
+        estimated_values = estimates[band][valid]
+        axis.scatter(
+            reference_values[plot_indices],
+            estimated_values[plot_indices],
+            s=2,
+            alpha=0.4,
+            c=color,
+            label=f"B{band}",
+        )
+    axis.axline((0, 0), slope=1, color="k", lw=0.8)
+    axis.set(xlim=(0, 0.5), ylim=(0, 0.5), xlabel="ρ BOA Sentinel-2", ylabel=name, title=name)
+
+axes[0].legend()
+plt.tight_layout()
+plt.show()
+""", """
 rng = np.random.default_rng(0)
-el, rows = {}, []
-for b in BANDS:
-    v = np.flatnonzero(valid.ravel())
-    order = v[np.argsort(boa[b].ravel()[v])]
-    panels = np.r_[order[:n_panel], order[-n_panel:]]               # dark and bright "panels"
-    a, c = np.polyfit(summer["toa"][b].ravel()[panels], boa[b].ravel()[panels], 1)
-    el[b] = a * summer["toa"][b] + c
-    rows.append({"band": f"B{b}", "slope a": a, "offset b": c, "RMSE TOA": rmse(summer["toa"][b], boa[b]),
-                 "RMSE DOS": rmse(dos[b], boa[b]), "RMSE emp. line": rmse(el[b], boa[b])})
-print(pd.DataFrame(rows).set_index("band").round(4))
-fig, ax = plt.subplots(1, 3, figsize=(13, 4))
-sel = rng.choice(np.flatnonzero(valid.ravel()), 4000, replace=False)
-for a_, (name, est) in zip(ax, [("TOA", summer["toa"]), ("DOS", dos), ("empirical line", el)]):
-    for b, col in [(2, "tab:blue"), (4, "tab:red"), (5, "tab:purple")]:
-        a_.scatter(boa[b].ravel()[sel], est[b].ravel()[sel], s=2, alpha=0.4, c=col, label=f"B{b}")
-    a_.axline((0, 0), slope=1, color="k", lw=0.8); a_.set(xlim=(0, 0.5), ylim=(0, 0.5), xlabel="ρ BOA Sentinel-2", ylabel=name, title=name)
-ax[0].legend(); plt.tight_layout(); plt.show()
-''')),
+n_valid = np.count_nonzero(valid)
+plot_indices = rng.choice(n_valid, size=4000, replace=False)
+
+methods = [("TOA", summer["toa"]), ("DOS", dos), ("empirical line", empirical)]
+band_colors = {2: "tab:blue", 4: "tab:red", 5: "tab:purple"}
+fig, axes = plt.subplots(1, 3, figsize=(13, 4))
+
+for axis, (name, estimates) in zip(axes, methods):
+    for band, color in band_colors.items():
+        reference_values = boa[band][valid]
+        estimated_values = estimates[band][valid]
+        axis.scatter(
+            reference_values[plot_indices],
+            estimated_values[plot_indices],
+            s=2,
+            alpha=0.4,
+            c=color,
+            label=f"B{band}",
+        )
+    axis.axline((0, 0), slope=1, color="k", lw=0.8)
+    axis.set(xlim=(0, 0.5), ylim=(0, 0.5), xlabel="ρ BOA Sentinel-2", ylabel=name, title=name)
+
+axes[0].legend()
+plt.tight_layout()
+plt.show()
+""")),
         ("task", t(
-            "Proč má empirická přímka v modrých pásmech záporný posun a sklon jiný než 1? Co fyzikálně vyjadřují? Která metoda dopadla nejlépe a proč DOS nemůže opravit sklon? Nastav `n_panel = 20`: co se stane se spolehlivostí přímky? Proč v terénu stačí dva panely, ale musí ležet ve stejném snímku a za stejného osvětlení?",
-            "Why does the empirical line have a negative offset and a slope different from 1 in the blue bands? What do they express physically? Which method did best and why can DOS not correct the slope? Set `n_panel = 20`: what happens to the reliability of the line? Why are two panels enough in the field, but must be in the same image and under the same illumination?")),
+            "Proč má empirická přímka v modrých pásmech záporný posun a sklon jiný než 1? Co fyzikálně vyjadřují? Která metoda má nejmenší RMSE v jednotlivých pásmech a proč DOS nemůže opravit sklon? Nastav `n_reference = 20` a znovu spusť buňky 6.1–6.3: jak se změní sklon, posun a RMSE? Proč v terénu stačí k určení přímky dva kalibrační panely s různou známou odrazivostí, ale musí ležet ve stejném snímku a za stejného osvětlení?",
+            "Why does the empirical line have a negative offset and a slope different from 1 in the blue bands? What do they express physically? Which method has the smallest RMSE in each band, and why can DOS not correct the slope? Set `n_reference = 20` and run cells 6.1–6.3 again: how do the slope, offset and RMSE change? Why are two calibration panels with different known reflectance enough to determine the line in the field, but must they be in the same image and under the same illumination?")),
         ("task", t(
         "+ Porovnej výsledky se spolužákem, který spustil notebook pro jiné místo: vyšel podobný rozdíl TOA − BOA nad vodou a podobný sklon empirické přímky? Čím se mohou lišit (jiný den, jiný opar, jiná výška Slunce)?",
         "+ Compare your results with a classmate who ran the notebook for another place: did you get a similar TOA − BOA difference over water and a similar empirical line slope? What could make them differ (another day, other haze, another sun elevation)?")),

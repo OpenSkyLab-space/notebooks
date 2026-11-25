@@ -374,7 +374,8 @@ for direction, sign in [("towards the Sun", 1), ("away from the Sun", -1)]:
         ("code", t('''
 def shift_to(ref, img):
     """Celopixelový posun img vůči ref fázovou korelací gradientů (pásma má každé svůj objektiv)."""
-    g = lambda a: np.hypot(*np.gradient(ndi.gaussian_filter(a, 1.5)))
+    def g(a):
+        return np.hypot(*np.gradient(ndi.gaussian_filter(a, 1.5)))
     F = np.fft.fft2(g(ref)) * np.conj(np.fft.fft2(g(img))); c = np.fft.ifft2(F / (np.abs(F) + 1e-12)).real
     dy, dx = np.unravel_index(c.argmax(), c.shape)
     return (dy - c.shape[0] if dy > c.shape[0] // 2 else dy, dx - c.shape[1] if dx > c.shape[1] // 2 else dx)
@@ -401,7 +402,8 @@ ax.set_title("snímek z letu (sesazená pásma), oblasti pro porovnání"); ax.a
 ''', '''
 def shift_to(ref, img):
     """Whole-pixel shift of img relative to ref by phase correlation of gradients (each band has its own lens)."""
-    g = lambda a: np.hypot(*np.gradient(ndi.gaussian_filter(a, 1.5)))
+    def g(a):
+        return np.hypot(*np.gradient(ndi.gaussian_filter(a, 1.5)))
     F = np.fft.fft2(g(ref)) * np.conj(np.fft.fft2(g(img))); c = np.fft.ifft2(F / (np.abs(F) + 1e-12)).real
     dy, dx = np.unravel_index(c.argmax(), c.shape)
     return (dy - c.shape[0] if dy > c.shape[0] // 2 else dy, dx - c.shape[1] if dx > c.shape[1] // 2 else dx)
@@ -438,7 +440,8 @@ def calibrated(b, vignette=True):
     mp, mf = PANEL[b][1], FLIGHT[b][1]; k = panel_tab.loc[mp["band"], "k = ρ/L_p"]
     L = ndi.shift(radiance(*FLIGHT[b], vignette=vignette), shifts[b], order=0, mode="nearest")
     return k * L * mp["E_h"] / mf["E_h"]
-nd = lambda nir, red: (nir - red) / (nir + red + 1e-9)
+def nd(nir, red):
+    return (nir - red) / (nir + red + 1e-9)
 variants = {"z radiance": nd(L_al[4], L_al[3]), "panel + DLS": nd(calibrated(4), calibrated(3)),
             "panel + DLS bez vinětace": nd(calibrated(4, False), calibrated(3, False))}
 fig, ax = plt.subplots(1, 3, figsize=(15, 4))
@@ -453,7 +456,8 @@ def calibrated(b, vignette=True):
     mp, mf = PANEL[b][1], FLIGHT[b][1]; k = panel_tab.loc[mp["band"], "k = ρ/L_p"]
     L = ndi.shift(radiance(*FLIGHT[b], vignette=vignette), shifts[b], order=0, mode="nearest")
     return k * L * mp["E_h"] / mf["E_h"]
-nd = lambda nir, red: (nir - red) / (nir + red + 1e-9)
+def nd(nir, red):
+    return (nir - red) / (nir + red + 1e-9)
 variants = {"from radiance": nd(L_al[4], L_al[3]), "panel + DLS": nd(calibrated(4), calibrated(3)),
             "panel + DLS without vignetting": nd(calibrated(4, False), calibrated(3, False))}
 fig, ax = plt.subplots(1, 3, figsize=(15, 4))

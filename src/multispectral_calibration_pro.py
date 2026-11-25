@@ -184,7 +184,8 @@ REF = 2                       # referenční pásmo (zelené), vůči němu jsou
 
 def shift_sub(a, c):
     """Posun (dy, dx), o který je třeba posunout c, aby sedělo na a: fázová korelace gradientů se subpixelovým zpřesněním."""
-    g = lambda z: np.hypot(*np.gradient(ndi.gaussian_filter(z, 1.5)))
+    def g(z):
+        return np.hypot(*np.gradient(ndi.gaussian_filter(z, 1.5)))
     w = np.outer(np.hanning(a.shape[0]), np.hanning(a.shape[1]))
     F = np.fft.fft2(g(a) * w) * np.conj(np.fft.fft2(g(c) * w)); cc = np.fft.ifft2(F / (np.abs(F) + 1e-12)).real
     i, j = np.unravel_index(cc.argmax(), cc.shape); H, W = cc.shape
@@ -219,7 +220,8 @@ REF = 2                       # reference band (green); the lens offsets in the 
 
 def shift_sub(a, c):
     """Shift (dy, dx) by which c must be moved to match a: phase correlation of gradients with subpixel refinement."""
-    g = lambda z: np.hypot(*np.gradient(ndi.gaussian_filter(z, 1.5)))
+    def g(z):
+        return np.hypot(*np.gradient(ndi.gaussian_filter(z, 1.5)))
     w = np.outer(np.hanning(a.shape[0]), np.hanning(a.shape[1]))
     F = np.fft.fft2(g(a) * w) * np.conj(np.fft.fft2(g(c) * w)); cc = np.fft.ifft2(F / (np.abs(F) + 1e-12)).real
     i, j = np.unravel_index(cc.argmax(), cc.shape); H, W = cc.shape
@@ -346,7 +348,8 @@ L_af = {b: warp(L_fl[b], *AFF[b]) for b in L_fl}
 k = {b: PANEL[b][1]["albedo"] / radiance(*PANEL[b])[Path(np.array(PANEL[b][1]["area"]).reshape(-1, 2)).contains_points(
          np.c_[np.indices(PANEL[b][0].shape)[1].ravel(), np.indices(PANEL[b][0].shape)[0].ravel()]).reshape(PANEL[b][0].shape)].mean() for b in L_fl}
 def refl(L): return {b: k[b] * L[b] * PANEL[b][1]["E_h"] / FLIGHT[b][1]["E_h"] for b in L}   # panel + DLS
-ndvi = lambda R: (R[4] - R[3]) / (R[4] + R[3] + 1e-9)
+def ndvi(R):
+    return (R[4] - R[3]) / (R[4] + R[3] + 1e-9)
 RHO_tr, RHO_af = refl(L_tr), refl(L_af)
 N_tr, N_af = ndvi(RHO_tr), ndvi(RHO_af)
 dN = N_tr - N_af
@@ -376,7 +379,8 @@ L_af = {b: warp(L_fl[b], *AFF[b]) for b in L_fl}
 k = {b: PANEL[b][1]["albedo"] / radiance(*PANEL[b])[Path(np.array(PANEL[b][1]["area"]).reshape(-1, 2)).contains_points(
          np.c_[np.indices(PANEL[b][0].shape)[1].ravel(), np.indices(PANEL[b][0].shape)[0].ravel()]).reshape(PANEL[b][0].shape)].mean() for b in L_fl}
 def refl(L): return {b: k[b] * L[b] * PANEL[b][1]["E_h"] / FLIGHT[b][1]["E_h"] for b in L}   # panel + DLS
-ndvi = lambda R: (R[4] - R[3]) / (R[4] + R[3] + 1e-9)
+def ndvi(R):
+    return (R[4] - R[3]) / (R[4] + R[3] + 1e-9)
 RHO_tr, RHO_af = refl(L_tr), refl(L_af)
 N_tr, N_af = ndvi(RHO_tr), ndvi(RHO_af)
 dN = N_tr - N_af
@@ -407,7 +411,8 @@ ERR_RED, ERR_NIR = 0.00, 0.05   # ◀ parametr: relativní chyba kalibrace červ
 R_ok = RHO_af
 R_err = dict(R_ok); R_err[3] = R_ok[3] * (1 + ERR_RED); R_err[4] = R_ok[4] * (1 + ERR_NIR)
 R_dls = {b: np.pi * L_af[b] / FLIGHT[b][1]["E_h"] for b in L_af}     # jen DLS
-ndre = lambda R: (R[4] - R[5]) / (R[4] + R[5] + 1e-9)
+def ndre(R):
+    return (R[4] - R[5]) / (R[4] + R[5] + 1e-9)
 rows = {}
 for reg, (r, c) in REGIONS.items():
     n0 = np.median(ndvi(R_ok)[r, c])
@@ -432,7 +437,8 @@ ERR_RED, ERR_NIR = 0.00, 0.05   # ◀ parameter: relative calibration error of t
 R_ok = RHO_af
 R_err = dict(R_ok); R_err[3] = R_ok[3] * (1 + ERR_RED); R_err[4] = R_ok[4] * (1 + ERR_NIR)
 R_dls = {b: np.pi * L_af[b] / FLIGHT[b][1]["E_h"] for b in L_af}     # DLS only
-ndre = lambda R: (R[4] - R[5]) / (R[4] + R[5] + 1e-9)
+def ndre(R):
+    return (R[4] - R[5]) / (R[4] + R[5] + 1e-9)
 rows = {}
 for reg, (r, c) in REGIONS.items():
     n0 = np.median(ndvi(R_ok)[r, c])
@@ -597,9 +603,12 @@ sharp = {b: up[b] * pan_c / pan_low for b in up}                                
 N_up, N_sh = ndvi(up), ndvi(sharp)
 print(f"největší rozdíl NDVI zostřeného a převzorkovaného: {np.nanmax(np.abs(N_sh - N_up)):.1e}")
 print(f"průměrná odrazivost Red před a po zostření: {up[3].mean():.4f} a {sharp[3].mean():.4f}")
-hf = lambda a: np.std(a - ndi.gaussian_filter(a, 2)) / np.std(a)      # podíl jemných detailů (do ~2 pixelů pan)
+# podíl jemných detailů (do ~2 pixelů pan)
+def hf(a):
+    return np.std(a - ndi.gaussian_filter(a, 2)) / np.std(a)
 print(f"podíl jemných detailů: Red převzorkované {hf(up[3]):.3f}, Red zostřené {hf(sharp[3]):.3f}, pan {hf(pan_c):.3f}")
-rgb = lambda D: np.clip(np.dstack([D[3], D[2], D[1]]) / np.percentile(np.dstack([up[3], up[2], up[1]]), 99.5), 0, 1)
+def rgb(D):
+    return np.clip(np.dstack([D[3], D[2], D[1]]) / np.percentile(np.dstack([up[3], up[2], up[1]]), 99.5), 0, 1)
 fig, ax = plt.subplots(1, 4, figsize=(18, 4.6))
 ax[0].imshow(rgb(up)); ax[0].set_title(f"RGB, MS ({gsd[ms['band']]:.1f} cm)")
 ax[1].imshow(pan_c, cmap="gray"); ax[1].set_title(f"panchromatické ({gsd[mp['band']]:.1f} cm)")
@@ -648,9 +657,12 @@ sharp = {b: up[b] * pan_c / pan_low for b in up}                                
 N_up, N_sh = ndvi(up), ndvi(sharp)
 print(f"largest difference between sharpened and resampled NDVI: {np.nanmax(np.abs(N_sh - N_up)):.1e}")
 print(f"mean Red reflectance before and after sharpening: {up[3].mean():.4f} and {sharp[3].mean():.4f}")
-hf = lambda a: np.std(a - ndi.gaussian_filter(a, 2)) / np.std(a)      # share of fine detail (up to ~2 pan pixels)
+# share of fine detail (up to ~2 pan pixels)
+def hf(a):
+    return np.std(a - ndi.gaussian_filter(a, 2)) / np.std(a)
 print(f"share of fine detail: Red resampled {hf(up[3]):.3f}, Red sharpened {hf(sharp[3]):.3f}, pan {hf(pan_c):.3f}")
-rgb = lambda D: np.clip(np.dstack([D[3], D[2], D[1]]) / np.percentile(np.dstack([up[3], up[2], up[1]]), 99.5), 0, 1)
+def rgb(D):
+    return np.clip(np.dstack([D[3], D[2], D[1]]) / np.percentile(np.dstack([up[3], up[2], up[1]]), 99.5), 0, 1)
 fig, ax = plt.subplots(1, 4, figsize=(18, 4.6))
 ax[0].imshow(rgb(up)); ax[0].set_title(f"RGB, MS ({gsd[ms['band']]:.1f} cm)")
 ax[1].imshow(pan_c, cmap="gray"); ax[1].set_title(f"panchromatic ({gsd[mp['band']]:.1f} cm)")
